@@ -1,0 +1,5 @@
+export component Hero:
+    htmlTag: img
+    width: 100%
+    height: 120px
+    objectFit: cover

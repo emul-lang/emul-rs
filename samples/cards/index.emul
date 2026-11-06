@@ -1,4 +1,15 @@
-from ./buttons import MyButton, SecondaryButton
+from ../lib import
+    Banner
+    Body
+    Card
+    Copy
+    Grid
+    Hero
+    MyButton
+    Page
+    SecondaryButton
+    Strong
+    Title
 
 // Layout pieces
 component MyLayout:
@@ -6,63 +17,6 @@ component MyLayout:
     flexDirection: row
     gap: 16px
     padding: 64px
-
-component Page:
-    backgroundColor: #f4f4f5
-    padding: 32px
-    display: flex
-    flexDirection: column
-    gap: 32px
-
-component Grid:
-    display: grid
-    gridTemplateColumns: repeat(3, 1fr)
-    gap: 24px
-
-component Card:
-    backgroundColor: #ffffff
-    borderRadius: 12px
-    boxShadow: 0 4px 12px rgba(0, 0, 0, 0.12)
-    overflow: hidden
-    display: flex
-    gap: 32px
-
-component Hero:
-    htmlTag: img
-    width: 100%
-    height: 120px
-    objectFit: cover
-
-component Body:
-    padding: 16px
-    display: flex
-    flexDirection: column
-    gap: 8px
-
-component Title:
-    fontSize: 20px
-    fontWeight: 700
-    color: #18181b
-
-component Copy:
-    fontSize: 14px
-    lineHeight: 1.5
-    color: #52525b
-
-component Strong:
-    display: inline
-    fontWeight: 700
-    color: #2563eb
-    textDecoration: underline
-
-component Banner:
-    padding: 24px
-    backgroundImage: linear-gradient(90deg, #6366f1, #ec4899)
-    color: #ffffff
-    fontSize: 28px
-    fontWeight: 800
-    textAlign: center
-    textShadow: 0 2px 4px rgba(0, 0, 0, 0.3)
 
 export composition MyComposition {
     MyLayout {

@@ -1,0 +1,6 @@
+export component Page:
+    backgroundColor: #f4f4f5
+    padding: 32px
+    display: flex
+    flexDirection: column
+    gap: 32px

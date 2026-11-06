@@ -1,0 +1,6 @@
+from ./DefaultButton import DefaultButton
+
+export component MyButton extends DefaultButton:
+    padding: 8px 12px
+    color: #dc2626
+    fontWeight: 600

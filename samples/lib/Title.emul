@@ -1,0 +1,4 @@
+export component Title:
+    fontSize: 20px
+    fontWeight: 700
+    color: #18181b

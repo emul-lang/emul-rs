@@ -1,0 +1,5 @@
+export component Strong:
+    display: inline
+    fontWeight: 700
+    color: #2563eb
+    textDecoration: underline

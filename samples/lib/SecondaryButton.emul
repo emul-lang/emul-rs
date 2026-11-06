@@ -1,0 +1,5 @@
+from ./MyButton import MyButton
+
+export component SecondaryButton extends MyButton:
+    backgroundColor: #ffffff
+    border: 1px solid #dc2626

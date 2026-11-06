@@ -1,0 +1,6 @@
+export component DefaultButton:
+    htmlTag: button
+    display: flex
+    alignItems: center
+    borderRadius: 4px
+    backgroundColor: #e4e4e7

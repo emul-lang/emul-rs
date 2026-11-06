@@ -15,3 +15,7 @@
 
 # Piton tethers (installed locally)
 /tethers
+
+# Sample render output
+/samples/*/out/
+/samples/*/dist/

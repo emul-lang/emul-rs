@@ -1,0 +1,8 @@
+export component Banner:
+    padding: 24px
+    backgroundImage: linear-gradient(90deg, #6366f1, #ec4899)
+    color: #ffffff
+    fontSize: 28px
+    fontWeight: 800
+    textAlign: center
+    textShadow: 0 2px 4px rgba(0, 0, 0, 0.3)
