@@ -1,0 +1,26 @@
+export anchor LineHeight:
+    description:
+        Sets the height of each line of text. A unitless number is multiplied by the component's own font size.
+
+    identifier: lineHeight
+
+    cssProperty:
+        Corresponds to the CSS `line-height` property.
+
+    values:
+        - `normal`
+        - `<number>`
+        - `<length>`
+        - `<percentage>`
+
+    initial: normal
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            lineHeight: 1.5
+        \\\
+        ```

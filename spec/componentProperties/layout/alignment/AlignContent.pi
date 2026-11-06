@@ -1,0 +1,29 @@
+export anchor AlignContent:
+    description:
+        Sets how the lines of a wrapping flex container are distributed along the cross axis. Has no effect on a single-line container.
+
+    identifier: alignContent
+
+    cssProperty:
+        Corresponds to the CSS `align-content` property.
+
+    values:
+        - `stretch`
+        - `flex-start`
+        - `flex-end`
+        - `center`
+        - `space-between`
+        - `space-around`
+        - `space-evenly`
+
+    initial: stretch
+
+    appliesTo: Multi-line flex containers.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            alignContent: space-between
+        \\\
+        ```

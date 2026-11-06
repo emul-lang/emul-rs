@@ -1,0 +1,113 @@
+from ./Output import Output
+from ./componentProperties/layout/Display import Display
+
+export anchor Layout:
+    description:
+        The layout rules Emul follows, in all three outputs, where plain CSS
+        leaves room for surprises or where Emul deliberately differs from it.
+        Anything not covered here follows CSS.
+
+    noMarginCollapsing:
+        Margins never collapse. In CSS, the vertical margins of neighbouring
+        blocks can merge into one; in Emul, two blocks with 16px margins
+        always have 32px between them, exactly as written.
+
+        The HTML output keeps this true in the browser by laying out every
+        block whose children are all blocks as a flex column, which never
+        collapses margins. Blocks holding text or inline instances are left
+        as normal blocks, where vertical margins don't apply to the inline
+        content anyway.
+
+    percentageHeights:
+        A percentage height is measured against the parent's height, but
+        only when that height is fixed. When the parent's height is `auto`,
+        and so depends on its children, a percentage height on a child is
+        treated as `auto`, as in CSS. The same applies to minHeight and
+        maxHeight.
+
+        The root is the parent of a composition's top-level instances, and
+        its height is the canvas height. With a canvas height of `auto`,
+        percentage heights on top-level instances are treated as `auto` too.
+
+        Percentage widths are always measured against the parent's width,
+        which is always known.
+
+    baselineAlignment:
+        `alignItems: baseline` and `alignSelf: baseline` line children up by
+        the baseline of their first line of text. A child with no text of its
+        own uses the bottom edge of its margin box as its baseline. Text
+        inside nested children does not count; only text written directly in
+        the child's own body.
+
+    whiteSpace:
+        With whiteSpace at its initial value, `normal`, text is handled the
+        same way CSS handles it.
+
+        - collapsing
+            Any run of spaces or tabs inside quoted text is drawn as a single
+            space.
+        - joining
+            Quoted texts next to each other are joined before collapsing, so a
+            space at the end of one and the start of the next become one
+            space.
+        - trimming
+            Spaces at the start and end of a line, once the text has been
+            broken into lines, are not drawn.
+        - wrapping
+            Lines break at the places the Unicode line breaking rules allow,
+            such as between words, as in browsers.
+
+        `nowrap` keeps the collapsing but never breaks lines. `pre` and
+        `pre-wrap` keep every space as written; `pre-wrap` still wraps.
+        `pre-line` collapses spaces and wraps.
+
+    inline:
+        @{Display} `inline` is for styling part of a run of text, such as a
+        bold word in a sentence. To keep it simple, an inline instance:
+
+        - holds only text and other inline instances
+        - is styled only by its typography properties, color, textDecoration
+            and textShadow
+        - ignores width, height, padding, margin, border and background, which
+            are reported as having no effect
+
+        Everything that needs a box, such as a button or a badge inside a
+        sentence, is laid out with flex instead.
+
+    imageSize:
+        An image instance with no width or height is drawn at the image's
+        natural size, which is found as follows.
+
+        - raster images
+            PNG, JPEG and WebP files use their size in pixels.
+        - svg images
+            Use their width and height, or the size of their view box if they
+            have none, and `300px` by `150px` if they have neither, as in
+            browsers.
+
+        When only one of width or height is set, the other follows from the
+        image's own proportions. When both are set, objectFit decides how the
+        image fills the box.
+
+    sizingKeywords:
+        Sizes are given as lengths, percentages or `auto`. The CSS keywords
+        `min-content`, `max-content` and `fit-content` are not part of Emul.
+
+    gradients:
+        Gradients follow CSS syntax: `linear-gradient()` with an angle in deg
+        or a `to` direction such as `to right`, `radial-gradient()` with a
+        shape and position, and colour stops with optional positions in px or
+        %.
+
+        Colours between stops are always blended in sRGB, whatever format the
+        stops are written in. The HTML output writes `in srgb` into each
+        gradient, so browsers blend the same way, and the SVG output converts
+        every stop to sRGB, which is how SVG gradients blend.
+
+    textDirection:
+        Text is laid out left to right. Right-to-left and mixed-direction
+        text, as in Arabic or Hebrew, is out of scope for now.
+
+    accuracy:
+        These rules make the three outputs match closely, but not to the
+        pixel; see @{Output}.

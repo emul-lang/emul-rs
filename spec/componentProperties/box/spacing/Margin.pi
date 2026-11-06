@@ -1,0 +1,26 @@
+export anchor Margin:
+    description:
+        Shorthand for the four margin sides: the space outside the component's border, separating it from its neighbours. One value sets all sides; two set top/bottom then left/right; three set top, left/right, bottom; four set top, right, bottom, left. Negative values are allowed.
+
+    identifier: margin
+
+    cssProperty:
+        Corresponds to the CSS `margin` property.
+
+    values:
+        - `auto`
+        - `<length>`
+        - `<percentage>`
+        - `<top> <right>? <bottom>? <left>?`
+
+    initial: 0
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            margin: 0 auto
+        \\\
+        ```

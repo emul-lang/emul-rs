@@ -1,0 +1,121 @@
+from ./Escapes import Escapes
+from ./Layout import Layout
+
+export anchor Values:
+    description:
+        Values are what follow the colon, both in a component's properties and
+        in an instance's attributes. This section sets out how a value is
+        split into parts, and which units and colour formats Emul accepts.
+
+    propertyValues:
+        A property's value is everything after the colon to the end of the
+        line, with the spaces around it trimmed. A value can't continue onto
+        the next line.
+
+    splitting:
+        Within a value, parts are separated as follows:
+
+        - spaces
+            Separate the parts of a single value, such as the four sides in
+            `padding: 8px 12px 8px 12px`. Any run of spaces counts as one.
+        - commas
+            Separate whole items in properties that take a list, such as
+            several shadows in `boxShadow`, or several typefaces in
+            `fontFamily`.
+        - slashes
+            Separate the halves of properties whose entry says so, such as
+            `aspectRatio: 16 / 9` or `gridColumn: 1 / 3`. Spaces around the
+            slash are optional.
+        - parentheses
+            Group the arguments of a function, such as `rgba()` or
+            `repeat()`. Commas and slashes inside parentheses belong to the
+            function and do not split the value.
+        - quotes
+            Group text that contains spaces, such as a typeface name like
+            `"Helvetica Neue"`, or the row strings of `gridTemplateAreas`.
+            Commas, slashes and parentheses inside quotes are just text.
+
+    bodyEntries:
+        In a composition, a body's entries are separated by commas or line
+        breaks. Only a comma at the top level of the body ends an entry. A
+        comma inside quotes or parentheses does not, so quoted text and
+        quoted attribute values can contain commas freely. A comma in an
+        unquoted attribute value must be escaped, as described in
+        @{Escapes}.
+
+    units:
+        Sizes are given in exactly two units:
+
+        - px
+            Pixels, written as a number followed by `px`, such as `12px` or
+            `0.5px`.
+        - percent
+            A percentage, written as a number followed by `%`, such as `50%`.
+            What it is a percentage of is set by each property's entry.
+
+        Wherever a property's entry lists `<length>`, it means a value in
+        `px`. A percentage is only accepted where the entry also lists
+        `<percentage>`. Other CSS units, such as `em`, `rem`, `vw` and `vh`,
+        are not accepted.
+
+        Zero may be written without a unit. Negative values are accepted only
+        where a property's entry says so.
+
+    otherUnits:
+        A few values are not sizes, and have units of their own:
+
+        - deg
+            Angles, as in `rotate: 45deg`.
+        - fr
+            A share of the free space in a grid track, as in
+            `gridTemplateColumns: 1fr 2fr`.
+        - numbers
+            Plain numbers with no unit, for properties such as `opacity`,
+            `flexGrow`, `lineHeight` and `scale`.
+        - integers
+            Whole numbers, for properties such as `zIndex` and `lineClamp`.
+
+    colours:
+        Wherever a property's entry lists `<color>`, the value is written in
+        one of these four formats. Each is written exactly as CSS allows,
+        including both the comma-separated and the space-separated forms of
+        the functions, and out-of-range values are clamped as CSS clamps
+        them.
+
+        - hex
+            A `#` followed by three, four, six or eight hexadecimal digits,
+            such as `#fff`, `#ffff`, `#ffffff` or `#ffffff80`. The fourth or
+            last pair of digits is the opacity.
+        - rgba
+            `rgba(red, green, blue, alpha)`, with each colour channel from 0
+            to 255 or as a percentage, and alpha from 0 to 1 or as a
+            percentage. `rgb()` is accepted as the same function, as in
+            CSS.
+        - hsl
+            `hsl(hue, saturation, lightness)`, with hue in degrees and the
+            other two as percentages, and an optional alpha. `hsla()` is
+            accepted as the same function, as in CSS.
+        - oklch
+            `oklch(lightness chroma hue)`, written as in CSS, with an
+            optional alpha after a slash.
+
+        Named colours, such as `red`, and keywords such as `transparent` and
+        `currentColor` are not accepted. A fully transparent colour is written
+        as `#0000`.
+
+    images:
+        Wherever a property's entry lists an image, the value is
+        `url(<path>)`, or a `linear-gradient()` or `radial-gradient()` written
+        as in CSS. How gradients blend is set out in @{Layout}.
+
+        A path is resolved the same way as an import path. It is relative to
+        the file it is written in, or measured from the project's source root
+        when it starts with `/`. It must point at a local file; remote URLs
+        are not accepted, because the SVG and PNG renderers can't fetch them.
+        The same rules apply to the `src` attribute of an image instance.
+
+        Image files may be PNG, JPEG, WebP or SVG.
+
+    keywords:
+        Keywords, such as `flex`, `center` or `nowrap`, are written exactly as
+        listed in each property's entry. They are case-sensitive.

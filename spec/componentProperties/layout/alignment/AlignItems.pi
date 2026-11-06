@@ -1,0 +1,27 @@
+export anchor AlignItems:
+    description:
+        Sets the default alignment of all children along the cross axis of a flex container.
+
+    identifier: alignItems
+
+    cssProperty:
+        Corresponds to the CSS `align-items` property.
+
+    values:
+        - `stretch`
+        - `flex-start`
+        - `flex-end`
+        - `center`
+        - `baseline`
+
+    initial: stretch
+
+    appliesTo: Flex containers.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            alignItems: center
+        \\\
+        ```

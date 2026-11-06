@@ -1,0 +1,364 @@
+from ./Modules import Modules
+from ./Values import Values
+from ./componentProperties/background/BackgroundColor import BackgroundColor
+from ./componentProperties/background/BackgroundImage import BackgroundImage
+from ./componentProperties/background/BackgroundPosition import
+    BackgroundPosition
+from ./componentProperties/background/BackgroundRepeat import BackgroundRepeat
+from ./componentProperties/background/BackgroundSize import BackgroundSize
+from ./componentProperties/box/border/Border import Border
+from ./componentProperties/box/border/BorderBottom import BorderBottom
+from ./componentProperties/box/border/BorderColor import BorderColor
+from ./componentProperties/box/border/BorderLeft import BorderLeft
+from ./componentProperties/box/border/BorderRight import BorderRight
+from ./componentProperties/box/border/BorderStyle import BorderStyle
+from ./componentProperties/box/border/BorderTop import BorderTop
+from ./componentProperties/box/border/BorderWidth import BorderWidth
+from ./componentProperties/box/borderRadius/BorderRadius import BorderRadius
+from ./componentProperties/box/overflow/Overflow import Overflow
+from ./componentProperties/box/sizing/AspectRatio import AspectRatio
+from ./componentProperties/box/sizing/Height import Height
+from ./componentProperties/box/sizing/MaxHeight import MaxHeight
+from ./componentProperties/box/sizing/MaxWidth import MaxWidth
+from ./componentProperties/box/sizing/MinHeight import MinHeight
+from ./componentProperties/box/sizing/MinWidth import MinWidth
+from ./componentProperties/box/sizing/Width import Width
+from ./componentProperties/box/spacing/Margin import Margin
+from ./componentProperties/box/spacing/MarginBottom import MarginBottom
+from ./componentProperties/box/spacing/MarginLeft import MarginLeft
+from ./componentProperties/box/spacing/MarginRight import MarginRight
+from ./componentProperties/box/spacing/MarginTop import MarginTop
+from ./componentProperties/box/spacing/Padding import Padding
+from ./componentProperties/box/spacing/PaddingBottom import PaddingBottom
+from ./componentProperties/box/spacing/PaddingLeft import PaddingLeft
+from ./componentProperties/box/spacing/PaddingRight import PaddingRight
+from ./componentProperties/box/spacing/PaddingTop import PaddingTop
+from ./componentProperties/effects/BoxShadow import BoxShadow
+from ./componentProperties/effects/Opacity import Opacity
+from ./componentProperties/html/HtmlTag import HtmlTag
+from ./componentProperties/layout/Display import Display
+from ./componentProperties/layout/alignment/AlignContent import AlignContent
+from ./componentProperties/layout/alignment/AlignItems import AlignItems
+from ./componentProperties/layout/alignment/AlignSelf import AlignSelf
+from ./componentProperties/layout/alignment/JustifyContent import JustifyContent
+from ./componentProperties/layout/alignment/JustifyItems import JustifyItems
+from ./componentProperties/layout/alignment/JustifySelf import JustifySelf
+from ./componentProperties/layout/flex/Flex import Flex
+from ./componentProperties/layout/flex/FlexBasis import FlexBasis
+from ./componentProperties/layout/flex/FlexDirection import FlexDirection
+from ./componentProperties/layout/flex/FlexGrow import FlexGrow
+from ./componentProperties/layout/flex/FlexShrink import FlexShrink
+from ./componentProperties/layout/flex/FlexWrap import FlexWrap
+from ./componentProperties/layout/gap/ColumnGap import ColumnGap
+from ./componentProperties/layout/gap/Gap import Gap
+from ./componentProperties/layout/gap/RowGap import RowGap
+from ./componentProperties/layout/grid/GridArea import GridArea
+from ./componentProperties/layout/grid/GridAutoRows import GridAutoRows
+from ./componentProperties/layout/grid/GridColumn import GridColumn
+from ./componentProperties/layout/grid/GridRow import GridRow
+from ./componentProperties/layout/grid/GridTemplateAreas import
+    GridTemplateAreas
+from ./componentProperties/layout/grid/GridTemplateColumns import
+    GridTemplateColumns
+from ./componentProperties/layout/grid/GridTemplateRows import GridTemplateRows
+from ./componentProperties/layout/position/Bottom import Bottom
+from ./componentProperties/layout/position/Inset import Inset
+from ./componentProperties/layout/position/Left import Left
+from ./componentProperties/layout/position/Position import Position
+from ./componentProperties/layout/position/Right import Right
+from ./componentProperties/layout/position/Top import Top
+from ./componentProperties/layout/position/ZIndex import ZIndex
+from ./componentProperties/media/ObjectFit import ObjectFit
+from ./componentProperties/media/ObjectPosition import ObjectPosition
+from ./componentProperties/transforms/Rotate import Rotate
+from ./componentProperties/transforms/Scale import Scale
+from ./componentProperties/transforms/Translate import Translate
+from ./componentProperties/typography/alignmentAndSpacing/LetterSpacing import
+    LetterSpacing
+from ./componentProperties/typography/alignmentAndSpacing/TextAlign import
+    TextAlign
+from ./componentProperties/typography/decoration/TextDecoration import
+    TextDecoration
+from ./componentProperties/typography/font/FontFamily import FontFamily
+from ./componentProperties/typography/font/FontSize import FontSize
+from ./componentProperties/typography/font/FontStyle import FontStyle
+from ./componentProperties/typography/font/FontWeight import FontWeight
+from ./componentProperties/typography/linesAndWrapping/LineClamp import
+    LineClamp
+from ./componentProperties/typography/linesAndWrapping/LineHeight import
+    LineHeight
+from ./componentProperties/typography/linesAndWrapping/TextOverflow import
+    TextOverflow
+from ./componentProperties/typography/linesAndWrapping/WhiteSpace import
+    WhiteSpace
+from ./componentProperties/typography/textAppearance/Color import Color
+from ./componentProperties/typography/textAppearance/TextShadow import
+    TextShadow
+from ./componentProperties/typography/textAppearance/TextTransform import
+    TextTransform
+
+export anchor Components:
+    description:
+        Components are roughly equivalent to classes in CSS.
+
+        The purpose of components is to declare and apply styling, to control
+        the availability and look of components.
+
+    keywordIdentifier: component
+
+    keyword:
+        Components are declared with the ${this.keywordIdentifier} keyword
+
+    identifier:
+        Following the keyword is the name of the component.
+
+    indentation:
+        Components syntax are indentation-based.  This style is particularly
+        well suited for components, because components are little more than a
+        single-level of CSS-like properties.
+
+        Indentation follows the same rule as Piton. Tabs or any number of
+        spaces may be used, but the choice must be consistent throughout the
+        file. Four spaces per level is preferred, and is what the formatter
+        writes.
+
+    declaration:
+        A declaration is an optional `export`, the keyword, the name, an
+        optional extends clause, and a colon. Every line indented beneath it belongs to the component,
+        and the component ends at the first line that is not indented.
+
+    naming:
+        Component names are written in PascalCase, such as `MyButton`. A name
+        must be unique within the file it is used in, counting both the
+        components declared there and those imported, because compositions
+        refer to components by name alone. An import can be aliased to avoid
+        a clash, as described in @{Modules}. Composition names follow the same
+        rules.
+
+    propertySyntax:
+        Each indented line sets one property, written as the property's
+        identifier, a colon, and a value, such as `paddingX: 12px`.
+
+        Identifiers are the camelCase form of the matching CSS property, so
+        CSS `flex-direction` is written `flexDirection`. Values are written as
+        they would be in CSS. Each property's own entry below lists the values
+        it accepts.
+
+        A property may be set only once in a component. The order of lines
+        has no meaning.
+
+    shorthands:
+        Some properties are shorthands that set several others at once, such
+        as `padding` or `border`. When a component sets both a shorthand and
+        one of the properties it covers, the more specific property wins,
+        whatever order the lines are in. This differs from CSS, where the
+        later line wins.
+
+    defaults:
+        A property that is not set takes its initial value, as listed in the
+        property's entry. Initial values are as close to unset as possible:
+        no margin, no padding, no border, no background, and no browser
+        default styling. A component with no properties draws nothing but its
+        content. The few properties that need some value to draw with, such
+        as `color`, `fontFamily` and `fontSize`, have plain fixed initial
+        values.
+
+    noCascading:
+        Properties never cascade. A component's properties apply to its own
+        instances only, and never pass down to the instances inside them. A
+        `color` on a card does not colour the text of the buttons in it.
+
+        Extending is the only way for one component to take properties from
+        another. Components that share a look should extend a common
+        component, as described below.
+
+    values:
+        How values are written, the units and colour formats accepted, and how
+        a value is split into parts, are described in @{Values}.
+
+    extends:
+        Components use structural inheritance, the same as Piton anchors. A
+        component may extend one or more other components, listed after
+        `extends` and separated by commas, as in
+        `component MyButton extends DefaultButton, Rounded:`.
+
+    inheritance:
+        - merging
+            The new component starts with every property of the components it
+            extends. When more than one of them sets the same property, they
+            are merged left to right, and the last in line wins.
+        - overriding
+            Any property the component sets itself replaces the inherited
+            value.
+        - shorthands
+            After merging, the shorthand rule above still applies. A specific
+            property, such as `borderColor`, wins over a shorthand that covers
+            it, such as `border`, wherever each one came from.
+        - chains
+            A component may extend a component that extends others, to any
+            depth.
+        - cycles
+            A component can't extend itself, directly or through other
+            components. That is a compiler error.
+        - visibility
+            Only a component declared in the same file, or imported into it,
+            can be extended.
+
+    inheritanceExample:
+        ```emul
+        \\\
+        component Rounded:
+            borderRadius: 999px
+            padding: 4px 8px
+
+        component Spacious:
+            padding: 12px 24px
+
+        component Pill extends Rounded, Spacious:
+            backgroundColor: #e4e4e7
+        \\\
+        ```
+
+        `Pill` has a `borderRadius` of `999px` from `Rounded`. Both bases set
+        `padding`, and `Spacious` is last in line, so `Pill` gets
+        `12px 24px`.
+
+    noNesting:
+        Components hold properties only. They do not contain other components,
+        text, or selectors; arranging components inside one another is the
+        job of compositions. Pseudo-classes, states such as hover or focus,
+        and media queries are out of scope.
+
+    example:
+        ```emul
+        \\\
+        component Card:
+            display: flex
+            flexDirection: column
+            gap: 12px
+            padding: 24px
+            backgroundColor: #ffffff
+            border: 1px solid #e4e4e7
+            borderRadius: 12px
+            boxShadow: 0 4px 12px rgba(0, 0, 0, 0.08)
+
+        component FeaturedCard extends Card:
+            borderColor: #3b82f6
+            backgroundColor: #eff6ff
+        \\\
+        ```
+
+        `FeaturedCard` has every property of `Card`, but with a blue border
+        and a pale blue background. Its `borderColor` wins over the colour set
+        by `Card`'s `border` shorthand, because it is the more specific
+        property.
+
+    properties:
+        layout:
+            display:
+                - @{Display}
+            flex:
+                - @{Flex}
+                - @{FlexDirection}
+                - @{FlexWrap}
+                - @{FlexGrow}
+                - @{FlexShrink}
+                - @{FlexBasis}
+            grid:
+                - @{GridTemplateColumns}
+                - @{GridTemplateRows}
+                - @{GridTemplateAreas}
+                - @{GridAutoRows}
+                - @{GridColumn}
+                - @{GridRow}
+                - @{GridArea}
+            alignment:
+                - @{AlignItems}
+                - @{AlignSelf}
+                - @{AlignContent}
+                - @{JustifyContent}
+                - @{JustifyItems}
+                - @{JustifySelf}
+            gap:
+                - @{Gap}
+                - @{RowGap}
+                - @{ColumnGap}
+            position:
+                - @{Position}
+                - @{Top}
+                - @{Right}
+                - @{Bottom}
+                - @{Left}
+                - @{Inset}
+                - @{ZIndex}
+        box:
+            sizing:
+                - @{Width}
+                - @{Height}
+                - @{MinWidth}
+                - @{MinHeight}
+                - @{MaxWidth}
+                - @{MaxHeight}
+                - @{AspectRatio}
+            spacing:
+                - @{Margin}
+                - @{MarginTop}
+                - @{MarginRight}
+                - @{MarginBottom}
+                - @{MarginLeft}
+                - @{Padding}
+                - @{PaddingTop}
+                - @{PaddingRight}
+                - @{PaddingBottom}
+                - @{PaddingLeft}
+            border:
+                - @{Border}
+                - @{BorderWidth}
+                - @{BorderStyle}
+                - @{BorderColor}
+                - @{BorderTop}
+                - @{BorderRight}
+                - @{BorderBottom}
+                - @{BorderLeft}
+            borderRadius:
+                - @{BorderRadius}
+            overflow:
+                - @{Overflow}
+        typography:
+            font:
+                - @{FontFamily}
+                - @{FontSize}
+                - @{FontWeight}
+                - @{FontStyle}
+            linesAndWrapping:
+                - @{LineHeight}
+                - @{WhiteSpace}
+                - @{TextOverflow}
+                - @{LineClamp}
+            alignmentAndSpacing:
+                - @{TextAlign}
+                - @{LetterSpacing}
+            decoration:
+                - @{TextDecoration}
+            textAppearance:
+                - @{Color}
+                - @{TextTransform}
+                - @{TextShadow}
+        background:
+            - @{BackgroundColor}
+            - @{BackgroundImage}
+            - @{BackgroundSize}
+            - @{BackgroundPosition}
+            - @{BackgroundRepeat}
+        effects:
+            - @{Opacity}
+            - @{BoxShadow}
+        transforms:
+            - @{Translate}
+            - @{Rotate}
+            - @{Scale}
+        media:
+            - @{ObjectFit}
+            - @{ObjectPosition}
+        html:
+            - @{HtmlTag}

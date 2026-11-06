@@ -1,0 +1,10 @@
+use @emul/config
+
+export emul-config Project:
+    entry: ./index.emul
+    outDir: ./dist
+    background: #fafafa
+    width: 900
+    sizes:
+        Features:
+            height: 700

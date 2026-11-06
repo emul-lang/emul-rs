@@ -1,0 +1,26 @@
+export anchor Inset:
+    description:
+        Shorthand for top, right, bottom and left. Values map onto the sides the same way as margin: one value sets all sides; two set top/bottom then left/right; three set top, left/right, bottom; four set top, right, bottom, left.
+
+    identifier: inset
+
+    cssProperty:
+        Corresponds to the CSS `inset` property.
+
+    values:
+        - `auto`
+        - `<length>`
+        - `<percentage>`
+        - `<top> <right>? <bottom>? <left>?`
+
+    initial: auto
+
+    appliesTo: Positioned components (position other than static).
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            inset: 0
+        \\\
+        ```

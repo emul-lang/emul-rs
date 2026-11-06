@@ -1,0 +1,24 @@
+export anchor TextOverflow:
+    description:
+        Sets how text that overflows the component is shown where it is cut off: clipped, or ending in an ellipsis. It only takes effect when the text does not wrap and overflow is not visible.
+
+    identifier: textOverflow
+
+    cssProperty:
+        Corresponds to the CSS `text-overflow` property.
+
+    values:
+        - `clip`
+        - `ellipsis`
+
+    initial: clip
+
+    appliesTo: Block-level components with overflow other than visible.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            textOverflow: ellipsis
+        \\\
+        ```

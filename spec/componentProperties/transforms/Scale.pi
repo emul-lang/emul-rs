@@ -1,0 +1,26 @@
+export anchor Scale:
+    description:
+        Resizes the component as drawn around its centre, without affecting layout. One value scales both axes; two values scale x then y. Applied after translate and rotate.
+
+    identifier: scale
+
+    cssProperty:
+        Corresponds to the CSS `scale` property.
+
+    values:
+        - `none`
+        - `<number>`
+        - `<percentage>`
+        - `<x> <y>`
+
+    initial: none
+
+    appliesTo: All components except inline ones.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            scale: 1.05
+        \\\
+        ```

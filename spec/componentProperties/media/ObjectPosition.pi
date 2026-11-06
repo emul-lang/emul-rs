@@ -1,0 +1,30 @@
+export anchor ObjectPosition:
+    description:
+        Sets where an image or video is placed within the component's box, for example which part stays visible when object-fit crops it.
+
+    identifier: objectPosition
+
+    cssProperty:
+        Corresponds to the CSS `object-position` property.
+
+    values:
+        - `center`
+        - `top`
+        - `right`
+        - `bottom`
+        - `left`
+        - `<length>`
+        - `<percentage>`
+        - `<x> <y>`
+
+    initial: 50% 50%
+
+    appliesTo: Replaced content, such as images and video.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            objectPosition: top center
+        \\\
+        ```

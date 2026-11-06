@@ -1,0 +1,24 @@
+export anchor GridTemplateAreas:
+    description:
+        Names areas of the grid with one quoted string per row, each word naming the cell in that column. Repeating a name across cells makes one rectangular area; a dot leaves a cell unnamed. Children are placed into areas with grid-area.
+
+    identifier: gridTemplateAreas
+
+    cssProperty:
+        Corresponds to the CSS `grid-template-areas` property.
+
+    values:
+        - `none`
+        - `"<area> <area> ..." ...`
+
+    initial: none
+
+    appliesTo: Grid containers.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            gridTemplateAreas: "header header" "sidebar main"
+        \\\
+        ```

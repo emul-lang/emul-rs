@@ -1,0 +1,25 @@
+export anchor Height:
+    description:
+        Sets the height of the component's box, including its padding and border.
+
+    identifier: height
+
+    cssProperty:
+        Corresponds to the CSS `height` property.
+
+    values:
+        - `auto`
+        - `<length>`
+        - `<percentage>`
+
+    initial: auto
+
+    appliesTo: All components except inline ones.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            height: 48px
+        \\\
+        ```

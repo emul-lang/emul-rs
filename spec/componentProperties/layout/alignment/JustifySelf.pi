@@ -1,0 +1,28 @@
+export anchor JustifySelf:
+    description:
+        Overrides the container's justify-items for a single child, aligning it along the inline axis within its grid area. Ignored in flex layout.
+
+    identifier: justifySelf
+
+    cssProperty:
+        Corresponds to the CSS `justify-self` property.
+
+    values:
+        - `auto`
+        - `stretch`
+        - `start`
+        - `end`
+        - `center`
+        - `baseline`
+
+    initial: auto
+
+    appliesTo: Grid items.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            justifySelf: end
+        \\\
+        ```

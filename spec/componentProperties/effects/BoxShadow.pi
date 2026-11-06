@@ -1,0 +1,25 @@
+export anchor BoxShadow:
+    description:
+        Draws one or more shadows around the component's box, following its border radius. Shadows do not affect layout. `inset` draws the shadow inside the border instead of outside.
+
+    identifier: boxShadow
+
+    cssProperty:
+        Corresponds to the CSS `box-shadow` property.
+
+    values:
+        - `none`
+        - `inset? <offset-x> <offset-y> <blur>? <spread>? <color>?`
+        - `<shadow>, <shadow>, ...`
+
+    initial: none
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            boxShadow: 0 4px 12px rgba(0, 0, 0, 0.15)
+        \\\
+        ```

@@ -1,0 +1,28 @@
+export anchor JustifyContent:
+    description:
+        Sets how the children of a flex container, and the space between them, are distributed along the main axis.
+
+    identifier: justifyContent
+
+    cssProperty:
+        Corresponds to the CSS `justify-content` property.
+
+    values:
+        - `flex-start`
+        - `flex-end`
+        - `center`
+        - `space-between`
+        - `space-around`
+        - `space-evenly`
+
+    initial: flex-start
+
+    appliesTo: Flex containers.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            justifyContent: space-between
+        \\\
+        ```

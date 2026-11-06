@@ -1,0 +1,65 @@
+from ./Cli import Cli
+from ./Config import Config
+
+export anchor OutputSize:
+    description:
+        The output size is the width and height of the canvas a composition
+        is rendered onto. It is set in `emul.config.pi`, and can be
+        overridden by flags on the command line.
+
+    settings:
+        - width
+            The canvas width, in px. Defaults to `1280`.
+        - height
+            The canvas height, in px, or `auto`. With `auto`, the canvas is
+            exactly as tall as the composition's content, rounded up to a
+            whole pixel. Defaults to `auto`.
+        - scale
+            The pixel density of the PNG output, such as `2` for a canvas
+            twice as many pixels wide and tall. It has no effect on HTML or
+            SVG. Defaults to `1`.
+
+    precedence:
+        For each setting, the first of these that gives a value wins:
+
+        - a flag on the command line, as described in @{Cli}
+        - an entry for that composition in the config's per-composition
+            sizes
+        - the project-wide value in @{Config}
+        - the default above
+
+    perComposition:
+        Different compositions often need different sizes, such as a page
+        and a social card. The config can give any composition its own
+        width, height or scale, by name. A composition without an entry uses
+        the project-wide values.
+
+        ```piton
+        \\\
+        use @emul/config
+
+        export emul-config Project:
+            width: 1280
+            height: auto
+            sizes:
+                SocialCard:
+                    width: 1200
+                    height: 630
+                    scale: 2
+        \\\
+        ```
+
+    inEachOutput:
+        - html
+            The body is given the canvas width, and the canvas height unless
+            it is `auto`. A fixed height clips anything below it, as in the
+            other outputs.
+        - svg
+            The canvas size becomes the SVG's width, height and view box, in
+            px.
+        - png
+            The image is the canvas size multiplied by the scale, in pixels.
+
+    limits:
+        Width and height must be whole numbers from 1 to 16384. A PNG whose
+        size after scaling is over 16384 pixels on either side is an error.

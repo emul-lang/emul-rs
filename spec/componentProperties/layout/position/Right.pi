@@ -1,0 +1,25 @@
+export anchor Right:
+    description:
+        Sets the distance between the component's right edge and the right edge of its containing block. For relative positioning it shifts the component from its normal place. For absolute positioning it is measured from the nearest positioned ancestor.
+
+    identifier: right
+
+    cssProperty:
+        Corresponds to the CSS `right` property.
+
+    values:
+        - `auto`
+        - `<length>`
+        - `<percentage>`
+
+    initial: auto
+
+    appliesTo: Positioned components (position other than static).
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            right: 16px
+        \\\
+        ```

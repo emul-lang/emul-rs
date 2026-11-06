@@ -1,0 +1,48 @@
+from ./Escapes import Escapes
+
+export anchor Comments:
+    description:
+        Emul comments follow the same rules as Piton comments. They are
+        notes for the reader, and the compiler ignores them.
+
+    lineOnly:
+        Comments are line-only. There are no block comments.
+
+    marker:
+        A comment starts with `//` and runs to the end of the line.
+
+    ownLine:
+        A comment has to be on its own line, with nothing but indentation
+        before the `//`. At the end of a line of code, `//` is just part of
+        the value. This matters for values that contain `//` themselves, such
+        as image URLs.
+
+    placement:
+        Comments may appear anywhere a line may: at the top level of a file,
+        between the properties of a component, and between the entries of a
+        composition. A comment does not end a component's indented block.
+
+    escaping:
+        To start a line with a literal `//` rather than a comment, escape it
+        as described in @{Escapes}.
+
+    formatting:
+        The formatter always puts a space between the `//` and the comment
+        text, and leaves the rest of the comment as it is, so commented-out
+        code is kept intact.
+
+    example:
+        ```emul
+        \\\
+        // Buttons used across the marketing site
+        component HeroBanner:
+            // The image URL keeps its // because this is not its own line
+            backgroundImage: url(https://example.com/hero.png)
+            backgroundSize: cover
+
+        composition Home {
+            // The banner is the only child of the root
+            HeroBanner { "Welcome" }
+        }
+        \\\
+        ```

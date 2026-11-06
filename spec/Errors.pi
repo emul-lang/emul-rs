@@ -1,0 +1,224 @@
+from ./Components import Components
+from ./Compositions import Compositions
+from ./Config import Config
+from ./Escapes import Escapes
+from ./Fonts import Fonts
+from ./Layout import Layout
+from ./Modules import Modules
+from ./Values import Values
+from ./componentProperties/html/HtmlTag import HtmlTag
+
+export anchor Errors:
+    description:
+        What the Emul compiler reports when a source file is wrong, or
+        probably not what its author meant. Problems are either errors or
+        warnings.
+
+    severity:
+        - errors
+            The source can't be compiled as written. When there is any error,
+            nothing is rendered.
+        - warnings
+            The source compiles and renders, but something in it is likely a
+            mistake, or has no effect.
+
+    reporting:
+        Each problem is reported with its severity, the file, line and column
+        it was found at, a message, and a short code in square brackets. The
+        offending line is shown beneath it, with the problem marked. All
+        problems in a project are reported together, rather than stopping at
+        the first.
+
+        ```text
+        \\\
+        error: designs/Buttons.emul:4:5: `colour` is not a property [unknown-property]
+          4 |     colour: #dc2626
+            |     ^^^^^^
+        \\\
+        ```
+
+    syntaxErrors:
+        - unexpected-indentation
+            A line is indented where no component is open, or indented
+            inconsistently within one.
+        - unclosed-brace
+            A composition or instance body is opened and never closed.
+        - unexpected-brace
+            A closing brace has no matching opening brace, or text follows the
+            closing brace of a composition on the same line.
+        - unexpected-character
+            A composition body holds something that is not quoted text, an
+            attribute, an instance or a comment.
+        - unclosed-quote
+            Quoted text or a quoted value is not closed before the end of the
+            line.
+        - unclosed-escape
+            An escape wrapper, as described in @{Escapes}, is opened and never
+            closed, or is closed with a different number of backslashes.
+        - missing-colon
+            A component declaration or property line has no colon.
+        - unknown-keyword
+            A top-level line starts with something other than `component`,
+            `composition`, `export`, `from`, or a comment.
+        - mixed-indentation
+            A file indents with tabs in some places and spaces in others, or
+            with different numbers of spaces per level.
+        - invalid-name
+            A component or composition name is not PascalCase, meaning a
+            capital letter followed by letters and digits only.
+        - missing-body
+            An instance's name is not followed by a body in braces. An
+            instance with nothing in it is still written with empty braces.
+
+    componentErrors:
+        - unknown-property
+            A property is not one of those listed in @{Components}.
+        - invalid-value
+            A value is not one the property accepts, as set out in its own
+            entry and in @{Values}. This includes a unit other than `px` or
+            `%` for a size, a percentage where the property takes only `px`, a
+            negative value where it is not allowed, an unknown keyword, and a
+            colour in a format Emul does not accept.
+        - duplicate-property
+            A component sets the same property more than once.
+        - empty-value
+            A property line has nothing after its colon.
+        - content-in-component
+            A component contains text, an instance, or anything else that
+            is not a property line.
+        - invalid-html-tag
+            An @{HtmlTag} value is not a lowercase element name, or is one of
+            the tags that are not allowed.
+
+    inheritanceErrors:
+        - unknown-component
+            A component extends, or a composition instances, a name that is
+            not a component declared in the same file or imported into it.
+        - extends-cycle
+            A component extends itself, directly or through other components.
+        - extends-composition
+            A component extends a composition.
+
+    compositionErrors:
+        - instance-of-composition
+            An instance names a composition rather than a component.
+            Compositions can't be placed inside one another.
+        - content-in-root
+            The root of a composition holds text or attributes. The root holds
+            instances only.
+        - content-in-void-element
+            An instance whose component has a void htmlTag, such as `img`,
+            has text or children.
+        - block-in-inline
+            An instance whose component is `display: inline` has a child that
+            is not inline. Inline instances hold only text and other inline
+            instances, as described in @{Layout}.
+        - missing-src
+            An instance whose component has the htmlTag `img` has no `src`
+            attribute.
+        - duplicate-attribute
+            An instance sets the same attribute more than once.
+        - style-attribute
+            An attribute's name is the identifier of a component property,
+            such as `color`. Styling belongs in components, not instances.
+        - reserved-attribute
+            An attribute is named `class` or `style`. Emul sets both itself.
+        - invalid-attribute-name
+            An attribute's name is not lowercase letters, digits and hyphens,
+            starting with a letter.
+        - missing-image
+            A `src` attribute or an image `url()` points at a file that does
+            not exist, or at a remote URL.
+        - unsupported-image
+            An image file is not PNG, JPEG, WebP or SVG, or can't be read.
+
+    moduleErrors:
+        - duplicate-name
+            Two declarations or imports in one file have the same name.
+            Components and compositions share one set of names.
+        - missing-file
+            An import path does not point at an existing file or module.
+        - not-exported
+            An import names something the other file does not export, or does
+            not declare at all.
+        - export-unknown
+            An `export` line, or a `from ... export` line, names something
+            that does not exist.
+
+    fontErrors:
+        - unknown-font-family
+            A fontFamily names a family that Google Fonts does not have.
+        - missing-font-face
+            A component uses a fontWeight or fontStyle that its family does
+            not offer. Emul never fakes one, as described in @{Fonts}.
+        - font-unavailable
+            A font file is not in the cache and can't be downloaded, such as
+            when building offline for the first time.
+
+    outputErrors:
+        - invalid-size
+            A width or height, in the config or on the command line, is not a
+            whole number from 1 to 16384, or a scale is not a positive number.
+        - output-too-large
+            A PNG would be over 16384 pixels on either side after scaling.
+
+    configErrors:
+        - invalid-config
+            The `emul.config.pi` file does not compile as Piton, or does not
+            export exactly one `emul-config` anchor.
+        - missing-entry
+            The entry file set in @{Config}, or the default one, does not
+            exist.
+        - unknown-format
+            The formats setting lists something other than `html`, `svg` and
+            `png`.
+        - invalid-setting
+            A config setting has a value of the wrong kind, such as an
+            svgFonts value other than `outline` or `embed`, or a size entry
+            for a composition that does not exist.
+
+    warnings:
+        - no-effect
+            A property can't have any effect where the component is used. For
+            example, `gap` on a component whose display is not flex or grid,
+            `flexGrow` on an instance whose parent is not a flex container,
+            `top` on a component whose position is `static`, or `padding` on
+            an inline component.
+        - percentage-height-ignored
+            A percentage height is used where the parent's height is `auto`,
+            so it is treated as `auto`, as described in @{Layout}.
+        - empty-composition
+            A composition has nothing in its root, so it renders an empty
+            canvas.
+        - unused-declaration
+            A component or composition that is not exported is never used in
+            its own file.
+        - unused-import
+            An imported name is never used.
+        - duplicate-extends
+            A component lists the same component more than once after
+            `extends`.
+        - shorthand-overlap
+            A component sets both a shorthand and a specific property it
+            covers. The specific one wins, as described in @{Components}, but
+            the overlap is often a leftover.
+        - nothing-to-render
+            The entry file exports no compositions, so nothing is rendered.
+        - not-rendered
+            A composition is exported from a file other than the entry, and
+            is not exported from the entry either, so it is never rendered.
+
+    notErrors:
+        Some things look wrong but are allowed:
+
+        - circular imports, as described in @{Modules}
+        - a `//` partway through a line, which is part of the value, not a
+            comment
+        - an instance with an empty body, such as a divider drawn only by its
+            component's styling
+        - a component that is exported but never used, since another project
+            may use it
+
+    compositionsLink:
+        The rules for bodies, text and attributes that these errors enforce
+        are described in @{Compositions}.

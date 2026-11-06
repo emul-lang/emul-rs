@@ -1,0 +1,65 @@
+from ./Cli import Cli
+from ./Config import Config
+from ./Errors import Errors
+from ./OutputSize import OutputSize
+from ./PngOutput import PngOutput
+from ./SvgOutput import SvgOutput
+
+export anchor Preview:
+    description:
+        Preview mode shows a project's compositions in a viewer that updates
+        by itself whenever a source file is saved. It is started with
+        `emul preview`, as described in @{Cli}.
+
+    viewer:
+        The viewer is a native desktop window built with egui, the Rust
+        immediate-mode GUI library, so it ships inside the `emul` binary with
+        nothing else to install. The window lists every composition exported
+        from the entry file in a side panel, and shows the selected one in
+        the main area.
+
+    formats:
+        - svg
+            The window draws the composition from the same rendering that
+            @{SvgOutput} writes, rasterized to fit the window.
+        - png
+            The window shows the exact image @{PngOutput} would write, at its
+            configured scale, so pixel-level detail can be checked.
+        - html
+            egui can't render HTML, so the HTML view opens in the default web
+            browser instead. `emul preview` serves it from a small local web
+            server, and the browser page reloads by itself on every rebuild,
+            the same as the window. A button in the window opens it.
+
+        The window can switch between the SVG and PNG views at any time, or
+        show them side by side.
+
+    autoRefresh:
+        Emul watches every `.emul` file in the project, every image it uses,
+        and `emul.config.pi`. When any of them is saved, it rebuilds what
+        changed and the window redraws straight away. The selected
+        composition, view, zoom and scroll position are kept.
+
+    errors:
+        When a save leaves the project with errors, the window keeps showing
+        the last good rendering, with the errors listed in a panel over it,
+        as described in @{Errors}. Clicking an error shows its file and line.
+        The view goes back to normal as soon as the errors are fixed. The
+        browser page shows the same errors.
+
+    size:
+        Each composition is rendered at its size from @{OutputSize}. The
+        window can zoom in and out, and fit the canvas to the window, without
+        changing that size. The size flags of `emul build` also work with
+        `emul preview`, to try a composition at another size.
+
+    nothingWritten:
+        Preview mode renders in memory. It does not write to the output
+        directory set in @{Config}; `emul build` does that.
+
+    flags:
+        - port
+            `--port <number>` sets the port the HTML view is served on.
+            Defaults to `4400`, or the next free port.
+        - html
+            `--html` also opens the HTML view in the browser at start-up.

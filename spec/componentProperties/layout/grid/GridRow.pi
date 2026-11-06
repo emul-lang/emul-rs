@@ -1,0 +1,27 @@
+export anchor GridRow:
+    description:
+        Sets which row lines the child starts and ends on. A single value sets the start line only; `span` sets how many rows it covers.
+
+    identifier: gridRow
+
+    cssProperty:
+        Corresponds to the CSS `grid-row` property.
+
+    values:
+        - `auto`
+        - `<line-number>`
+        - `<line-name>`
+        - `span <count>`
+        - `<start> / <end>`
+
+    initial: auto
+
+    appliesTo: Grid items (children of a grid container).
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            gridRow: 1 / -1
+        \\\
+        ```

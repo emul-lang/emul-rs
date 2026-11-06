@@ -1,0 +1,25 @@
+export anchor MinWidth:
+    description:
+        Sets the smallest width the component may have. It overrides width and max-width when they would make the component narrower.
+
+    identifier: minWidth
+
+    cssProperty:
+        Corresponds to the CSS `min-width` property.
+
+    values:
+        - `auto`
+        - `<length>`
+        - `<percentage>`
+
+    initial: auto
+
+    appliesTo: All components except inline ones.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            minWidth: 120px
+        \\\
+        ```

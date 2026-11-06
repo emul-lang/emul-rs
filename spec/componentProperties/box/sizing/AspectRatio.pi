@@ -1,0 +1,25 @@
+export anchor AspectRatio:
+    description:
+        Sets a preferred ratio of width to height. When only one of width or height is set, the other is derived from the ratio.
+
+    identifier: aspectRatio
+
+    cssProperty:
+        Corresponds to the CSS `aspect-ratio` property.
+
+    values:
+        - `auto`
+        - `<width> / <height>`
+        - `<number>`
+
+    initial: auto
+
+    appliesTo: All components except inline ones.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            aspectRatio: 16 / 9
+        \\\
+        ```

@@ -1,0 +1,25 @@
+export anchor Gap:
+    description:
+        Shorthand for row-gap and column-gap: the space between the children of a container. One value sets both; two values set row-gap then column-gap.
+
+    identifier: gap
+
+    cssProperty:
+        Corresponds to the CSS `gap` property.
+
+    values:
+        - `<length>`
+        - `<percentage>`
+        - `<row-gap> <column-gap>`
+
+    initial: 0
+
+    appliesTo: Flex and grid containers.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            gap: 16px
+        \\\
+        ```

@@ -1,0 +1,25 @@
+export anchor MarginBottom:
+    description:
+        Sets the space outside the component's bottom border. Negative values are allowed, and `auto` takes up the available space on that side.
+
+    identifier: marginBottom
+
+    cssProperty:
+        Corresponds to the CSS `margin-bottom` property.
+
+    values:
+        - `auto`
+        - `<length>`
+        - `<percentage>`
+
+    initial: 0
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            marginBottom: 24px
+        \\\
+        ```

@@ -1,0 +1,28 @@
+export anchor GridTemplateRows:
+    description:
+        Defines the rows of the grid: how many there are and how tall each one is. Lines between them may be named in square brackets.
+
+    identifier: gridTemplateRows
+
+    cssProperty:
+        Corresponds to the CSS `grid-template-rows` property.
+
+    values:
+        - `none`
+        - `<track-size> ...`
+        - `repeat(<count>, <track-size>)`
+        - `repeat(auto-fill, <track-size>)`
+        - `repeat(auto-fit, <track-size>)`
+        - `[<line-name>] <track-size> ...`
+
+    initial: none
+
+    appliesTo: Grid containers.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            gridTemplateRows: 64px 1fr auto
+        \\\
+        ```

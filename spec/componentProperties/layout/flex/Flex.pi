@@ -1,0 +1,25 @@
+export anchor Flex:
+    description:
+        Shorthand for flex-grow, flex-shrink and flex-basis, controlling how a flex item grows or shrinks to fill the space of its flex container.
+
+    identifier: flex
+
+    cssProperty:
+        Corresponds to the CSS `flex` property.
+
+    values:
+        - `none`
+        - `auto`
+        - `<flex-grow> <flex-shrink>? <flex-basis>?`
+
+    initial: 0 1 auto
+
+    appliesTo: Flex items (children of a flex container).
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            flex: 1 1 0
+        \\\
+        ```

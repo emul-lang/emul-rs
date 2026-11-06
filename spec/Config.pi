@@ -1,0 +1,69 @@
+from ./Cli import Cli
+from ./Fonts import Fonts
+from ./OutputSize import OutputSize
+from ./SvgOutput import SvgOutput
+from ./Values import Values
+
+export anchor Config:
+    description:
+        An Emul project is configured by an `emul.config.pi` file at the top
+        of the project, the same way a Piton project is configured by a
+        `piton.config.pi` file. The config file is written in Piton, not Emul.
+
+    optional:
+        The config file is optional. Without one, the project root is the
+        current directory, and every default below applies.
+
+    anchor:
+        The file uses the `@emul/config` keywords and exports a single
+        `emul-config` anchor. The anchor's name is up to the project.
+
+        ```piton
+        \\\
+        use @emul/config
+
+        export emul-config Project:
+            root: ./designs
+            entry: ./designs/index.emul
+            outDir: ./dist
+            formats:
+                - html
+                - svg
+                - png
+        \\\
+        ```
+
+    settings:
+        - root
+            The source root. Absolute import and image paths, those starting
+            with `/`, are measured from here. Defaults to the directory holding
+            the config file.
+        - entry
+            The entry file. Every composition exported from it is rendered.
+            Defaults to `index.emul` inside the root.
+        - outDir
+            The directory rendered files are written to. Defaults to `out`
+            inside the directory holding the config file.
+        - formats
+            Which outputs to render for each composition, any of `html`, `svg`
+            and `png`. Defaults to all three.
+        - width, height, scale and sizes
+            The canvas size, project-wide and per composition, as described in
+            @{OutputSize}.
+        - background
+            The canvas background colour, in any format described in
+            @{Values}. Defaults to none, which leaves the canvas transparent.
+        - svgFonts
+            Whether SVG output writes text as `outline` paths or as text with
+            `embed`ded fonts, as described in @{SvgOutput}. Defaults to
+            `outline`.
+        - fontCache
+            The directory downloaded font files are kept in, as described in
+            @{Fonts}. Defaults to a shared cache directory for the user.
+
+    overrides:
+        Every setting except root and entry can be overridden by a flag on
+        the command line, as described in @{Cli}.
+
+    paths:
+        Paths in the config file are relative to the config file itself.

@@ -1,0 +1,28 @@
+export anchor GridAutoRows:
+    description:
+        Sets the height of rows the grid creates implicitly, when there are more children than the rows defined by grid-template-rows.
+
+    identifier: gridAutoRows
+
+    cssProperty:
+        Corresponds to the CSS `grid-auto-rows` property.
+
+    values:
+        - `auto`
+        - `<length>`
+        - `<percentage>`
+        - `<fr>`
+        - `minmax(<min>, <max>)`
+        - `<track-size> ...`
+
+    initial: auto
+
+    appliesTo: Grid containers.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            gridAutoRows: minmax(100px, auto)
+        \\\
+        ```

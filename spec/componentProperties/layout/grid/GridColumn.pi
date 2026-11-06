@@ -1,0 +1,27 @@
+export anchor GridColumn:
+    description:
+        Sets which column lines the child starts and ends on. A single value sets the start line only; `span` sets how many columns it covers.
+
+    identifier: gridColumn
+
+    cssProperty:
+        Corresponds to the CSS `grid-column` property.
+
+    values:
+        - `auto`
+        - `<line-number>`
+        - `<line-name>`
+        - `span <count>`
+        - `<start> / <end>`
+
+    initial: auto
+
+    appliesTo: Grid items (children of a grid container).
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            gridColumn: 1 / 3
+        \\\
+        ```

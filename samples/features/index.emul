@@ -1,0 +1,90 @@
+component Stage:
+    position: relative
+    padding: 24px
+    display: grid
+    gridTemplateColumns: 200px 1fr 1fr
+    gridTemplateRows: auto auto auto
+    gridTemplateAreas: "side top top" "side a b" "side c d"
+    gap: 16px
+    height: 100%
+
+component Side:
+    gridArea: side
+    backgroundImage: radial-gradient(circle at 30% 30%, #fde68a, #f97316 60%, #7c2d12)
+    borderRadius: 16px 0 16px 0
+    padding: 16px
+    color: #ffffff
+    fontFamily: "Playfair Display"
+    fontSize: 22px
+    fontStyle: italic
+
+component Top:
+    gridArea: top
+    border: 3px dashed #6366f1
+    borderLeft: 8px solid #f43f5e
+    padding: 12px
+    textAlign: center
+    fontSize: 18px
+
+component Box:
+    padding: 12px
+    backgroundColor: #ffffff
+    borderTop: 4px solid #10b981
+    borderBottom: 4px double #0ea5e9
+    boxShadow: inset 0 0 0 2px rgba(0, 0, 0, 0.06), 0 8px 24px -8px rgba(0, 0, 0, 0.3)
+
+component A extends Box:
+    gridArea: a
+    lineClamp: 2
+
+component B extends Box:
+    gridArea: b
+    whiteSpace: nowrap
+    overflow: hidden
+    textOverflow: ellipsis
+
+component C extends Box:
+    gridArea: c
+    opacity: 0.6
+    rotate: -3deg
+
+component D extends Box:
+    gridArea: d
+    fontFamily: Inter, "Noto Color Emoji"
+    letterSpacing: 2px
+    textTransform: uppercase
+    fontWeight: 800
+
+component Badge:
+    position: absolute
+    top: 8px
+    right: 8px
+    zIndex: 2
+    padding: 4px 10px
+    borderRadius: 999px
+    backgroundColor: oklch(0.6 0.2 260)
+    color: #ffffff
+    fontSize: 12px
+    scale: 1.1
+
+component Under:
+    position: absolute
+    left: 0
+    bottom: 0
+    width: 120px
+    height: 60px
+    zIndex: -1
+    backgroundColor: hsl(140, 60%, 80%)
+
+export composition Features {
+    Stage {
+        Under {}
+        Side { "A serif side panel in italic" }
+        Top { "Centered heading with mixed borders" }
+        A { "This text is clamped to two lines so the rest of this long sentence never shows up anywhere at all in the output." }
+        B { "This single line is cut off with an ellipsis because it is too long" }
+        C { "Faded and rotated" }
+        D { "Party 🎉 time" }
+        Badge { "New" }
+    }
+}

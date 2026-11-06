@@ -1,0 +1,110 @@
+from ./Config import Config
+from ./Fonts import Fonts
+from ./Layout import Layout
+from ./Output import Output
+from ./OutputSize import OutputSize
+
+export anchor SvgOutput:
+    description:
+        How a composition is turned into SVG. The SVG is Emul's reference
+        rendering: Emul computes the layout, shapes the text and draws every
+        box itself, rather than relying on the viewer. The PNG is made from
+        it, and the HTML is expected to match it, as described in
+        @{Output}.
+
+    files:
+        Each rendered composition becomes one SVG file in the output
+        directory, named after the composition, such as `MyComposition.svg`.
+        The file is self-contained. It has no scripts, no external
+        references and no dependence on anything installed where it is
+        viewed.
+
+    canvas:
+        The SVG's width, height and view box are the output size described
+        in @{OutputSize}, in px, so one SVG unit is one CSS pixel. A canvas
+        background, if set, is drawn as a rectangle covering the canvas.
+        Everything is clipped to the canvas.
+
+    layout:
+        Emul lays out the composition with its own layout engine, following
+        the CSS rules for each property in its list: block, flex and grid
+        layout, positioning, sizing and spacing. The result is a box for every
+        instance and a position for every line of text, all in absolute
+        canvas coordinates. The SVG then draws those boxes; it does not
+        describe layout itself.
+
+    structure:
+        Each instance becomes a group element, holding its own drawing
+        followed by its children's groups. Groups are written in drawing
+        order, which is the order the children are written in, changed only
+        by zIndex within a stacking context. Component and composition names
+        are kept as id attributes, such as `MyButton-3`, to make the file
+        easier to read; they have no effect on how it looks.
+
+    boxes:
+        - backgrounds
+            A rectangle filling the border box, with rounded corners from
+            borderRadius. A background image or gradient is drawn on top,
+            sized, placed and repeated as backgroundSize, backgroundPosition
+            and backgroundRepeat say, and clipped to the same rounded
+            rectangle.
+        - borders
+            When all four sides match, a single stroked rounded rectangle.
+            When they differ, a separate shape for each side. `dashed` and
+            `dotted` borders use dash patterns, and `double` two strokes.
+        - shadows
+            Each boxShadow becomes a filter: the box's shape, grown or shrunk
+            by the spread, offset, then blurred. The blur's standard deviation
+            is half the CSS blur radius, as in browsers. An `inset` shadow is
+            clipped to the inside of the box.
+        - opacity
+            An opacity attribute on the instance's group, so it applies to the
+            instance and its children together.
+        - transforms
+            A transform attribute on the group, combining translate, rotate
+            and scale in that order, around the centre of the box.
+        - clipping
+            `overflow: hidden` becomes a clip path matching the inside of the
+            border, rounded corners included, applied to the children.
+
+    images:
+        An instance with the htmlTag `img` draws its `src` image, placed and
+        cropped as objectFit and objectPosition say. Image files are embedded
+        in the SVG as data, so the file stays self-contained when moved.
+
+    text:
+        Emul shapes every run of text itself, using the font files described
+        in @{Fonts}, and handles spaces and breaks it into lines as set out
+        in @{Layout}. textTransform is applied before shaping, letterSpacing is
+        applied to the glyph positions, and textOverflow and lineClamp cut
+        the text and add the ellipsis before it is drawn. textDecoration lines
+        and textShadow are drawn as shapes and filters.
+
+    fonts:
+        How text is written into the SVG is set by the SVG fonts option, in
+        @{Config} or on the command line:
+
+        - outline
+            Each glyph is written as a path. The SVG looks the same in every
+            viewer and needs no fonts at all, but its text can't be selected
+            or searched. This is the default. Colour glyphs, such as emoji,
+            are expanded into one filled path per colour layer, or into an
+            embedded image when the font stores them as bitmaps.
+        - embed
+            Text is written as text elements, and the font files are embedded
+            in the SVG, reduced to only the characters it uses. Its text can
+            be selected and searched, but the result depends on the viewer
+            supporting embedded fonts.
+
+    colours:
+        Every colour is written in the SVG as hex. Colours given as `hsl()` or
+        `oklch()` are converted first, since not all SVG viewers understand
+        them. Colours outside the sRGB range are brought into it.
+
+    notInSvg:
+        HTML attributes other than `src` have no effect on the SVG, and
+        htmlTag only matters for `img`.
+
+    precision:
+        Coordinates are written with at most two decimal places, which is far
+        finer than a pixel.

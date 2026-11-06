@@ -1,0 +1,24 @@
+export anchor PaddingTop:
+    description:
+        Sets the space between the component's content and its top border.
+
+    identifier: paddingTop
+
+    cssProperty:
+        Corresponds to the CSS `padding-top` property.
+
+    values:
+        - `<length>`
+        - `<percentage>`
+
+    initial: 0
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            paddingTop: 16px
+        \\\
+        ```

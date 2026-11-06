@@ -1,0 +1,24 @@
+export anchor Rotate:
+    description:
+        Rotates the component as drawn around its centre, without affecting layout. Positive angles turn clockwise. Applied after translate and before scale.
+
+    identifier: rotate
+
+    cssProperty:
+        Corresponds to the CSS `rotate` property.
+
+    values:
+        - `none`
+        - `<angle>` in deg
+
+    initial: none
+
+    appliesTo: All components except inline ones.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            rotate: 90deg
+        \\\
+        ```

@@ -1,0 +1,25 @@
+export anchor Translate:
+    description:
+        Moves the component as drawn, without affecting layout. Percentages are measured against the component's own size. Applied before rotate and scale.
+
+    identifier: translate
+
+    cssProperty:
+        Corresponds to the CSS `translate` property.
+
+    values:
+        - `none`
+        - `<x>`
+        - `<x> <y>`
+
+    initial: none
+
+    appliesTo: All components except inline ones.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            translate: 0 -4px
+        \\\
+        ```

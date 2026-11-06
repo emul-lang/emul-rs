@@ -1,0 +1,25 @@
+export anchor Width:
+    description:
+        Sets the width of the component's box, including its padding and border.
+
+    identifier: width
+
+    cssProperty:
+        Corresponds to the CSS `width` property.
+
+    values:
+        - `auto`
+        - `<length>`
+        - `<percentage>`
+
+    initial: auto
+
+    appliesTo: All components except inline ones.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            width: 320px
+        \\\
+        ```

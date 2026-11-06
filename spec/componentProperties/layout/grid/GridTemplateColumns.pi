@@ -1,0 +1,28 @@
+export anchor GridTemplateColumns:
+    description:
+        Defines the columns of the grid: how many there are and how wide each one is. Lines between them may be named in square brackets.
+
+    identifier: gridTemplateColumns
+
+    cssProperty:
+        Corresponds to the CSS `grid-template-columns` property.
+
+    values:
+        - `none`
+        - `<track-size> ...`
+        - `repeat(<count>, <track-size>)`
+        - `repeat(auto-fill, <track-size>)`
+        - `repeat(auto-fit, <track-size>)`
+        - `[<line-name>] <track-size> ...`
+
+    initial: none
+
+    appliesTo: Grid containers.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            gridTemplateColumns: repeat(3, 1fr)
+        \\\
+        ```

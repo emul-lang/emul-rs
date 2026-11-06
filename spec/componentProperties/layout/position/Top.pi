@@ -1,0 +1,25 @@
+export anchor Top:
+    description:
+        Sets the distance between the component's top edge and the top edge of its containing block. For relative positioning it shifts the component from its normal place. For absolute positioning it is measured from the nearest positioned ancestor.
+
+    identifier: top
+
+    cssProperty:
+        Corresponds to the CSS `top` property.
+
+    values:
+        - `auto`
+        - `<length>`
+        - `<percentage>`
+
+    initial: auto
+
+    appliesTo: Positioned components (position other than static).
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            top: 0
+        \\\
+        ```

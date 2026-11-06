@@ -1,0 +1,27 @@
+export anchor ObjectFit:
+    description:
+        Sets how an image or video is resized to fill the component's box: stretched, scaled to fit inside while keeping its ratio, scaled to cover the box and cropped, left at its natural size, or whichever of none and contain is smaller.
+
+    identifier: objectFit
+
+    cssProperty:
+        Corresponds to the CSS `object-fit` property.
+
+    values:
+        - `fill`
+        - `contain`
+        - `cover`
+        - `none`
+        - `scale-down`
+
+    initial: fill
+
+    appliesTo: Replaced content, such as images and video.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            objectFit: cover
+        \\\
+        ```

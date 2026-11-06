@@ -1,0 +1,26 @@
+export anchor FlexBasis:
+    description:
+        Sets the starting size of a flex item along the main axis, before remaining space is distributed.
+
+    identifier: flexBasis
+
+    cssProperty:
+        Corresponds to the CSS `flex-basis` property.
+
+    values:
+        - `auto`
+        - `content`
+        - `<length>`
+        - `<percentage>`
+
+    initial: auto
+
+    appliesTo: Flex items.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            flexBasis: 200px
+        \\\
+        ```

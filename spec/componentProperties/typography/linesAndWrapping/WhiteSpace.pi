@@ -1,0 +1,27 @@
+export anchor WhiteSpace:
+    description:
+        Sets how spaces and line breaks in the component's text are handled, and whether lines wrap.
+
+    identifier: whiteSpace
+
+    cssProperty:
+        Corresponds to the CSS `white-space` property.
+
+    values:
+        - `normal`
+        - `nowrap`
+        - `pre`
+        - `pre-wrap`
+        - `pre-line`
+
+    initial: normal
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            whiteSpace: nowrap
+        \\\
+        ```

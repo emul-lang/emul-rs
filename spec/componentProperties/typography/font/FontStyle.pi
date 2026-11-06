@@ -1,0 +1,25 @@
+export anchor FontStyle:
+    description:
+        Sets whether the component's text is drawn upright or slanted.
+
+    identifier: fontStyle
+
+    cssProperty:
+        Corresponds to the CSS `font-style` property.
+
+    values:
+        - `normal`
+        - `italic`
+        - `oblique`
+
+    initial: normal
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            fontStyle: italic
+        \\\
+        ```

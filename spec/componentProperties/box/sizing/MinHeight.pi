@@ -1,0 +1,25 @@
+export anchor MinHeight:
+    description:
+        Sets the smallest height the component may have. It overrides height and max-height when they would make the component shorter.
+
+    identifier: minHeight
+
+    cssProperty:
+        Corresponds to the CSS `min-height` property.
+
+    values:
+        - `auto`
+        - `<length>`
+        - `<percentage>`
+
+    initial: auto
+
+    appliesTo: All components except inline ones.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            minHeight: 100%
+        \\\
+        ```

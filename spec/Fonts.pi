@@ -1,0 +1,58 @@
+from ./Config import Config
+from ./componentProperties/typography/font/FontFamily import FontFamily
+
+export anchor Fonts:
+    description:
+        Every typeface in Emul comes from Google Fonts. Using one fixed source
+        means all three outputs draw text with the very same font files.
+
+    families:
+        A @{FontFamily} value names Google Fonts families, exactly as Google
+        Fonts lists them, such as `Inter` or `"Playfair Display"`. A name with
+        spaces is quoted. Generic families, such as `sans-serif`, and fonts
+        installed on the computer are not accepted, because they differ from
+        machine to machine.
+
+    defaultFamily:
+        A component that does not set fontFamily uses `Inter`.
+
+    fallbacks:
+        A fontFamily may list more than one family, separated by commas. The
+        first family is used for every character it has. A later family is
+        used only for characters the earlier ones lack, such as emoji or
+        another script. A family like `"Noto Color Emoji"` is a common last
+        entry.
+
+    faces:
+        Each fontWeight and fontStyle used with a family must exist in that
+        family on Google Fonts. A variable family accepts any weight in its
+        range. Emul never fakes a bold or italic face by thickening or
+        slanting another one, because browsers and Emul would fake it
+        differently. A face the first family does not have is an error.
+        Fallback families, after the first, only supply characters the first
+        lacks, so for them the closest face they have is used instead.
+
+    fetching:
+        Fonts are fetched from Google Fonts dynamically, during compilation.
+        Emul looks up each family named in the project in Google Fonts'
+        catalogue, to check that it exists and has the weights and styles
+        used, then downloads the font files for every family, weight and
+        style the rendered compositions use. Files are kept in a
+        cache, so a project only downloads each one once, and later builds
+        work offline. The cache location can be set in @{Config}.
+
+    inEachOutput:
+        - html
+            The HTML links the Google Fonts stylesheet for exactly the
+            families, weights and styles it uses.
+        - svg
+            Fonts are either embedded in the file or turned into outlines, as
+            set by the SVG fonts option. See the SVG output section.
+        - png
+            Text is always drawn from outlines, so the PNG never depends on
+            fonts at all once rendered.
+
+    versions:
+        Google Fonts occasionally updates a family. The cache keeps the
+        version first downloaded, so a project's output does not change
+        unexpectedly; clearing the cache picks up the newer version.

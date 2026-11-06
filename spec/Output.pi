@@ -1,0 +1,63 @@
+from ./Cli import Cli
+from ./Config import Config
+from ./Fonts import Fonts
+from ./HtmlOutput import HtmlOutput
+from ./OutputSize import OutputSize
+from ./PngOutput import PngOutput
+from ./SvgOutput import SvgOutput
+
+export anchor Output:
+    description:
+        The compiler output targets and how they map.
+
+    summary:
+        Every rendered composition can be written as HTML, SVG and PNG. The
+        three are the same design in three formats, and should look the same.
+
+    fidelity:
+        The outputs are expected to match:
+
+        - svg
+            Emul computes the layout, shapes the text and draws every box
+            itself. The SVG is the reference rendering.
+        - png
+            The PNG is the SVG rasterized. It adds nothing and leaves nothing
+            out, so it always matches the SVG.
+        - html
+            The browser does the layout and drawing, from CSS that Emul
+            writes. Emul's properties are deliberately a small, plain subset
+            of CSS, so a browser and Emul's own layout give nearly the same
+            result.
+
+        The HTML and SVG are expected to match closely, not to the pixel.
+        Differences in anti-aliasing, glyph smoothing and pixel snapping are
+        how each browser draws, and are fine. A difference a person would
+        notice, such as a box in clearly the wrong place or a line of text
+        breaking at a different word, is a bug in Emul. Emul's designs are
+        plain enough that this level of agreement holds in practice.
+
+    sharedInputs:
+        All three outputs are made from the same inputs, so they never drift
+        apart. They share the following.
+
+        - the same output size, as described in @{OutputSize}
+        - the same font files, as described in @{Fonts}
+        - the same images, read from the same local files
+
+    canvas:
+        The output size sets the canvas, which is the area the composition's
+        root fills. The root's children are laid out inside it, and
+        percentages on them are measured against it. Anything drawn outside
+        the canvas is clipped, in all three outputs.
+
+        Behind the root is the canvas background. It is transparent unless a
+        background colour is set in @{Config} or on the command line.
+
+    formats:
+        - @{HtmlOutput}
+        - @{SvgOutput}
+        - @{PngOutput}
+
+    choosing:
+        Which formats are written is set by the formats setting in @{Config},
+        and can be overridden on the command line, as described in @{Cli}.

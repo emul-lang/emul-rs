@@ -1,0 +1,28 @@
+export anchor AlignSelf:
+    description:
+        Overrides the container's align-items for a single child, aligning it along the cross axis.
+
+    identifier: alignSelf
+
+    cssProperty:
+        Corresponds to the CSS `align-self` property.
+
+    values:
+        - `auto`
+        - `stretch`
+        - `flex-start`
+        - `flex-end`
+        - `center`
+        - `baseline`
+
+    initial: auto
+
+    appliesTo: Flex items.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            alignSelf: flex-end
+        \\\
+        ```

@@ -1,0 +1,24 @@
+export anchor BorderLeft:
+    description:
+        Shorthand that sets the width, style and colour of the component's left border only. A border given a style but no width is 1px wide.
+
+    identifier: borderLeft
+
+    cssProperty:
+        Corresponds to the CSS `border-left` property.
+
+    values:
+        - `none`
+        - `<border-width>? <border-style> <border-color>?`
+
+    initial: none
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            borderLeft: 4px solid #3b82f6
+        \\\
+        ```

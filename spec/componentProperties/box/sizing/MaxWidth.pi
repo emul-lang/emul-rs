@@ -1,0 +1,25 @@
+export anchor MaxWidth:
+    description:
+        Sets the largest width the component may have. It overrides width, but not min-width.
+
+    identifier: maxWidth
+
+    cssProperty:
+        Corresponds to the CSS `max-width` property.
+
+    values:
+        - `none`
+        - `<length>`
+        - `<percentage>`
+
+    initial: none
+
+    appliesTo: All components except inline ones.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            maxWidth: 960px
+        \\\
+        ```

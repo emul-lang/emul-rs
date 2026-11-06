@@ -1,0 +1,20 @@
+{
+  "generated": [
+    ".claude/reference/Syntax.md",
+    ".claude/reference/Thesis.md",
+    ".claude/reference/index.md",
+    ".claude/reference/tethers/crux/skills/lib/CruxSkills.md",
+    ".claude/skills/crux-spec-coverage/SKILL.md",
+    ".claude/skills/crux-spec-deep-dive/SKILL.md",
+    ".claude/skills/crux-spec-develop/SKILL.md",
+    ".claude/skills/crux-spec-distill/SKILL.md",
+    ".claude/skills/crux-spec-impact/SKILL.md",
+    ".claude/skills/crux-spec-refactor/SKILL.md",
+    ".claude/skills/crux-spec-review/SKILL.md",
+    ".claude/skills/crux-ui-develop/SKILL.md",
+    ".claude/skills/crux-ui-styles/SKILL.md"
+  ],
+  "targets": {
+    "claude-code": "2026-09-21"
+  }
+}

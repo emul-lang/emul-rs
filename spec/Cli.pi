@@ -1,0 +1,78 @@
+from ./Config import Config
+from ./Errors import Errors
+from ./Formatting import Formatting
+from ./OutputSize import OutputSize
+from ./Preview import Preview
+
+export anchor Cli:
+    description:
+        The `emul` command compiles, checks and formats Emul projects. It
+        reads `emul.config.pi` from the current directory, if there is one,
+        and its flags override the config's settings.
+
+    commands:
+        - build
+            Checks the project, then renders every composition exported from
+            the entry file, in every configured format.
+        - check
+            Reports errors and warnings without rendering anything.
+        - format
+            Rewrites `.emul` files in their canonical layout, as described in
+            @{Formatting}. With `--check`, it changes nothing and exits with
+            code 1 if any file is not already formatted.
+        - preview
+            Opens a desktop viewer that shows the compositions as SVG or PNG,
+            and in the browser as HTML, refreshing by itself whenever a file
+            is saved, as described in
+            @{Preview}.
+
+    build:
+        `emul build` takes optional composition names, to render only those
+        compositions instead of all of them.
+
+        ```text
+        \\\
+        emul build
+        emul build Landing SocialCard
+        emul build --width 375 --format png --scale 3
+        \\\
+        ```
+
+    flags:
+        - width
+            `--width <px>` sets the canvas width.
+        - height
+            `--height <px>` or `--height auto` sets the canvas height.
+        - scale
+            `--scale <number>` sets the PNG pixel density.
+        - background
+            `--background <color>` sets the canvas background, in any colour
+            format Emul accepts.
+        - format
+            `--format <format>` renders only the given format. It may be
+            repeated, as in `--format svg --format png`.
+        - svgFonts
+            `--svg-fonts outline` or `--svg-fonts embed` sets how text is
+            written into SVG.
+        - outDir
+            `--out <dir>` sets the output directory.
+        - config
+            `--config <path>` uses a config file other than the one in the
+            current directory.
+
+    flagPrecedence:
+        A size flag applies to every composition being rendered, including
+        those with their own sizes in the config, as described in
+        @{OutputSize}. Any other flag replaces the matching setting in
+        @{Config}.
+
+    exitCodes:
+        - 0
+            Success. Warnings may have been reported.
+        - 1
+            One or more errors, as described in @{Errors}. Nothing was
+            rendered.
+        - 2
+            The command itself was used wrongly, such as an unknown flag or a
+            composition name that is not exported from the entry, which is
+            reported with the code `unknown-composition`.

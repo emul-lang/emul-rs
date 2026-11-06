@@ -1,0 +1,25 @@
+export anchor BorderRadius:
+    description:
+        Shorthand that rounds the component's corners. One value sets all corners; two set top-left/bottom-right then top-right/bottom-left; three set top-left, top-right/bottom-left, bottom-right; four set top-left, top-right, bottom-right, bottom-left. The background is clipped to the rounded shape.
+
+    identifier: borderRadius
+
+    cssProperty:
+        Corresponds to the CSS `border-radius` property.
+
+    values:
+        - `<length>`
+        - `<percentage>`
+        - `<top-left> <top-right>? <bottom-right>? <bottom-left>?`
+
+    initial: 0
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            borderRadius: 8px
+        \\\
+        ```

@@ -1,0 +1,26 @@
+export anchor BackgroundImage:
+    description:
+        Sets one or more images, or gradients, painted behind the component's content. The first listed image is drawn on top.
+
+    identifier: backgroundImage
+
+    cssProperty:
+        Corresponds to the CSS `background-image` property.
+
+    values:
+        - `none`
+        - `url(<path>)`
+        - `<gradient>`
+        - `<image>, <image>, ...`
+
+    initial: none
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            backgroundImage: linear-gradient(to bottom, #fff, #eee)
+        \\\
+        ```

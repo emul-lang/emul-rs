@@ -1,0 +1,25 @@
+export anchor Bottom:
+    description:
+        Sets the distance between the component's bottom edge and the bottom edge of its containing block. For relative positioning it shifts the component from its normal place. For absolute positioning it is measured from the nearest positioned ancestor.
+
+    identifier: bottom
+
+    cssProperty:
+        Corresponds to the CSS `bottom` property.
+
+    values:
+        - `auto`
+        - `<length>`
+        - `<percentage>`
+
+    initial: auto
+
+    appliesTo: Positioned components (position other than static).
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            bottom: 0
+        \\\
+        ```

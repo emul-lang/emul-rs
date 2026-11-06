@@ -1,0 +1,25 @@
+export anchor GridArea:
+    description:
+        Places the child into a named area from grid-template-areas, or sets its row start, column start, row end and column end lines, in that order.
+
+    identifier: gridArea
+
+    cssProperty:
+        Corresponds to the CSS `grid-area` property.
+
+    values:
+        - `auto`
+        - `<area-name>`
+        - `<row-start> / <column-start> / <row-end> / <column-end>`
+
+    initial: auto
+
+    appliesTo: Grid items (children of a grid container).
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            gridArea: sidebar
+        \\\
+        ```

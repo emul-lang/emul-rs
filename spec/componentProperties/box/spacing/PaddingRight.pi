@@ -1,0 +1,24 @@
+export anchor PaddingRight:
+    description:
+        Sets the space between the component's content and its right border.
+
+    identifier: paddingRight
+
+    cssProperty:
+        Corresponds to the CSS `padding-right` property.
+
+    values:
+        - `<length>`
+        - `<percentage>`
+
+    initial: 0
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            paddingRight: 12px
+        \\\
+        ```

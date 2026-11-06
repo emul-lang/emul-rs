@@ -1,0 +1,25 @@
+export anchor Position:
+    description:
+        Sets how the component is positioned: in normal flow, offset from its normal place, or taken out of flow and placed relative to its nearest positioned ancestor.
+
+    identifier: position
+
+    cssProperty:
+        Corresponds to the CSS `position` property.
+
+    values:
+        - `static`
+        - `relative`
+        - `absolute`
+
+    initial: static
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            position: absolute
+        \\\
+        ```

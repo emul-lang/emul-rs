@@ -1,0 +1,24 @@
+export anchor BorderRight:
+    description:
+        Shorthand that sets the width, style and colour of the component's right border only. A border given a style but no width is 1px wide.
+
+    identifier: borderRight
+
+    cssProperty:
+        Corresponds to the CSS `border-right` property.
+
+    values:
+        - `none`
+        - `<border-width>? <border-style> <border-color>?`
+
+    initial: none
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            borderRight: none
+        \\\
+        ```

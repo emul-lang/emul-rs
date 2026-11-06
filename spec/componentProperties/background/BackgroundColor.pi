@@ -1,0 +1,24 @@
+export anchor BackgroundColor:
+    description:
+        Sets the colour painted behind the component's content and padding, beneath any background image.
+
+    identifier: backgroundColor
+
+    cssProperty:
+        Corresponds to the CSS `background-color` property.
+
+    values:
+        - `none`
+        - `<color>`
+
+    initial: none
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            backgroundColor: #f4f4f5
+        \\\
+        ```

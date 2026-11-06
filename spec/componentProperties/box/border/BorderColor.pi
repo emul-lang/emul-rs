@@ -1,0 +1,24 @@
+export anchor BorderColor:
+    description:
+        Sets the colour of the component's borders. One value sets all sides; two set top/bottom then left/right; three set top, left/right, bottom; four set top, right, bottom, left.
+
+    identifier: borderColor
+
+    cssProperty:
+        Corresponds to the CSS `border-color` property.
+
+    values:
+        - `<color>`
+        - `<top> <right>? <bottom>? <left>?`
+
+    initial: #000000
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            borderColor: #3b82f6
+        \\\
+        ```

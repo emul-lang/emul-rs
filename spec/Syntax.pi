@@ -1,0 +1,70 @@
+from ./Cli import Cli
+from ./Comments import Comments
+from ./Components import Components
+from ./Compositions import Compositions
+from ./Config import Config
+from ./Errors import Errors
+from ./Escapes import Escapes
+from ./Fonts import Fonts
+from ./Formatting import Formatting
+from ./Layout import Layout
+from ./Modules import Modules
+from ./Output import Output
+from ./Preview import Preview
+from ./Thesis import Thesis
+from ./Values import Values
+
+export anchor Syntax:
+    introduction:
+        The syntax of Emul is a curious combination of personalities; a little
+        bit of the indentation-based, a little bit of of the braces world. To
+        help explain the syntax, let's first establish what the building blocks
+        are.
+
+    components: {Components.description}
+    composition: {Compositions.description}
+
+    example:
+        Again, we can point to our example:
+
+        {Thesis.example}
+
+        You can see that the first four, `DefaultButton`, `MyButton`,
+        `SecondaryButton` and `MyLayout`, are components, and they use
+        indentation-based syntax.
+
+        The final cluster that uses brace syntax is a composition.
+
+    keywords:
+        You can see in the example we have the `component` and `composition`
+        keywords.  These inform the compiler what we're trying to declare.
+
+    identifiers:
+        Following the keyword is the name of the thing we're declaring.
+
+        - `component MyButton`
+            is the MyButton component.
+        - `composition MyComposition`
+            you guessed it, the MyComposition composition.
+
+    details:
+        We'll cover the details of both components and compositions in their
+        respective sections.
+
+        - @{Components}
+        - @{Compositions}
+
+        These rules apply to both:
+
+        - @{Comments}
+        - @{Values}
+        - @{Layout}
+        - @{Escapes}
+        - @{Modules}
+        - @{Config}
+        - @{Cli}
+        - @{Preview}
+        - @{Formatting}
+        - @{Fonts}
+        - @{Output}
+        - @{Errors}

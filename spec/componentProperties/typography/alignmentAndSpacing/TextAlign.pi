@@ -1,0 +1,28 @@
+export anchor TextAlign:
+    description:
+        Sets how lines of text, and inline content, are aligned within the component.
+
+    identifier: textAlign
+
+    cssProperty:
+        Corresponds to the CSS `text-align` property.
+
+    values:
+        - `start`
+        - `end`
+        - `left`
+        - `right`
+        - `center`
+        - `justify`
+
+    initial: start
+
+    appliesTo: Block-level components and their text.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            textAlign: center
+        \\\
+        ```

@@ -1,0 +1,24 @@
+export anchor Overflow:
+    description:
+        Sets what happens when the component's content is larger than its box: drawn outside it, or clipped to the box's padding edge. Emul renders static output, so there is no scrolling.
+
+    identifier: overflow
+
+    cssProperty:
+        Corresponds to the CSS `overflow` property.
+
+    values:
+        - `visible`
+        - `hidden`
+
+    initial: visible
+
+    appliesTo: Block-level and flex or grid containers.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            overflow: hidden
+        \\\
+        ```

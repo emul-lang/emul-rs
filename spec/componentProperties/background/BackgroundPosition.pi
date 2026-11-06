@@ -1,0 +1,30 @@
+export anchor BackgroundPosition:
+    description:
+        Sets where the background image is placed within the component, measured from the top left corner.
+
+    identifier: backgroundPosition
+
+    cssProperty:
+        Corresponds to the CSS `background-position` property.
+
+    values:
+        - `center`
+        - `top`
+        - `right`
+        - `bottom`
+        - `left`
+        - `<length>`
+        - `<percentage>`
+        - `<x> <y>`
+
+    initial: 0% 0%
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            backgroundPosition: center
+        \\\
+        ```

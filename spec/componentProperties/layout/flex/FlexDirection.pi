@@ -1,0 +1,26 @@
+export anchor FlexDirection:
+    description:
+        Sets the main axis of a flex container, and so the direction in which its children are placed.
+
+    identifier: flexDirection
+
+    cssProperty:
+        Corresponds to the CSS `flex-direction` property.
+
+    values:
+        - `row`
+        - `row-reverse`
+        - `column`
+        - `column-reverse`
+
+    initial: row
+
+    appliesTo: Flex containers.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            flexDirection: column
+        \\\
+        ```

@@ -1,0 +1,63 @@
+export anchor Thesis:
+    introduction:
+        Behaviour and general concepts are easy to describe in prose. But my
+        goodness, when you start trying to describe an image, a user interface,
+        a button, a layout, etc., AI rapidly looses grasp of whatever dimension
+        it calls reality.
+
+        And that's not unresonable in the slightest that it struggles; models
+        are trained on many kinds of input, but your or my definition of a
+        "pretty picture" isn't one of them. What's far more reasonable is to
+        accept the assumption that most of the internet now is pretty, and that
+        HTML and CSS are the core building blocks -- in fact the only actualy
+        _blocks_- of how all of it all comes together. And further that the
+        infinitely expanding universe of training data that is the Internet is
+        exactly why models can turn HTML/CSS into a rather precise visual
+        outcome. Aestheticaly pleasing deterministic trainging data -- wow.
+
+        So that's incredible. And HTML/CSS is something that most software
+        developers know to some extent. And thanks to tools like Figma,
+        designers understand the mechanisms even if they've never touched a line
+        of code. But in a world where authorship itself is far less valuable
+        than creative intent, how do we capture the disparate skillsets involved
+        in expressing and implementing that intent into a single, robust source?
+
+        Emul is a proposed solution to that question. It's a language that
+        provides limited approximation of the design model that HTML/CSS
+        provides, while simplifying the implementation and authorship details
+        such that legacy and browser quirks are not within scope.  The goal is
+        to allow creating a robust visual implementation; we want a
+        model-friendly visual implementation *and* a pretty that you can view.
+
+    example:
+        ```emul
+        \\\
+        component DefaultButton:
+            htmlTag: button
+            display: flex
+            alignItems: center
+            borderRadius: 6px
+            backgroundColor: #e4e4e7
+
+        component MyButton extends DefaultButton:
+            padding: 8px 12px
+            color: #dc2626
+
+        component SecondaryButton extends MyButton:
+            backgroundColor: #ffffff
+            border: 1px solid #dc2626
+
+        component MyLayout:
+            display: flex
+            flexDirection: row
+            gap: 16px
+            padding: 64px
+
+        composition MyComposition {
+            MyLayout {
+                SecondaryButton { "Click Me" }
+                MyButton { "Click Me Again", title: The second button }
+            }
+        }
+        \\\
+        ```

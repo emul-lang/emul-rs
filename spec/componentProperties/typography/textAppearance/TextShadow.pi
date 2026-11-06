@@ -1,0 +1,25 @@
+export anchor TextShadow:
+    description:
+        Draws one or more shadows behind the component's own text.
+
+    identifier: textShadow
+
+    cssProperty:
+        Corresponds to the CSS `text-shadow` property.
+
+    values:
+        - `none`
+        - `<offset-x> <offset-y> <blur>? <color>?`
+        - `<shadow>, <shadow>, ...`
+
+    initial: none
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            textShadow: 0 1px 2px rgba(0, 0, 0, 0.4)
+        \\\
+        ```

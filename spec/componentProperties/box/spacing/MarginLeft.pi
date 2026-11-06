@@ -1,0 +1,25 @@
+export anchor MarginLeft:
+    description:
+        Sets the space outside the component's left border. Negative values are allowed, and `auto` takes up the available space on that side.
+
+    identifier: marginLeft
+
+    cssProperty:
+        Corresponds to the CSS `margin-left` property.
+
+    values:
+        - `auto`
+        - `<length>`
+        - `<percentage>`
+
+    initial: 0
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            marginLeft: auto
+        \\\
+        ```

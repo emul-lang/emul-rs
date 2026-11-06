@@ -1,0 +1,26 @@
+export anchor TextTransform:
+    description:
+        Changes the capitalisation of the component's text when displayed, without changing the text itself.
+
+    identifier: textTransform
+
+    cssProperty:
+        Corresponds to the CSS `text-transform` property.
+
+    values:
+        - `none`
+        - `uppercase`
+        - `lowercase`
+        - `capitalize`
+
+    initial: none
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            textTransform: uppercase
+        \\\
+        ```

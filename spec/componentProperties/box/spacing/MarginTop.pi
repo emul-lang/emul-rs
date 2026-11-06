@@ -1,0 +1,25 @@
+export anchor MarginTop:
+    description:
+        Sets the space outside the component's top border. Negative values are allowed, and `auto` takes up the available space on that side.
+
+    identifier: marginTop
+
+    cssProperty:
+        Corresponds to the CSS `margin-top` property.
+
+    values:
+        - `auto`
+        - `<length>`
+        - `<percentage>`
+
+    initial: 0
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            marginTop: 24px
+        \\\
+        ```

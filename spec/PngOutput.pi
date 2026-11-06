@@ -1,0 +1,35 @@
+from ./OutputSize import OutputSize
+from ./SvgOutput import SvgOutput
+
+export anchor PngOutput:
+    description:
+        How a composition is turned into PNG. The PNG is the SVG output
+        rasterized, described in @{SvgOutput}. It is never laid out or drawn
+        separately, so it always matches the SVG.
+
+    files:
+        Each rendered composition becomes one PNG file in the output
+        directory, named after the composition, such as `MyComposition.png`.
+
+    source:
+        The PNG is rasterized from the SVG with text in outline form,
+        whatever the SVG fonts option is set to. Embedded fonts never affect
+        the PNG.
+
+    size:
+        The image is the output size multiplied by the scale, as described in
+        @{OutputSize}, in whole pixels. A scale of `2` gives an image twice as
+        wide and twice as tall, with every shape drawn at the higher
+        resolution, not stretched.
+
+    pixels:
+        Pixels are 8-bit RGBA in the sRGB colour space. Edges are
+        anti-aliased.
+
+    transparency:
+        Transparency is kept. Where nothing is drawn and no canvas background
+        is set, pixels are fully transparent.
+
+    metadata:
+        The PNG holds no metadata beyond what the format needs, so the same
+        input always produces the same file, byte for byte.

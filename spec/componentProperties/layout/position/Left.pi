@@ -1,0 +1,25 @@
+export anchor Left:
+    description:
+        Sets the distance between the component's left edge and the left edge of its containing block. For relative positioning it shifts the component from its normal place. For absolute positioning it is measured from the nearest positioned ancestor.
+
+    identifier: left
+
+    cssProperty:
+        Corresponds to the CSS `left` property.
+
+    values:
+        - `auto`
+        - `<length>`
+        - `<percentage>`
+
+    initial: auto
+
+    appliesTo: Positioned components (position other than static).
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            left: 50%
+        \\\
+        ```

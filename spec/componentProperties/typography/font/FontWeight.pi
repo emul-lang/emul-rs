@@ -1,0 +1,25 @@
+export anchor FontWeight:
+    description:
+        Sets how thick the component's text is drawn. When the typeface lacks the exact weight, the nearest available one is used.
+
+    identifier: fontWeight
+
+    cssProperty:
+        Corresponds to the CSS `font-weight` property.
+
+    values:
+        - `normal`
+        - `bold`
+        - `<number> from 1 to 1000`
+
+    initial: normal (400)
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            fontWeight: 600
+        \\\
+        ```

@@ -1,0 +1,23 @@
+export anchor FlexShrink:
+    description:
+        Sets how much a flex item shrinks, relative to its siblings, when the children overflow the flex container.
+
+    identifier: flexShrink
+
+    cssProperty:
+        Corresponds to the CSS `flex-shrink` property.
+
+    values:
+        - `<number>, zero or greater`
+
+    initial: 1
+
+    appliesTo: Flex items.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            flexShrink: 0
+        \\\
+        ```

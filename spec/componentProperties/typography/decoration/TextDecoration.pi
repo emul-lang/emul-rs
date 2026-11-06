@@ -1,0 +1,27 @@
+export anchor TextDecoration:
+    description:
+        Sets lines drawn on the component's own text, with their style and colour. It is not drawn across the text of child instances. Without a colour, the line uses the component's color.
+
+    identifier: textDecoration
+
+    cssProperty:
+        Corresponds to the CSS `text-decoration` property.
+
+    values:
+        - `none`
+        - `underline`
+        - `overline`
+        - `line-through`
+        - `<line> <style>? <color>?`
+
+    initial: none
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            textDecoration: underline dotted
+        \\\
+        ```

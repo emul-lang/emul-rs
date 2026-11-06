@@ -1,0 +1,25 @@
+export anchor MaxHeight:
+    description:
+        Sets the largest height the component may have. It overrides height, but not min-height.
+
+    identifier: maxHeight
+
+    cssProperty:
+        Corresponds to the CSS `max-height` property.
+
+    values:
+        - `none`
+        - `<length>`
+        - `<percentage>`
+
+    initial: none
+
+    appliesTo: All components except inline ones.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            maxHeight: 400px
+        \\\
+        ```

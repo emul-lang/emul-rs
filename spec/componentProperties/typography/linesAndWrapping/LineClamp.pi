@@ -1,0 +1,24 @@
+export anchor LineClamp:
+    description:
+        Limits the component's text to a number of lines, cutting off the rest and ending the last visible line with an ellipsis.
+
+    identifier: lineClamp
+
+    cssProperty:
+        Corresponds to the CSS `line-clamp` property.
+
+    values:
+        - `none`
+        - `<integer>`
+
+    initial: none
+
+    appliesTo: Block-level components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            lineClamp: 3
+        \\\
+        ```

@@ -1,0 +1,23 @@
+export anchor FlexGrow:
+    description:
+        Sets how much of the remaining space in the flex container a flex item takes, relative to its siblings.
+
+    identifier: flexGrow
+
+    cssProperty:
+        Corresponds to the CSS `flex-grow` property.
+
+    values:
+        - `<number>, zero or greater`
+
+    initial: 0
+
+    appliesTo: Flex items.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            flexGrow: 1
+        \\\
+        ```

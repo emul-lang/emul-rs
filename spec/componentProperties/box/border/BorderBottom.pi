@@ -1,0 +1,24 @@
+export anchor BorderBottom:
+    description:
+        Shorthand that sets the width, style and colour of the component's bottom border only. A border given a style but no width is 1px wide.
+
+    identifier: borderBottom
+
+    cssProperty:
+        Corresponds to the CSS `border-bottom` property.
+
+    values:
+        - `none`
+        - `<border-width>? <border-style> <border-color>?`
+
+    initial: none
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            borderBottom: 2px solid #18181b
+        \\\
+        ```

@@ -1,0 +1,23 @@
+export anchor FontSize:
+    description:
+        Sets the size of the component's text, in pixels.
+
+    identifier: fontSize
+
+    cssProperty:
+        Corresponds to the CSS `font-size` property.
+
+    values:
+        - `<px>`
+
+    initial: 16px
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            fontSize: 14px
+        \\\
+        ```

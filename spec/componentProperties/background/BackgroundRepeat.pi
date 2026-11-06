@@ -1,0 +1,28 @@
+export anchor BackgroundRepeat:
+    description:
+        Sets whether, and along which axes, the background image repeats to fill the component.
+
+    identifier: backgroundRepeat
+
+    cssProperty:
+        Corresponds to the CSS `background-repeat` property.
+
+    values:
+        - `repeat`
+        - `no-repeat`
+        - `repeat-x`
+        - `repeat-y`
+        - `space`
+        - `round`
+
+    initial: repeat
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            backgroundRepeat: no-repeat
+        \\\
+        ```

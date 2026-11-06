@@ -1,0 +1,24 @@
+export anchor FontFamily:
+    description:
+        Sets the Google Fonts family for the component's text. Further families, separated by commas, are used only for characters the earlier ones lack, such as emoji.
+
+    identifier: fontFamily
+
+    cssProperty:
+        Corresponds to the CSS `font-family` property.
+
+    values:
+        - `<google-fonts-family>`, quoted if it contains spaces
+        - `<google-fonts-family>, <google-fonts-family>, ...`
+
+    initial: Inter
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            fontFamily: Inter, "Noto Color Emoji"
+        \\\
+        ```

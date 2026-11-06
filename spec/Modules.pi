@@ -1,0 +1,97 @@
+from ./Components import Components
+from ./Config import Config
+
+export anchor Modules:
+    description:
+        Emul files and modules follow the same import and export behaviour as
+        Piton. A design can be split across any number of files, and each file
+        decides what the others may use.
+
+    files:
+        Emul source files carry the `.emul` extension. A directory with an
+        `index.emul` file becomes a module.
+
+    exporting:
+        Putting `export` before a declaration makes it available to other
+        files and modules. Both components and compositions can be exported.
+        Anything that is not exported can only be used in its own file.
+
+        ```emul
+        \\\
+        export component Button:
+            padding: 8px 12px
+        \\\
+        ```
+
+    importing:
+        A file brings in exported declarations with `from`, a path, `import`,
+        and a comma-separated list of names.
+
+        ```emul
+        \\\
+        from ./Buttons import Button, IconButton
+        \\\
+        ```
+
+        Importing a name that the other file does not export is a compiler
+        error.
+
+    paths:
+        Import paths are relative to the current file. The `.emul` extension
+        is optional, and the formatter removes it. A path of just `.` or `..`
+        points at the `index.emul` in that directory.
+
+        A path starting with `/` is absolute, measured from the project's
+        source root, as set in @{Config}.
+
+    aliasing:
+        A name can be imported under a different name by writing the alias
+        after it, with no keyword in between. The declaration is then
+        available as, and only as, the alias.
+
+        ```emul
+        \\\
+        from ./Buttons import Button PrimaryButton, IconButton
+        \\\
+        ```
+
+    lineBreaks:
+        An import may be split across lines, with `from`, the path and
+        `import` on the first line and each name indented on its own line
+        below. The formatter splits an import this way when it has more than
+        two names or runs past 80 columns. It also sorts imports by path, and
+        sorts the names within each one.
+
+    modules:
+        An `index.emul` gathers declarations from the files in its directory
+        and exports them, so other files can import from the directory as a
+        whole. It can do this in any of these ways:
+
+        ```emul
+        \\\
+        // Import, then export
+        from ./Button import Button
+        export Button
+
+        // Export directly from another file
+        from ./Card export Card
+
+        // Export everything another file exports
+        from ./Forms export *
+
+        // Export under a different name
+        from ./Badge export Badge Tag
+        \\\
+        ```
+
+    circularImports:
+        Circular imports are supported and are not an error. Two files may
+        import from each other. The only cycle that is an error is a component
+        extending itself, directly or through other components, as described
+        in @{Components}.
+
+    rendering:
+        Every composition exported from the entry file is rendered. The entry
+        file is set in @{Config}. A
+        composition that is not exported, or only exported from some other
+        file, is not rendered on its own.

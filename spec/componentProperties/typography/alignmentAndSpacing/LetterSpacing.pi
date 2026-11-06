@@ -1,0 +1,24 @@
+export anchor LetterSpacing:
+    description:
+        Adds space between the characters of the component's text, on top of the typeface's own spacing. Negative values tighten it.
+
+    identifier: letterSpacing
+
+    cssProperty:
+        Corresponds to the CSS `letter-spacing` property.
+
+    values:
+        - `normal`
+        - `<length>`
+
+    initial: normal
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            letterSpacing: 0.5px
+        \\\
+        ```

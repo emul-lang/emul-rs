@@ -1,0 +1,27 @@
+export anchor JustifyItems:
+    description:
+        Sets the default inline-axis alignment of all children within their grid areas. Ignored in flex layout.
+
+    identifier: justifyItems
+
+    cssProperty:
+        Corresponds to the CSS `justify-items` property.
+
+    values:
+        - `stretch`
+        - `start`
+        - `end`
+        - `center`
+        - `baseline`
+
+    initial: stretch
+
+    appliesTo: Grid containers.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            justifyItems: center
+        \\\
+        ```

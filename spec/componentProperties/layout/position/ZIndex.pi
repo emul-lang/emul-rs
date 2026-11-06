@@ -1,0 +1,24 @@
+export anchor ZIndex:
+    description:
+        Sets the stacking order of a positioned component and its descendants. Higher values are drawn above lower ones within the same stacking context; any integer value also creates a new stacking context.
+
+    identifier: zIndex
+
+    cssProperty:
+        Corresponds to the CSS `z-index` property.
+
+    values:
+        - `auto`
+        - `<integer>`
+
+    initial: auto
+
+    appliesTo: Positioned components (position other than static).
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            zIndex: 10
+        \\\
+        ```

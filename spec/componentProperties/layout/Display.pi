@@ -1,0 +1,34 @@
+from ../../Layout import Layout
+
+export anchor Display:
+    description:
+        Sets how the component is laid out: as a block, inline with surrounding text, as a flex or grid container that arranges its children, or not at all.
+
+    identifier: display
+
+    cssProperty:
+        Corresponds to the CSS `display` property.
+
+    values:
+        - `block`
+        - `inline`
+        - `flex`
+        - `grid`
+        - `none`
+
+    initial: block
+
+    appliesTo: All components.
+
+    inlineLimits:
+        An `inline` instance can only hold text and other inline instances,
+        and is styled only by its text properties. The full rules are in
+        @{Layout}.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            display: flex
+        \\\
+        ```

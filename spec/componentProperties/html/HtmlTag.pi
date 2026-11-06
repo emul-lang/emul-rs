@@ -1,0 +1,51 @@
+export anchor HtmlTag:
+    description:
+        Sets which HTML element each instance of the component becomes in the
+        HTML output. Emul has no other way to give an element meaning, so
+        this is how a component becomes a button, a link or an image.
+
+    identifier: htmlTag
+
+    cssProperty:
+        None. It is an Emul property that sets the element's tag name in the
+        HTML output.
+
+    values:
+        - `<tag-name>`, any lowercase HTML element name, such as `button`,
+            `a`, `img`, `h1` or `section`
+
+    initial: div
+
+    appliesTo: All components.
+
+    voidElements:
+        Elements that can't have content in HTML, such as `img`, `input`,
+        `br` and `hr`, are void elements. An instance whose component has a
+        void htmlTag can't have text or children.
+
+    notAllowed:
+        The tags `html`, `head`, `body`, `script` and `style` are not
+        accepted, because the HTML output uses them itself.
+
+    otherOutputs:
+        The SVG and PNG outputs ignore htmlTag, with one exception. An
+        instance whose component has the htmlTag `img` is drawn as the image
+        named by its `src` attribute, sized and placed by `objectFit` and
+        `objectPosition`.
+
+    styling:
+        The element's own default browser styling is always removed, so
+        htmlTag changes what an element means, never how it looks. A `button`
+        looks exactly like a `div` with the same properties.
+
+    example:
+        ```emul
+        \\\
+        component Avatar:
+            htmlTag: img
+            width: 48px
+            height: 48px
+            borderRadius: 50%
+            objectFit: cover
+        \\\
+        ```

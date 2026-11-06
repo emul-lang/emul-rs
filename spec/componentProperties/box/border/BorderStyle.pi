@@ -1,0 +1,28 @@
+export anchor BorderStyle:
+    description:
+        Sets the line style of the component's borders. One value sets all sides; two set top/bottom then left/right; three set top, left/right, bottom; four set top, right, bottom, left.
+
+    identifier: borderStyle
+
+    cssProperty:
+        Corresponds to the CSS `border-style` property.
+
+    values:
+        - `none`
+        - `solid`
+        - `dashed`
+        - `dotted`
+        - `double`
+        - `<top> <right>? <bottom>? <left>?`
+
+    initial: none
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            borderStyle: dashed
+        \\\
+        ```

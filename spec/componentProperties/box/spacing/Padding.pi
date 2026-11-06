@@ -1,0 +1,25 @@
+export anchor Padding:
+    description:
+        Shorthand for the four padding sides: the space between the component's content and its border. One value sets all sides; two set top/bottom then left/right; three set top, left/right, bottom; four set top, right, bottom, left.
+
+    identifier: padding
+
+    cssProperty:
+        Corresponds to the CSS `padding` property.
+
+    values:
+        - `<length>`
+        - `<percentage>`
+        - `<top> <right>? <bottom>? <left>?`
+
+    initial: 0
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            padding: 8px 12px
+        \\\
+        ```

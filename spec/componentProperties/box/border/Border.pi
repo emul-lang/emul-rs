@@ -1,0 +1,24 @@
+export anchor Border:
+    description:
+        Shorthand that sets the width, style and colour of all four borders at once. Any part left out is reset to its initial value, except that a border given a style but no width is 1px wide, since Emul has no width keywords.
+
+    identifier: border
+
+    cssProperty:
+        Corresponds to the CSS `border` property.
+
+    values:
+        - `none`
+        - `<border-width>? <border-style> <border-color>?`
+
+    initial: none
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            border: 1px solid #d4d4d8
+        \\\
+        ```

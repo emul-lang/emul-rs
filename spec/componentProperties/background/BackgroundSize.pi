@@ -1,0 +1,28 @@
+export anchor BackgroundSize:
+    description:
+        Sets the size of the background image.
+
+    identifier: backgroundSize
+
+    cssProperty:
+        Corresponds to the CSS `background-size` property.
+
+    values:
+        - `auto`
+        - `cover`
+        - `contain`
+        - `<length>`
+        - `<percentage>`
+        - `<width> <height>`
+
+    initial: auto
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            backgroundSize: cover
+        \\\
+        ```

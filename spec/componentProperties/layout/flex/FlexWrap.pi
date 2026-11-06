@@ -1,0 +1,25 @@
+export anchor FlexWrap:
+    description:
+        Sets whether the children of a flex container are forced onto a single line or may wrap onto several lines.
+
+    identifier: flexWrap
+
+    cssProperty:
+        Corresponds to the CSS `flex-wrap` property.
+
+    values:
+        - `nowrap`
+        - `wrap`
+        - `wrap-reverse`
+
+    initial: nowrap
+
+    appliesTo: Flex containers.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            flexWrap: wrap
+        \\\
+        ```

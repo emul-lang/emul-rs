@@ -1,0 +1,55 @@
+export anchor Escapes:
+    description:
+        Emul escapes special characters the same way Piton does. It is the
+        only escape mechanism; there are no backslash sequences such as `\ \n \`
+        or `\ \" \`.
+
+    wrapper:
+        To escape special characters, wrap them in backslashes with a space on
+        each side. The spaces are part of the wrapper, so they are removed
+        along with the backslashes. Even a single character is wrapped this
+        way.
+
+    specialCharacters:
+        In Emul, escaping is needed for anything that would otherwise be read
+        as syntax:
+
+        - quotes
+            A double quote inside quoted text, which would otherwise end the
+            text. It is the only character quoted text needs escaped; braces
+            and commas inside quotes are already just text.
+        - braces
+            A curly brace in an unquoted attribute value, which would otherwise
+            open or close a body.
+        - commas
+            A comma in an unquoted attribute value, which would otherwise end
+            the entry. Quoting the value is usually simpler.
+        - comments
+            A `//` at the start of a line that should be text rather than a
+            comment.
+
+    stacking:
+        Backslashes can be stacked to escape backslashes themselves. The
+        closing wrapper has to match the opening one, so a wrapper of two
+        backslashes can contain a single backslash.
+
+    multiLine:
+        Putting the backslashes on a line by themselves opens a block, and the
+        same line closes it. Everything in between is kept as it is, line
+        breaks and indentation included. Emul uses three backslashes for these
+        blocks, as Piton does.
+
+    example:
+        ```emul
+        \\\
+        composition Pricing {
+            Quote { "She said \ " \ worth it \ " \ and bought two" }
+            Price { "From $5, billed monthly", title: Plans\ , \ pricing }
+        }
+        \\\
+        ```
+
+        The first instance shows the text `She said "worth it" and bought
+        two`. In the second, the comma in the quoted text needs no escape, but
+        the comma in the unquoted `title` attribute does, giving it the value
+        `Plans, pricing`.

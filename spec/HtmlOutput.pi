@@ -1,0 +1,122 @@
+from ./Config import Config
+from ./Fonts import Fonts
+from ./Output import Output
+from ./OutputSize import OutputSize
+from ./componentProperties/html/HtmlTag import HtmlTag
+
+export anchor HtmlOutput:
+    description:
+        How a composition is turned into HTML and CSS. The language carries
+        little information beyond layout and look, so the output is kept
+        plain. Nearly everything is a `div`. The HTML is expected to look the
+        same as the SVG and PNG, as described in @{Output}.
+
+    files:
+        Each rendered composition becomes one HTML file in the output
+        directory set in @{Config}, named after the composition, such as
+        `MyComposition.html`. Its CSS is in a single style element in its
+        head, and the only thing it loads from elsewhere is the Google Fonts
+        stylesheet.
+
+    elements:
+        Each instance becomes one element. The element is a `div` unless the
+        instance's component sets @{HtmlTag}. Children become child elements,
+        in the order they are written.
+
+    root:
+        The composition's root is the body element. It has no styling beyond
+        the reset described below, and the canvas size and background. The
+        body is given the canvas width from @{OutputSize}, and its height
+        unless that is `auto`, and clips anything outside it.
+
+    text:
+        Each quoted text in a body becomes a text node, in the position it is
+        written among the children. Characters with a meaning in HTML, such as
+        `<` and `&`, are escaped, so text is always shown as written and never
+        read as markup.
+
+    attributes:
+        Each attribute on an instance becomes an HTML attribute of the same
+        name and value on its element. A path in a `src` attribute is resolved
+        as described for images in values, and the file is copied into the
+        output directory alongside the HTML.
+
+    classes:
+        Each component used in the composition becomes one CSS class, named
+        after the name the component was declared with, not any alias it was
+        imported under. If two different components were declared with the
+        same name, in different files, the later ones are given a numeric
+        suffix, such as `Button-2`. An element gets exactly one class, the class of
+        its own component.
+
+        Two markers carry layout details that CSS classes can't express, and
+        never carry styling of their own:
+
+        - flow
+            A block whose children are all blocks gets the attribute
+            `data-emul-flow` set to `column`, which lays it out as a flex column
+            so margins never collapse, as described in the layout rules.
+        - clamp
+            The text of an element with lineClamp is wrapped in a span with the
+            attribute `data-emul-clamp`, which carries the clamp. Browsers only
+            hide clamped lines when the clamped box is no taller than its text,
+            and the element itself may be stretched taller by its parent.
+
+        Inheritance is resolved before the CSS is written. Each class holds
+        the component's complete set of properties, after merging everything
+        it extends and applying the shorthand rule. Emul's inheritance never
+        relies on CSS combining several classes.
+
+    properties:
+        Each property becomes the CSS property it corresponds to, with the
+        same value. Shorthands are written out as the specific properties
+        they set, so the shorthand rule gives the same result in CSS as in
+        Emul.
+
+        There are two exceptions:
+
+        - htmlTag
+            Sets the element's tag name, and is not written as CSS at all.
+        - lineClamp
+            Is written as the CSS browsers need for it to work today, which is
+            `-webkit-line-clamp` together with the display, box orientation
+            and overflow settings it depends on.
+
+    fonts:
+        The head links the Google Fonts stylesheet for exactly the families,
+        weights and styles the composition uses, as described in @{Fonts}.
+
+    reset:
+        The stylesheet begins with a reset rule that applies to every
+        element. It removes all browser default styling, then sets every
+        property to its Emul initial value. Because every element sets every
+        inheritable CSS property explicitly, nothing cascades from parent to
+        child. An element looks the way its own component says, and no other
+        way.
+
+        The reset also sets `box-sizing` to `border-box`, matching Emul's
+        sizing, where width and height include padding and border.
+
+    example:
+        ```emul
+        \\\
+        component Card:
+            padding: 24px
+            backgroundColor: #ffffff
+
+        component Title:
+            htmlTag: h2
+            fontSize: 20px
+
+        composition Example {
+            Card {
+                Title { "Hello" }
+                "Plain text inside the card"
+            }
+        }
+        \\\
+        ```
+
+        This becomes a body holding a `div` with the class `Card`. Inside it
+        are an `h2` with the class `Title` holding the text "Hello", then the
+        text node "Plain text inside the card".

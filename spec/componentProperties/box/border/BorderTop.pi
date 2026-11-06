@@ -1,0 +1,24 @@
+export anchor BorderTop:
+    description:
+        Shorthand that sets the width, style and colour of the component's top border only. A border given a style but no width is 1px wide.
+
+    identifier: borderTop
+
+    cssProperty:
+        Corresponds to the CSS `border-top` property.
+
+    values:
+        - `none`
+        - `<border-width>? <border-style> <border-color>?`
+
+    initial: none
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            borderTop: 1px solid #e4e4e7
+        \\\
+        ```

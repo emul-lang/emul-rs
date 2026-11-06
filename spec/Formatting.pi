@@ -1,0 +1,136 @@
+from ./Cli import Cli
+from ./Comments import Comments
+from ./Modules import Modules
+
+export anchor Formatting:
+    description:
+        `emul format` rewrites `.emul` files into one canonical layout, as
+        described in @{Cli}. Its rules take Piton's formatter as the base, and
+        borrow from Prettier where Piton has nothing to say. Like both, it is
+        opinionated and not configurable.
+
+    guarantees:
+        - meaning
+            Formatting never changes what a file means. The same components
+            and compositions are rendered exactly the same way before and
+            after.
+        - idempotent
+            Formatting an already formatted file changes nothing.
+
+    whitespace:
+        - indentation
+            Four spaces per level, never tabs, as with Piton.
+        - lineWidth
+            Lines aim to fit in 80 columns, as with Piton and Prettier. A
+            single value that can't be broken, such as a long property value,
+            may run past it.
+        - trailingSpaces
+            Spaces at the ends of lines are removed.
+        - lineEndings
+            Lines end with a single line feed, and the file ends with exactly
+            one.
+        - blankLines
+            Runs of blank lines become one blank line, as Prettier does. A
+            single blank line the author left between properties or entries
+            is kept, since it usually groups related lines.
+
+    fileLayout:
+        A file is laid out in this order: imports, then one blank line, then
+        declarations, with exactly one blank line between declarations. The
+        order of declarations is kept as written.
+
+    imports:
+        Imports follow Piton's rules, described in @{Modules}:
+
+        - sorting
+            Imports are sorted by path, and the names in each are sorted.
+        - lineBreaks
+            An import with more than two names, or one that would pass 80
+            columns, is split with each name on its own indented line.
+        - extensions
+            The `.emul` extension is removed from paths.
+
+    components:
+        - declaration
+            One space on each side of `extends`, a comma and a space between
+            the components it lists, and the colon directly after the last
+            name, as in `component Pill extends Rounded, Spacious:`.
+        - properties
+            One property per line, indented one level, with no space before
+            the colon and one space after it.
+        - order
+            Properties are kept in the order they were written. Their order
+            has no meaning, but authors often group them deliberately, so the
+            formatter does not sort them.
+
+    values:
+        - spacing
+            Runs of spaces between parts become one space. Commas get no space
+            before and one after. Slashes get one space on each side, as in
+            `16 / 9`.
+        - functions
+            No space between a function's name and its opening parenthesis,
+            and none just inside the parentheses, as in `rgba(0, 0, 0, 0.5)`.
+        - colours
+            Hex colours are written in lowercase.
+        - otherwise
+            Values are otherwise left as written. Units, keywords, number
+            formats and escapes are not rewritten.
+
+    compositions:
+        - opening
+            The opening brace of every body goes on the same line as the name,
+            after one space.
+        - shortBodies
+            A body with no children is kept on one line, with one space inside
+            each brace and entries separated by a comma and a space, if it
+            fits in 80 columns. An empty body is written as a pair of braces
+            with nothing between them.
+        - longBodies
+            A body with children, or one that does not fit on one line, has
+            one entry per line, indented one level, and no commas. Its closing
+            brace goes on its own line, level with the instance's name.
+        - quotes
+            Quoted text and quoted values keep their quotes and their content
+            exactly.
+
+    comments:
+        Comments follow Piton's rule, described in @{Comments}. The formatter
+        puts one space between the `//` and the comment text, and indents
+        the comment to match the line after it. It leaves the rest of the
+        comment alone, so commented-out code is kept intact.
+
+    example:
+        Before formatting:
+
+        ```emul
+        \\\
+        from ./Buttons.emul import Secondary,Primary
+        component   Card  extends Base,Shadowed :
+          padding:24px    32px
+          backgroundColor : #FFFFFF
+        //main card
+        composition Home{Card{
+            "Welcome"   ,Primary{"Start"}}}
+        \\\
+        ```
+
+        After formatting:
+
+        ```emul
+        \\\
+        from ./Buttons import Primary, Secondary
+
+        component Card extends Base, Shadowed:
+            padding: 24px 32px
+            backgroundColor: #ffffff
+
+        // main card
+        composition Home {
+            Card {
+                "Welcome"
+                Primary { "Start" }
+            }
+        }
+        \\\
+        ```

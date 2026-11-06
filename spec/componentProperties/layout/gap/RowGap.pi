@@ -1,0 +1,24 @@
+export anchor RowGap:
+    description:
+        Sets the space between rows of children in a container.
+
+    identifier: rowGap
+
+    cssProperty:
+        Corresponds to the CSS `row-gap` property.
+
+    values:
+        - `<length>`
+        - `<percentage>`
+
+    initial: 0
+
+    appliesTo: Flex and grid containers.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            rowGap: 8px
+        \\\
+        ```

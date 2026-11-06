@@ -1,0 +1,24 @@
+export anchor ColumnGap:
+    description:
+        Sets the space between columns of children in a container.
+
+    identifier: columnGap
+
+    cssProperty:
+        Corresponds to the CSS `column-gap` property.
+
+    values:
+        - `<length>`
+        - `<percentage>`
+
+    initial: 0
+
+    appliesTo: Flex and grid containers.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            columnGap: 8px
+        \\\
+        ```

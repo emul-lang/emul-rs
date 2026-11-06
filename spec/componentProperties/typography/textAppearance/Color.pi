@@ -1,0 +1,23 @@
+export anchor Color:
+    description:
+        Sets the colour of the component's own text and text decorations. It does not pass down to child instances; a child that should share the colour must set it, or extend a component that does.
+
+    identifier: color
+
+    cssProperty:
+        Corresponds to the CSS `color` property.
+
+    values:
+        - `<color>`
+
+    initial: #000000
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            color: #dc2626
+        \\\
+        ```

@@ -1,0 +1,24 @@
+export anchor BorderWidth:
+    description:
+        Sets the thickness of the component's borders. One value sets all sides; two set top/bottom then left/right; three set top, left/right, bottom; four set top, right, bottom, left. A border is only drawn when its style is not none.
+
+    identifier: borderWidth
+
+    cssProperty:
+        Corresponds to the CSS `border-width` property.
+
+    values:
+        - `<length>`
+        - `<top> <right>? <bottom>? <left>?`
+
+    initial: 0
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            borderWidth: 2px
+        \\\
+        ```

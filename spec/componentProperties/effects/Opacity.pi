@@ -1,0 +1,24 @@
+export anchor Opacity:
+    description:
+        Sets the transparency of the whole component, including its children. `0` is fully transparent and `1` fully opaque. Any value below `1` creates a new stacking context.
+
+    identifier: opacity
+
+    cssProperty:
+        Corresponds to the CSS `opacity` property.
+
+    values:
+        - `<number> from 0 to 1`
+        - `<percentage>`
+
+    initial: 1
+
+    appliesTo: All components.
+
+    example:
+        ```emul
+        \\\
+        component Example:
+            opacity: 0.5
+        \\\
+        ```
