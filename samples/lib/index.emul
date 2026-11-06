@@ -9,7 +9,11 @@ from ./DefaultButton export *
 from ./Grid export *
 from ./Hero export *
 from ./MyButton export *
+from ./Overlay export *
 from ./Page export *
+from ./Row export *
 from ./SecondaryButton export *
+from ./Stack export *
 from ./Strong export *
+from ./Surface export *
 from ./Title export *

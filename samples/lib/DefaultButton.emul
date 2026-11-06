@@ -1,6 +1,7 @@
-export component DefaultButton:
+from ./Row import Row
+
+export component DefaultButton extends Row:
     htmlTag: button
-    display: flex
     alignItems: center
     borderRadius: 4px
     backgroundColor: #e4e4e7

@@ -1,0 +1,4 @@
+// Lays its children out in a column.
+export component Stack:
+    display: flex
+    flexDirection: column

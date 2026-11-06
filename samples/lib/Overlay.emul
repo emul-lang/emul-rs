@@ -1,0 +1,3 @@
+// Taken out of the flow and placed against the nearest positioned ancestor.
+export component Overlay:
+    position: absolute

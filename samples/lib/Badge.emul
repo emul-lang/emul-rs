@@ -1,5 +1,6 @@
-export component Badge:
-    position: absolute
+from ./Overlay import Overlay
+
+export component Badge extends Overlay:
     top: 8px
     right: 8px
     zIndex: 2

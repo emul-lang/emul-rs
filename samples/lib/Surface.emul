@@ -1,0 +1,3 @@
+// A plain white panel for content to sit on.
+export component Surface:
+    backgroundColor: #ffffff

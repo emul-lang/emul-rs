@@ -1,7 +1,8 @@
-export component Card:
-    backgroundColor: #ffffff
+from ./Row import Row
+from ./Surface import Surface
+
+export component Card extends Surface, Row:
     borderRadius: 12px
     boxShadow: 0 4px 12px rgba(0, 0, 0, 0.12)
     overflow: hidden
-    display: flex
     gap: 32px

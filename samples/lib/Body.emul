@@ -1,5 +1,5 @@
-export component Body:
+from ./Stack import Stack
+
+export component Body extends Stack:
     padding: 16px
-    display: flex
-    flexDirection: column
     gap: 8px

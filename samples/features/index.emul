@@ -1,9 +1,12 @@
-from ../lib import Badge, Box
+from ../lib import
+    Badge
+    Box
+    Grid
+    Overlay
 
-component Stage:
+component Stage extends Grid:
     position: relative
     padding: 24px
-    display: grid
     gridTemplateColumns: 200px 1fr 1fr
     gridTemplateRows: auto auto auto
     gridTemplateAreas: "side top top" "side a b" "side c d"
@@ -50,8 +53,7 @@ component D extends Box:
     textTransform: uppercase
     fontWeight: 800
 
-component Under:
-    position: absolute
+component Under extends Overlay:
     left: 0
     bottom: 0
     width: 120px

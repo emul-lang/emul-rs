@@ -1,0 +1,4 @@
+// Lays its children out in a row.
+export component Row:
+    display: flex
+    flexDirection: row

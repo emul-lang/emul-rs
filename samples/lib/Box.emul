@@ -1,6 +1,7 @@
-export component Box:
+from ./Surface import Surface
+
+export component Box extends Surface:
     padding: 12px
-    backgroundColor: #ffffff
     borderTop: 4px solid #10b981
     borderBottom: 4px double #0ea5e9
     boxShadow: inset 0 0 0 2px rgba(0, 0, 0, 0.06), 0 8px 24px -8px rgba(0, 0, 0, 0.3)
