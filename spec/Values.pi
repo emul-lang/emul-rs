@@ -1,3 +1,4 @@
+from ./Errors import Errors
 from ./Escapes import Escapes
 from ./Layout import Layout
 
@@ -29,7 +30,9 @@ export anchor Values:
         - parentheses
             Group the arguments of a function, such as `rgba()` or
             `repeat()`. Commas and slashes inside parentheses belong to the
-            function and do not split the value.
+            function and do not split the value. Parentheses with no function
+            name before them hold an arithmetic expression, as described
+            under arithmetic.
         - quotes
             Group text that contains spaces, such as a typeface name like
             `"Helvetica Neue"`, or the row strings of `gridTemplateAreas`.
@@ -74,6 +77,216 @@ export anchor Values:
             `flexGrow`, `lineHeight` and `scale`.
         - integers
             Whole numbers, for properties such as `zIndex` and `lineClamp`.
+
+    arithmetic:
+        Values can be calculated with operators. A calculation is written
+        inside parentheses with no function name before them, such as
+        `padding: (8px * 2) (24px / 2)` or `width: (100% - 20%)`. Emul
+        calculates each expression to one number, with its unit, before the
+        property reads it. The property then checks the result exactly as if
+        it had been written out, so `gap: (8px * 2)` is the same as
+        `gap: 16px`, and a result that the property does not accept is an
+        `invalid-value` error.
+
+        An expression may appear wherever a single number or size may,
+        including inside a function, such as
+        `rgba((200 + 55), 0, 0, (1 - 0.5))`. It holds only numbers, with or
+        without a unit, the truth values `true` and `false`, the operators
+        described here, and further parentheses to group. Keywords such as
+        `auto`, colours and functions can't be part of an expression.
+
+    operators:
+        The arithmetic operators work on numbers and sizes:
+
+        - +
+            Adds two values with the same unit.
+        - -
+            Subtracts the right value from the left. Both have the same unit.
+        - *
+            Multiplies two values. At least one of them is a plain number,
+            and the result has the unit of the other.
+        - /
+            Divides the left value by the right. If the right value is a plain
+            number, the result has the unit of the left. If both have the same
+            unit, the result is a plain number, as in `(32px / 8px)`, which is
+            `4`.
+        - %
+            The remainder after dividing the left value by the right, with
+            the sign of the left value, so `(-7 % 3)` is `-1`. The right value
+            is a plain number or has the unit of the left. The result has the
+            unit of the left.
+
+        The ternary operator, described under ternary, chooses between two
+        values: `condition ? a : b`.
+
+    comparisons:
+        The comparison operators compare two numbers or sizes and give a
+        truth value, `true` or `false`:
+
+        - ==
+            Equal.
+        - !=
+            Not equal.
+        - <
+            Less than.
+        - <=
+            Less than or equal.
+        - >
+            Greater than.
+        - >=
+            Greater than or equal.
+
+        The two values must have the same unit, so `(8px < 50%)` and
+        `(8px == 8)` are `incompatible-units` errors. Units are never
+        converted. Numbers are compared as Emul writes them, rounded to four
+        decimal places, so `(0.1 + 0.2 == 0.3)` is `true`.
+
+        `==` and `!=` may also compare two truth values, as in
+        `(true != false)`. The other comparison operators can't take a truth
+        value, and a truth value is never equal to a number; both are
+        `invalid-operand` errors. Since a comparison gives a truth value,
+        comparisons can't be chained: `(1 < 2 < 3)` is an error, and is
+        written `(1 < 2 && 2 < 3)` instead.
+
+    truthValues:
+        The truth values are written `true` and `false`. They come from the
+        comparison and logical operators, or are written directly in an
+        expression.
+
+        Wherever a condition is read, by the logical operators and by the
+        ternary operator, every value is either truthy or falsy:
+
+        - falsy
+            `false`, and zero with any unit or none, such as `0`, `0px` and
+            `0%`.
+        - truthy
+            `true`, and every number that is not zero, including negative
+            numbers and fractions, such as `-2px` and `0.5`.
+
+        A property can't take a truth value. A truth value is used as the
+        condition of the ternary operator, or as a value of the logical
+        operators or of `==` and `!=`. An expression whose final result is a
+        truth value, such as `gap: (4px > 2px)`, is a `boolean-result` error.
+        The arithmetic operators can't take a truth value, so `(true + 1)` is
+        an `invalid-operand` error.
+
+    logicalOperators:
+        The logical operators combine conditions. Each takes any values,
+        reads them as truthy or falsy, and gives a truth value:
+
+        - &&
+            And. `true` when both values are truthy, as in
+            `(4px > 2px && 1 < 2)`.
+        - ||
+            Or. `true` when either value is truthy, as in
+            `(0px || 50%)`.
+        - !
+            Not. Written before a single value, `true` when that value is
+            falsy, as in `(!false)` or `(!(1px > 2px))`.
+
+        Both values of `&&` and `||` are always calculated, so an error in
+        either one is reported even when the other decides the result.
+        Single `&` and `|` are not operators, and are `invalid-expression`
+        errors.
+
+    ternary:
+        The ternary operator `condition ? a : b` gives `a` when the condition
+        is truthy and `b` when it is falsy, as in
+        `gap: (4px > 2px ? 16px : 8px)`, which is `16px`. The condition is
+        usually a comparison or a logical expression, but any value can be
+        the condition, read as truthy or falsy as described under
+        truthValues.
+
+        Both `a` and `b` are full expressions, and they may have different
+        units, since only one of them is the result. Both are calculated, so
+        an error in either one is reported. A ternary groups from the right,
+        so `(1 > 2 ? 1px : 2 > 1 ? 2px : 3px)` reads as
+        `(1 > 2 ? 1px : (2 > 1 ? 2px : 3px))`, which is `2px`.
+        A ternary may sit inside parentheses within a larger expression, as
+        in `((1 < 2 ? 10px : 0px) * 2)`.
+
+        The condition, the `?` and the `:` must all be present: a `?` with no
+        condition before it, a `?` with no `:` after it, a `:` with no `?`
+        before it, or a `?` or `:` with no value after it is an
+        `invalid-condition` error.
+
+    operatorSyntax:
+        Each binary operator, and each `?` and `:`, has a space on each side,
+        as in `(8px + 4px)` or `(4px > 2px ? 1 : 2)`. `!` is written
+        directly before its value, or with spaces after it, and has a space
+        or `(` before it. This keeps the operators apart from the rest of
+        the value syntax:
+
+        - slash separator
+            A `/` is division only inside an expression's parentheses.
+            Anywhere else, such as in `aspectRatio: 16 / 9`, it stays the
+            separator described under splitting.
+        - percentage unit
+            A `%` written directly after a number, with no space, is the
+            percentage unit, as in `50%`. A `%` with a space on each side, in
+            an expression, is the remainder operator. So `(50% % 3)` is the
+            remainder of `50%` divided by `3`.
+        - negative numbers
+            A `-` written directly before a number, with no space, is part of
+            the number, as in `-4px`. A `-` with a space on each side is
+            subtraction, so `(10px - -4px)` is `14px`.
+        - colons
+            A property's name ends at the first colon on its line, so the `:`
+            of a ternary inside its value does not split the line.
+
+    precedence:
+        From first to last, an expression is calculated in this order.
+        Operators on the same level are calculated from left to right, except
+        the ternary operator, which groups from the right.
+
+        - parentheses
+            Inner parentheses are calculated before what is around them.
+        - not
+            `!`.
+        - multiplication
+            `*`, `/` and `%`.
+        - addition
+            `+` and `-`.
+        - ordering
+            `<`, `<=`, `>` and `>=`.
+        - equality
+            `==` and `!=`.
+        - and
+            `&&`.
+        - or
+            `||`.
+        - ternary
+            `? :`.
+
+        So `(2px + 3 * 4px)` is `14px`, `((2 + 3) * 4px)` is `20px`,
+        `(2px + 2px == 2 * 2px)` is `true`, and
+        `(true || false && false)` is `true`. Because `!` comes first,
+        `(!1 == false)` reads as `((!1) == false)`, which is `true`.
+
+    arithmeticErrors:
+        The errors an expression can give are listed in @{Errors}:
+
+        - invalid-expression
+            The expression is malformed: an operator without the spaces it
+            needs, an operator with no value before or after it, two values
+            with no operator between them, empty or unclosed parentheses, a
+            single `=`, `&` or `|`, or something other than a number, a
+            truth value or an operator inside.
+        - incompatible-units
+            The units of the two values don't fit the operator, such as
+            `(8px + 50%)`, `(8px - 2)`, `(8px * 2px)` or `(8px < 50%)`.
+        - division-by-zero
+            The right value of `/` or `%` is zero.
+        - invalid-operand
+            A truth value is used with an arithmetic operator or with `<`,
+            `<=`, `>` or `>=`, or `==` or `!=` compares a truth value with a
+            number.
+        - invalid-condition
+            A ternary is missing its condition, its `?`, its `:`, or a value
+            after either of them.
+        - boolean-result
+            The final result of an expression is a truth value, which no
+            property takes.
 
     colours:
         Wherever a property's entry lists `<color>`, the value is written in

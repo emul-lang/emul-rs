@@ -1,4 +1,5 @@
 from ./Components import Components
+from ./Compositions import Compositions
 from ./Config import Config
 
 export anchor Modules:
@@ -86,12 +87,14 @@ export anchor Modules:
 
     circularImports:
         Circular imports are supported and are not an error. Two files may
-        import from each other. The only cycle that is an error is a component
+        import from each other. The only cycles that are errors are a component
         extending itself, directly or through other components, as described
-        in @{Components}.
+        in @{Components}, and a composition containing itself, as described
+        in @{Compositions}.
 
     rendering:
         Every composition exported from the entry file is rendered. The entry
         file is set in @{Config}. A
         composition that is not exported, or only exported from some other
-        file, is not rendered on its own.
+        file, is not rendered on its own, though it can still be instanced in
+        another composition, as described in @{Compositions}.

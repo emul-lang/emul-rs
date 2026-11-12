@@ -1,0 +1,519 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "piton",
+  "scopeName": "source.piton",
+  "fileTypes": [
+    "pi"
+  ],
+  "comments": "Every scope this grammar gives a byte is one of the canonical names in editors/fixtures/scopes.toml, and what it paints is tested against the parser by crates/piton-syntax/tests/highlight_corpus.rs. Prose has no scope: it is shown in the plain text style, so the structure around it stands out.",
+  "patterns": [
+    {
+      "include": "#escape-block"
+    },
+    {
+      "include": "#fence-piton"
+    },
+    {
+      "include": "#fence-json"
+    },
+    {
+      "include": "#fence-yaml"
+    },
+    {
+      "include": "#comment"
+    },
+    {
+      "include": "#import"
+    },
+    {
+      "include": "#pass"
+    },
+    {
+      "include": "#declaration"
+    },
+    {
+      "include": "#literal-value"
+    },
+    {
+      "include": "#property"
+    },
+    {
+      "include": "#list-marker"
+    },
+    {
+      "include": "#merge-marker"
+    },
+    {
+      "include": "#inline-escape"
+    },
+    {
+      "include": "#interpolation"
+    }
+  ],
+  "repository": {
+    "comment": {
+      "comments": "A comment runs to the end of the line and has to be on its own line: at the end of a line of code, `//` is just text. There is no block form.",
+      "match": "^\\s*(//).*$",
+      "name": "comment.line.double-slash.piton"
+    },
+    "escape-block": {
+      "comments": "A line of backslashes opens a block whose contents are literal, closed by a line of the same number.",
+      "begin": "^(\\s*)(\\\\+)\\s*$",
+      "end": "^\\s*(\\2)\\s*$",
+      "beginCaptures": {
+        "2": {
+          "name": "constant.character.escape.piton"
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "constant.character.escape.piton"
+        }
+      },
+      "contentName": "string.unquoted.verbatim.piton",
+      "patterns": []
+    },
+    "fence-piton": {
+      "comments": "A ```piton fence is text, and the lines inside it are Piton like any others. Only an escape block directly inside it is highlighted as piton.",
+      "begin": "^\\s*```piton\\s*$",
+      "end": "^\\s*```\\s*$",
+      "patterns": [
+        {
+          "begin": "^(\\s*)(\\\\+)\\s*$",
+          "end": "^\\s*(\\2)\\s*$",
+          "beginCaptures": {
+            "2": {
+              "name": "constant.character.escape.piton"
+            }
+          },
+          "endCaptures": {
+            "1": {
+              "name": "constant.character.escape.piton"
+            }
+          },
+          "contentName": "meta.embedded.block.piton",
+          "patterns": [
+            {
+              "include": "source.piton"
+            }
+          ]
+        },
+        {
+          "include": "$self"
+        }
+      ]
+    },
+    "fence-json": {
+      "comments": "A ```json fence is text, and the lines inside it are Piton like any others. Only an escape block directly inside it is highlighted as json.",
+      "begin": "^\\s*```json\\s*$",
+      "end": "^\\s*```\\s*$",
+      "patterns": [
+        {
+          "begin": "^(\\s*)(\\\\+)\\s*$",
+          "end": "^\\s*(\\2)\\s*$",
+          "beginCaptures": {
+            "2": {
+              "name": "constant.character.escape.piton"
+            }
+          },
+          "endCaptures": {
+            "1": {
+              "name": "constant.character.escape.piton"
+            }
+          },
+          "contentName": "meta.embedded.block.json",
+          "patterns": [
+            {
+              "include": "source.json"
+            }
+          ]
+        },
+        {
+          "include": "$self"
+        }
+      ]
+    },
+    "fence-yaml": {
+      "comments": "A ```yaml fence is text, and the lines inside it are Piton like any others. Only an escape block directly inside it is highlighted as yaml.",
+      "begin": "^\\s*```yaml\\s*$",
+      "end": "^\\s*```\\s*$",
+      "patterns": [
+        {
+          "begin": "^(\\s*)(\\\\+)\\s*$",
+          "end": "^\\s*(\\2)\\s*$",
+          "beginCaptures": {
+            "2": {
+              "name": "constant.character.escape.piton"
+            }
+          },
+          "endCaptures": {
+            "1": {
+              "name": "constant.character.escape.piton"
+            }
+          },
+          "contentName": "meta.embedded.block.yaml",
+          "patterns": [
+            {
+              "include": "source.yaml"
+            }
+          ]
+        },
+        {
+          "include": "$self"
+        }
+      ]
+    },
+    "import": {
+      "patterns": [
+        {
+          "comments": "`use` brings keywords into scope and nothing else. Imports are top-level only, so an indented `use the spec` is prose.",
+          "match": "^(use)\\s+(\\S+)",
+          "captures": {
+            "1": {
+              "name": "keyword.control.piton"
+            },
+            "2": {
+              "name": "string.unquoted.module-path.piton"
+            }
+          }
+        },
+        {
+          "comments": "`from ./x import A, b` may continue on indented lines, so the rule runs until a line at the margin or a blank one. Only capitalisation says whether an imported name is an anchor.",
+          "begin": "^(from)\\s+(\\S+)\\s+(import|export)(?=\\s|$)",
+          "end": "^(?=\\S)|^\\s*$",
+          "beginCaptures": {
+            "1": {
+              "name": "keyword.control.piton"
+            },
+            "2": {
+              "name": "string.unquoted.module-path.piton"
+            },
+            "3": {
+              "name": "keyword.control.piton"
+            }
+          },
+          "patterns": [
+            {
+              "match": "(?<![\\p{L}\\p{N}_-])\\p{Lu}[\\p{L}\\p{N}_-]*",
+              "name": "entity.name.type.piton"
+            },
+            {
+              "match": "(?<![\\p{L}\\p{N}_-])[\\p{Ll}_][\\p{L}\\p{N}_-]*",
+              "name": "variable.other.piton"
+            }
+          ]
+        },
+        {
+          "comments": "`export Name` re-exports something already declared or imported.",
+          "match": "^(export)\\s+([\\p{L}_][\\p{L}\\p{N}_-]*)\\s*$",
+          "captures": {
+            "1": {
+              "name": "keyword.control.piton"
+            },
+            "2": {
+              "patterns": [
+                {
+                  "match": "(?<![\\p{L}\\p{N}_-])\\p{Lu}[\\p{L}\\p{N}_-]*",
+                  "name": "entity.name.type.piton"
+                },
+                {
+                  "match": "(?<![\\p{L}\\p{N}_-])[\\p{Ll}_][\\p{L}\\p{N}_-]*",
+                  "name": "variable.other.piton"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "declaration": {
+      "comments": "`[export] [abstract] <keyword> Name [extends A, B] [as kw]:` -- the keyword may be user-defined. Declarations are top-level only, so the line starts at the margin and ends at its colon.",
+      "match": "^(?:(export)\\s+)?(?:(abstract)\\s+)?([a-z][a-z0-9]*(?:-[a-z0-9]+)*)\\s+([\\p{L}_][\\p{L}\\p{N}_-]*)(?:\\s+(extends)\\s+([^:]+?))?(?:\\s+(as)\\s+([a-z][a-z0-9]*(?:-[a-z0-9]+)*))?\\s*:\\s*$",
+      "captures": {
+        "1": {
+          "name": "keyword.control.piton"
+        },
+        "2": {
+          "name": "keyword.control.piton"
+        },
+        "3": {
+          "name": "keyword.control.piton"
+        },
+        "4": {
+          "name": "entity.name.type.declaration.piton"
+        },
+        "5": {
+          "name": "keyword.control.piton"
+        },
+        "6": {
+          "patterns": [
+            {
+              "match": "[\\p{L}_][\\p{L}\\p{N}_-]*",
+              "name": "entity.name.type.piton"
+            }
+          ]
+        },
+        "7": {
+          "name": "keyword.control.piton"
+        },
+        "8": {
+          "name": "keyword.control.piton"
+        }
+      }
+    },
+    "literal-value": {
+      "comments": "A value that is exactly a number, `true`, `false` or `null` is that literal. `3 apples`, `true story` and `.5` are text.",
+      "patterns": [
+        {
+          "match": "^\\s*(?:(export)\\s+)?([\\p{L}\\p{N}_][\\p{L}\\p{N}_-]*)((?:::\\s+(?:extends\\s+)?[\\p{L}_][\\p{L}\\p{N}_-]*(?:\\[\\])?)*)(:)\\s+(?:(-?\\d(?:_?\\d)*(?:\\.\\d(?:_?\\d)*)?)|(true|false|null))\\s*$",
+          "captures": {
+            "1": {
+              "name": "keyword.control.piton"
+            },
+            "2": {
+              "name": "variable.other.property.piton"
+            },
+            "3": {
+              "patterns": [
+                {
+                  "match": "(::)\\s*(?:(extends)\\s+)?(?<![\\p{L}\\p{N}_-])(string|number|boolean|null|list|dictionary|anchor|reference|any|simple|complex)(?![\\p{L}\\p{N}_-])(\\[\\])?",
+                  "captures": {
+                    "2": {
+                      "name": "keyword.control.piton"
+                    },
+                    "3": {
+                      "name": "support.type.builtin.piton"
+                    }
+                  }
+                },
+                {
+                  "match": "(::)\\s*(?:(extends)\\s+)?([\\p{L}_][\\p{L}\\p{N}_-]*)(\\[\\])?",
+                  "captures": {
+                    "2": {
+                      "name": "keyword.control.piton"
+                    },
+                    "3": {
+                      "name": "entity.name.type.piton"
+                    }
+                  }
+                }
+              ]
+            },
+            "5": {
+              "name": "constant.numeric.piton"
+            },
+            "6": {
+              "name": "constant.language.piton"
+            }
+          }
+        },
+        {
+          "match": "^\\s*(-)\\s+(?:(-?\\d(?:_?\\d)*(?:\\.\\d(?:_?\\d)*)?)|(true|false|null))\\s*$",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.list.begin.piton"
+            },
+            "2": {
+              "name": "constant.numeric.piton"
+            },
+            "3": {
+              "name": "constant.language.piton"
+            }
+          }
+        }
+      ]
+    },
+    "property": {
+      "comments": "A key is letters, digits, `_` and `-`, then any constraints, then a colon before whitespace or the end of the line -- the parser's rule. A required property in an abstract anchor has constraints and no colon. Keywords are keys here too.",
+      "patterns": [
+        {
+          "match": "^\\s*(?:(export)\\s+)?([\\p{L}\\p{N}_][\\p{L}\\p{N}_-]*)((?:::\\s+(?:extends\\s+)?[\\p{L}_][\\p{L}\\p{N}_-]*(?:\\[\\])?)*)(:)(?=\\s|$)",
+          "captures": {
+            "1": {
+              "name": "keyword.control.piton"
+            },
+            "2": {
+              "name": "variable.other.property.piton"
+            },
+            "3": {
+              "patterns": [
+                {
+                  "match": "(::)\\s*(?:(extends)\\s+)?(?<![\\p{L}\\p{N}_-])(string|number|boolean|null|list|dictionary|anchor|reference|any|simple|complex)(?![\\p{L}\\p{N}_-])(\\[\\])?",
+                  "captures": {
+                    "2": {
+                      "name": "keyword.control.piton"
+                    },
+                    "3": {
+                      "name": "support.type.builtin.piton"
+                    }
+                  }
+                },
+                {
+                  "match": "(::)\\s*(?:(extends)\\s+)?([\\p{L}_][\\p{L}\\p{N}_-]*)(\\[\\])?",
+                  "captures": {
+                    "2": {
+                      "name": "keyword.control.piton"
+                    },
+                    "3": {
+                      "name": "entity.name.type.piton"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "match": "^\\s*(?:(export)\\s+)?([\\p{L}\\p{N}_][\\p{L}\\p{N}_-]*)((?:::\\s+(?:extends\\s+)?[\\p{L}_][\\p{L}\\p{N}_-]*(?:\\[\\])?)+)\\s*$",
+          "captures": {
+            "1": {
+              "name": "keyword.control.piton"
+            },
+            "2": {
+              "name": "variable.other.property.piton"
+            },
+            "3": {
+              "patterns": [
+                {
+                  "match": "(::)\\s*(?:(extends)\\s+)?(?<![\\p{L}\\p{N}_-])(string|number|boolean|null|list|dictionary|anchor|reference|any|simple|complex)(?![\\p{L}\\p{N}_-])(\\[\\])?",
+                  "captures": {
+                    "2": {
+                      "name": "keyword.control.piton"
+                    },
+                    "3": {
+                      "name": "support.type.builtin.piton"
+                    }
+                  }
+                },
+                {
+                  "match": "(::)\\s*(?:(extends)\\s+)?([\\p{L}_][\\p{L}\\p{N}_-]*)(\\[\\])?",
+                  "captures": {
+                    "2": {
+                      "name": "keyword.control.piton"
+                    },
+                    "3": {
+                      "name": "entity.name.type.piton"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "list-marker": {
+      "comments": "A list item is never a key: `- Settings:` is the string `Settings:`.",
+      "match": "^\\s*(-)(?=\\s|$)",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.list.begin.piton"
+        }
+      }
+    },
+    "merge-marker": {
+      "comments": "`+` merges and deduplicates; `++` concatenates and keeps duplicates.",
+      "match": "^\\s*(\\+\\+?)(?=\\s|$)",
+      "captures": {
+        "1": {
+          "name": "keyword.operator.piton"
+        }
+      }
+    },
+    "inline-escape": {
+      "comments": "`\\ {1 + 2} \\` is the text `{1 + 2}`: an inline escape opens nothing, so it has no inner patterns and comes before the interpolation rule.",
+      "begin": "(?<!\\\\)(\\\\)(?!\\\\) ",
+      "end": " (\\\\)(?!\\\\)|$",
+      "beginCaptures": {
+        "1": {
+          "name": "constant.character.escape.piton"
+        }
+      },
+      "endCaptures": {
+        "1": {
+          "name": "constant.character.escape.piton"
+        }
+      },
+      "patterns": []
+    },
+    "interpolation": {
+      "comments": "Four sigils: intrinsic, string, numeric, and reference.",
+      "begin": "(\\$\\{|#\\{|@\\{|\\{)",
+      "end": "\\}",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.section.embedded.piton"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.section.embedded.piton"
+        }
+      },
+      "name": "meta.embedded.expression.piton",
+      "patterns": [
+        {
+          "include": "#expression"
+        }
+      ]
+    },
+    "expression": {
+      "patterns": [
+        {
+          "include": "#interpolation"
+        },
+        {
+          "match": "(?<![\\p{L}\\p{N}_-])(true|false|null)(?![\\p{L}\\p{N}_-])",
+          "name": "constant.language.piton"
+        },
+        {
+          "match": "(?<![\\p{L}\\p{N}_-])(this|self|super)(?![\\p{L}\\p{N}_-])",
+          "name": "variable.language.piton"
+        },
+        {
+          "comments": "Numbers allow underscore separators and need a leading digit. Minus is never a prefix in an expression.",
+          "match": "(?<![\\p{L}\\p{N}_-])\\d(?:_?\\d)*(?:\\.\\d(?:_?\\d)*)?",
+          "name": "constant.numeric.piton"
+        },
+        {
+          "match": "\"(?:[^\"\\\\]|\\\\.)*\"",
+          "name": "string.quoted.double.piton"
+        },
+        {
+          "comments": "A name after `.` is a key, whatever its case.",
+          "match": "(\\.)\\s*([\\p{L}_][\\p{L}\\p{N}_-]*)",
+          "captures": {
+            "1": {
+              "name": "keyword.operator.piton"
+            },
+            "2": {
+              "name": "variable.other.property.piton"
+            }
+          }
+        },
+        {
+          "match": "\\+\\+|==|!=|<=|>=|&&|\\|\\||[+\\-*/%<>!?:.]",
+          "name": "keyword.operator.piton"
+        },
+        {
+          "match": "\\p{Lu}[\\p{L}\\p{N}_-]*",
+          "name": "entity.name.type.piton"
+        },
+        {
+          "match": "[\\p{Ll}_][\\p{L}\\p{N}_-]*",
+          "name": "variable.other.piton"
+        }
+      ]
+    },
+    "pass": {
+      "comments": "`pass` is an intentionally empty body.",
+      "match": "^\\s*(pass)\\s*$",
+      "captures": {
+        "1": {
+          "name": "keyword.control.piton"
+        }
+      }
+    }
+  },
+  "displayName": "Piton"
+}

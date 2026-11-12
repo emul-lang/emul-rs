@@ -1,0 +1,19 @@
+use ./lib
+
+export test MathOperators:
+    expects:
+        Should be able to use basic math operators on values like + - / * and %
+
+export test ComparisonOperators:
+    expects:
+        Should be able to use standard comparison operators to evaluate a truthy
+        or falsy value
+
+export test LogicalOperators:
+    expects:
+        Should be able to use logical operators to evaluate a truthy or falsy
+        value
+
+export test TernaryOperators:
+    expects:
+        Should be able to use ternary operators

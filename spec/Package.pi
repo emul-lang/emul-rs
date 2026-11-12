@@ -1,0 +1,97 @@
+from ./Cli import Cli
+from ./Comments import Comments
+from ./Components import Components
+from ./Compositions import Compositions
+from ./Config import Config
+from ./Errors import Errors
+from ./Escapes import Escapes
+from ./Fonts import Fonts
+from ./Formatting import Formatting
+from ./HtmlOutput import HtmlOutput
+from ./Init import Init
+from ./Layout import Layout
+from ./Modules import Modules
+from ./Output import Output
+from ./OutputSize import OutputSize
+from ./PngOutput import PngOutput
+from ./Preview import Preview
+from ./SvgOutput import SvgOutput
+from ./Syntax import Syntax
+from ./Thesis import Thesis
+from ./Values import Values
+
+export anchor Package:
+    description:
+        The Emul specification is also a Piton package with the name `emul`.
+        Another Piton project can install it with `piton tether`. Its agents
+        then get the full specification of Emul. They can use it to write
+        `.emul` files, run the `emul` command, or put Emul into a tool or a
+        build.
+
+    name: emul
+
+    root:
+        The package root is `spec/`, the source root of this project. The
+        package thus holds each spec module. The relative imports between
+        the modules stay correct after `piton tether` installs them.
+
+    declaration:
+        `piton.config.pi` declares a `piton-package` anchor with the name
+        `emul` and the root `./spec`. The `packages` list of the project
+        config holds that anchor.
+
+    entry:
+        `spec/index.pi` is the entry of the package. It exports again each
+        module in `exports`, and the `Emul` table of contents. It does not
+        export the crux skills, because a package does not carry the
+        dependencies of its project. The project entry is `spec/project.pi`.
+        That file exports again `spec/index.pi` and the crux skills.
+
+    exports:
+        - @{Thesis}
+        - @{Syntax}
+        - @{Comments}
+        - @{Escapes}
+        - @{Values}
+        - @{Components}
+        - @{Compositions}
+        - @{Modules}
+        - @{Layout}
+        - @{Errors}
+        - @{Config}
+        - @{Fonts}
+        - @{Output}
+        - @{OutputSize}
+        - @{HtmlOutput}
+        - @{SvgOutput}
+        - @{PngOutput}
+        - @{Cli}
+        - @{Init}
+        - @{Formatting}
+        - @{Preview}
+
+    componentProperties:
+        Each component property has its own module below
+        `componentProperties/`. @{Components} refers to all of them. A
+        consumer imports one property by its path, for example
+        `from emul/componentProperties/layout/Display import Display`.
+
+    excluded:
+        The package does not export `tests/`. That directory holds the
+        `piton test` statements of this project, and Piton does not run the
+        tests of an installed package. The package also does not export
+        `CommentStyle`. It is a rule for the comments of this repository, not
+        a part of the Emul language.
+
+    upToDate:
+        The package must agree with the specification at all times. Each
+        change to the specification must also keep the package correct.
+
+        When you add a spec module at the top of `spec/`, add a
+        `from ./X export *` line for it to `spec/index.pi`. Also add it to
+        `exports` in this anchor. When you remove or rename a spec module,
+        change `spec/index.pi` and `exports` in the same change. When you add
+        a component property, add it to @{Components}.
+
+        After the change, run `piton check` and `piton build`. Then run
+        `piton test --tags package`.

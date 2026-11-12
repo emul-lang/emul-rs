@@ -1,6 +1,6 @@
-//! Reads `emul.config.pi`. The config is written in Piton; this reads the subset of
-//! Piton it uses: an exported `emul-config` anchor holding settings, lists and nested
-//! per-composition sizes.
+//! Reads `emul.config.pi`. The config uses Piton. This module reads only the part of
+//! Piton that the config uses. That part is an exported `emul-config` anchor. The anchor
+//! holds settings, lists and a nested size for each composition.
 
 use crate::diag::{Diags, Span};
 use crate::values::{parse_color, tokenize, Color};
@@ -53,7 +53,7 @@ pub enum SvgFonts {
 
 #[derive(Clone, Debug)]
 pub struct Config {
-    /// The directory holding the config file, or the current directory.
+    /// The directory that holds the config file, or the current directory.
     pub base: PathBuf,
     pub root: PathBuf,
     pub entry: PathBuf,
@@ -92,7 +92,7 @@ impl Config {
         }
     }
 
-    /// The size a composition renders at, before command-line flags.
+    /// The render size of a composition, before the command-line flags apply.
     pub fn size_for(&self, name: &str) -> (u32, Height, f32) {
         let o = self.sizes.get(name);
         (
@@ -110,7 +110,7 @@ enum PVal {
     Dict(Vec<(String, Span, PVal)>),
 }
 
-/// Loads the config at `path`. Errors are reported into `diags`.
+/// Loads the config at `path`. It adds errors to `diags`.
 pub fn load(path: &Path, diags: &mut Diags) -> Config {
     let base = path.parent().map(|p| if p.as_os_str().is_empty() { Path::new(".") } else { p }).unwrap_or(Path::new(".")).to_path_buf();
     let base = std::fs::canonicalize(&base).unwrap_or(base);

@@ -1,0 +1,372 @@
+// A messaging conversation. Each message sets `side`, which aligns and colours its bubble.
+
+component Page:
+    display: flex
+    justifyContent: center
+    padding: 48px 40px
+    backgroundImage: linear-gradient(150deg, #ede9fe, #fdf2f8 60%, #fff7ed)
+
+component Window:
+    display: flex
+    flexDirection: column
+    width: 640px
+    borderRadius: 28px
+    overflow: hidden
+    backgroundColor: #ffffff
+    boxShadow: 0 40px 80px -32px rgba(76, 29, 149, 0.4), 0 1px 3px rgba(15, 23, 42, 0.06)
+
+component Header:
+    display: flex
+    alignItems: center
+    gap: 14px
+    padding: 18px 24px
+    borderBottom: 1px solid #f1f0f5
+
+component AvatarWrap:
+    position: relative
+    width: 46px
+    height: 46px
+    flexShrink: 0
+
+component Avatar:
+    attribute who: lena | me = lena
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 46px
+    height: 46px
+    borderRadius: 50%
+    fontFamily: "DM Sans"
+    fontSize: 16px
+    fontWeight: 700
+    color: #ffffff
+    backgroundImage: linear-gradient(135deg, #f472b6, #8b5cf6)
+
+    when who == me:
+        backgroundImage: linear-gradient(135deg, #38bdf8, #6366f1)
+
+component Online:
+    position: absolute
+    right: 0px
+    bottom: 1px
+    width: 12px
+    height: 12px
+    borderRadius: 50%
+    backgroundColor: #22c55e
+    border: 2px solid #ffffff
+
+component Who:
+    display: flex
+    flexDirection: column
+    gap: 2px
+    flexGrow: 1
+
+component Name:
+    fontFamily: "DM Sans"
+    fontSize: 17px
+    fontWeight: 700
+    color: #1e1b2e
+
+component Status:
+    fontFamily: "DM Sans"
+    fontSize: 13px
+    fontWeight: 500
+    color: #16a34a
+
+component HeadButton:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 40px
+    height: 40px
+    borderRadius: 12px
+    gap: 3px
+    backgroundColor: #f5f3ff
+
+// A video camera: a rounded body and a lens made from a border triangle.
+component CamBody:
+    width: 14px
+    height: 11px
+    borderRadius: 3px
+    border: 2px solid #7c3aed
+
+component CamLens:
+    width: 0px
+    height: 0px
+    borderTop: 5px solid rgba(0, 0, 0, 0)
+    borderBottom: 5px solid rgba(0, 0, 0, 0)
+    borderRight: 6px solid #7c3aed
+
+component MoreDot:
+    width: 4px
+    height: 4px
+    borderRadius: 50%
+    backgroundColor: #7c3aed
+
+component Thread:
+    display: flex
+    flexDirection: column
+    gap: 14px
+    padding: 24px
+    backgroundColor: #fbfaff
+
+component Divider:
+    display: flex
+    alignItems: center
+    gap: 12px
+    margin: 4px 0 6px
+
+component Rule:
+    flexGrow: 1
+    borderTop: 1px solid #ece9f5
+
+component DividerText:
+    fontFamily: "DM Sans"
+    fontSize: 12px
+    fontWeight: 600
+    letterSpacing: 0.5px
+    color: #9b95b3
+
+component Msg:
+    attribute side: them | me = them
+    display: flex
+    flexDirection: column
+    alignItems: flex-start
+    gap: 6px
+
+    when side == me:
+        alignItems: flex-end
+
+component Bubble:
+    attribute side: them | me = them
+    maxWidth: 400px
+    padding: 12px 16px
+    fontFamily: "DM Sans", "Noto Color Emoji"
+    fontSize: 15px
+    lineHeight: 1.5
+    color: #2a2540
+    backgroundColor: #ffffff
+    border: 1px solid #ece9f5
+    borderRadius: 20px 20px 20px 6px
+    boxShadow: 0 2px 6px -2px rgba(76, 29, 149, 0.08)
+
+    when side == me:
+        color: #ffffff
+        backgroundImage: linear-gradient(135deg, #8b5cf6, #6d28d9)
+        border: 1px solid #7c3aed
+        borderRadius: 20px 20px 6px 20px
+        boxShadow: 0 8px 18px -8px rgba(109, 40, 217, 0.55)
+
+component Meta:
+    attribute side: them | me = them
+    fontFamily: "DM Sans"
+    fontSize: 11px
+    fontWeight: 500
+    color: #a8a3bd
+    paddingLeft: 6px
+
+    when side == me:
+        paddingLeft: 0px
+        paddingRight: 6px
+
+component Card:
+    display: flex
+    flexDirection: column
+    width: 300px
+    borderRadius: 18px
+    overflow: hidden
+    backgroundColor: #ffffff
+    border: 1px solid #ece9f5
+
+component CardArt:
+    height: 120px
+    backgroundImage: radial-gradient(circle at 75% 30%, #fde68a, rgba(253, 230, 138, 0) 30%), linear-gradient(160deg, #fb923c, #db2777 55%, #4c1d95)
+
+component CardBody:
+    display: flex
+    flexDirection: column
+    gap: 4px
+    padding: 12px 16px 14px
+
+component CardTitle:
+    fontFamily: "DM Sans"
+    fontSize: 15px
+    fontWeight: 700
+    color: #1e1b2e
+
+component CardText:
+    fontFamily: "DM Sans"
+    fontSize: 13px
+    color: #78729a
+
+component Reaction:
+    fontFamily: "DM Sans", "Noto Color Emoji"
+    fontSize: 12px
+    fontWeight: 600
+    color: #6d28d9
+    padding: 3px 9px
+    marginTop: -14px
+    marginRight: 10px
+    borderRadius: 999px
+    backgroundColor: #ffffff
+    border: 1px solid #ede9fe
+    boxShadow: 0 2px 6px rgba(76, 29, 149, 0.12)
+
+component Typing:
+    display: flex
+    alignItems: center
+    gap: 5px
+    padding: 14px 16px
+    backgroundColor: #ffffff
+    border: 1px solid #ece9f5
+    borderRadius: 20px 20px 20px 6px
+
+component Dot:
+    attribute fade: one | two | three = one
+    width: 7px
+    height: 7px
+    borderRadius: 50%
+    backgroundColor: #8b5cf6
+
+    when fade == two:
+        opacity: 0.6
+
+    when fade == three:
+        opacity: 0.3
+
+component Composer:
+    display: flex
+    alignItems: center
+    gap: 12px
+    padding: 16px 20px
+    borderTop: 1px solid #f1f0f5
+
+component Attach:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 42px
+    height: 42px
+    flexShrink: 0
+    borderRadius: 50%
+    backgroundColor: #f5f3ff
+    fontFamily: "DM Sans"
+    fontSize: 22px
+    fontWeight: 500
+    color: #7c3aed
+
+component Field:
+    flexGrow: 1
+    padding: 12px 18px
+    borderRadius: 999px
+    backgroundColor: #f6f5fa
+    border: 1px solid #ece9f5
+    fontFamily: "DM Sans"
+    fontSize: 15px
+    color: #a8a3bd
+
+component Send:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 46px
+    height: 46px
+    flexShrink: 0
+    borderRadius: 50%
+    backgroundImage: linear-gradient(135deg, #8b5cf6, #6d28d9)
+    boxShadow: 0 8px 16px -6px rgba(109, 40, 217, 0.6)
+
+// A paper-plane arrow made from a border triangle.
+component SendArrow:
+    width: 0px
+    height: 0px
+    marginLeft: 4px
+    borderTop: 8px solid rgba(0, 0, 0, 0)
+    borderBottom: 8px solid rgba(0, 0, 0, 0)
+    borderLeft: 14px solid #ffffff
+
+export composition Chat {
+    Page {
+        Window {
+            Header {
+                AvatarWrap {
+                    Avatar { "LM" }
+                    Online {}
+                }
+                Who {
+                    Name { "Lena Moreau" }
+                    Status { "Online" }
+                }
+                HeadButton {
+                    CamBody {}
+                    CamLens {}
+                }
+                HeadButton {
+                    MoreDot {}
+                    MoreDot {}
+                    MoreDot {}
+                }
+            }
+            Thread {
+                Divider {
+                    Rule {}
+                    DividerText { "Today" }
+                    Rule {}
+                }
+                Msg {
+                    Bubble {
+                        "Morning! Did you get a chance to look at the venue for Saturday?"
+                    }
+                    Meta { "9:41" }
+                }
+                Msg {
+                    side: me
+                    Bubble {
+                        side: me
+                        "Just did — the rooftop one is gorgeous. Fits about 40 people."
+                    }
+                    Meta { side: me, "9:43 · Read" }
+                }
+                Msg {
+                    Card {
+                        CardArt {}
+                        CardBody {
+                            CardTitle { "Terraço Alfama" }
+                            CardText { "Rooftop · Sunset from 20:40 · €€" }
+                        }
+                    }
+                    Meta { "9:44" }
+                }
+                Msg {
+                    Bubble {
+                        "This one has a backup room if it rains 🌧️ Should I book it for 7pm?"
+                    }
+                    Meta { "9:44" }
+                }
+                Msg {
+                    side: me
+                    Bubble {
+                        side: me
+                        "Yes please! I'll send the invites tonight 🎉"
+                    }
+                    Reaction { "❤️ 1" }
+                    Meta { side: me, "9:46 · Read" }
+                }
+                Msg {
+                    Typing {
+                        Dot {}
+                        Dot { fade: two }
+                        Dot { fade: three }
+                    }
+                }
+            }
+            Composer {
+                Attach { "+" }
+                Field { "Write a message…" }
+                Send {
+                    SendArrow {}
+                }
+            }
+        }
+    }
+}

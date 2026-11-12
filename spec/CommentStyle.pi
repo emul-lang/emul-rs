@@ -1,0 +1,27 @@
+export anchor CommentStyle:
+    description:
+        This rule applies to the comments of the project. It applies to the
+        comments in the `.pi` files of the specification. It also applies to
+        the comments in the code, the samples and the tools.
+
+    rule:
+        Write all comments in ASD-STE100 Simplified Technical English.
+
+    sentences:
+        - Write one topic in each sentence.
+        - Write 20 words or fewer in an instruction sentence.
+        - Write 25 words or fewer in a description sentence.
+        - Use the active voice.
+        - Use the simple present, the simple past or the future tense.
+
+    words:
+        - Use approved words. Use one word for one meaning.
+        - Do not use -ing forms. Do not use phrasal verbs.
+        - Do not use "may", "might" or "could". Use "can" or "must".
+        - Do not use contractions. Use articles.
+        - Keep noun clusters to 3 words or fewer.
+        - Keep technical names as they are, for example names in backticks.
+
+    scope:
+        Commented-out code stays as it is. Comments in an Emul or Piton
+        example also obey this rule.

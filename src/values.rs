@@ -1,11 +1,11 @@
-//! Tokenizing values, and the typed values shared by many properties: lengths,
-//! colours, gradients, shadows and positions.
+//! Splits values into tokens. This module also holds the typed values that many
+//! properties share: lengths, colours, gradients, shadows and positions.
 
 use std::fmt::Write as _;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Tok {
-    /// A number and its unit, which may be empty or `%`.
+    /// A number and its unit. The unit can be empty or `%`.
     Num(f64, String),
     Ident(String),
     Hash(String),
@@ -18,7 +18,34 @@ pub enum Tok {
     Names(Vec<String>),
 }
 
-pub fn tokenize(s: &str) -> Result<Vec<Tok>, String> {
+/// An error in the tokens of a value, with its diagnostic code.
+#[derive(Clone, Debug, PartialEq)]
+pub struct TokErr {
+    pub code: &'static str,
+    pub msg: String,
+}
+
+impl From<String> for TokErr {
+    fn from(msg: String) -> Self {
+        TokErr { code: "invalid-value", msg }
+    }
+}
+
+impl From<&str> for TokErr {
+    fn from(msg: &str) -> Self {
+        TokErr { code: "invalid-value", msg: msg.into() }
+    }
+}
+
+impl std::fmt::Display for TokErr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&self.msg)
+    }
+}
+
+/// Splits a value into tokens. This function calculates each arithmetic expression into
+/// one number token. An arithmetic expression is a `(` without a function name before it.
+pub fn tokenize(s: &str) -> Result<Vec<Tok>, TokErr> {
     let chars: Vec<char> = s.chars().collect();
     let mut i = 0;
     let (toks, end) = tok_until(&chars, &mut i, None)?;
@@ -26,7 +53,7 @@ pub fn tokenize(s: &str) -> Result<Vec<Tok>, String> {
     Ok(toks)
 }
 
-fn tok_until(c: &[char], i: &mut usize, close: Option<char>) -> Result<(Vec<Tok>, bool), String> {
+fn tok_until(c: &[char], i: &mut usize, close: Option<char>) -> Result<(Vec<Tok>, bool), TokErr> {
     let mut out = Vec::new();
     while *i < c.len() {
         let ch = c[*i];
@@ -36,6 +63,10 @@ fn tok_until(c: &[char], i: &mut usize, close: Option<char>) -> Result<(Vec<Tok>
         }
         match ch {
             ' ' | '\t' => *i += 1,
+            '(' => {
+                let (v, unit) = arith::group(c, i)?;
+                out.push(Tok::Num(v, unit));
+            }
             ',' => {
                 out.push(Tok::Comma);
                 *i += 1;
@@ -86,7 +117,7 @@ fn tok_until(c: &[char], i: &mut usize, close: Option<char>) -> Result<(Vec<Tok>
                 while *i < c.len() && (c[*i].is_ascii_digit() || c[*i] == '.') {
                     *i += 1;
                 }
-                // Exponents are not part of Emul values; stop at the unit.
+                // Emul values have no exponents. Stop at the unit.
                 let num: String = c[start..*i].iter().collect();
                 let v: f64 = num.parse().map_err(|_| format!("`{num}` is not a number"))?;
                 let mut unit = String::new();
@@ -124,7 +155,7 @@ fn tok_until(c: &[char], i: &mut usize, close: Option<char>) -> Result<(Vec<Tok>
                     } else {
                         let (inner, closed) = tok_until(c, i, Some(')'))?;
                         if !closed {
-                            return Err(format!("`{name}(` is never closed"));
+                            return Err(format!("`{name}(` is never closed").into());
                         }
                         out.push(Tok::Func(name.to_ascii_lowercase(), inner));
                     }
@@ -132,13 +163,365 @@ fn tok_until(c: &[char], i: &mut usize, close: Option<char>) -> Result<(Vec<Tok>
                     out.push(Tok::Ident(name));
                 }
             }
-            other => return Err(format!("unexpected `{other}`")),
+            other => return Err(format!("unexpected `{other}`").into()),
         }
     }
     if close.is_some() {
         return Ok((out, false));
     }
     Ok((out, true))
+}
+
+/// Expressions: `( ... )` without a function name. They contain numbers, sizes and the
+/// truth values `true` and `false`. They use arithmetic, comparison, logical and `? :`
+/// operators. The result of each expression is one number with a unit.
+mod arith {
+    use super::{fmt_num, TokErr};
+
+    fn err(code: &'static str, msg: impl Into<String>) -> TokErr {
+        TokErr { code, msg: msg.into() }
+    }
+
+    fn syntax(msg: impl Into<String>) -> TokErr {
+        err("invalid-expression", msg)
+    }
+
+    #[derive(Clone, Debug, PartialEq)]
+    enum T {
+        Num(f64, String),
+        Bool(bool),
+        /// A binary operator: `+ - * / % == != < <= > >= && ||`.
+        Op(&'static str),
+        Not,
+        Question,
+        Colon,
+        Open,
+        Close,
+    }
+
+    /// The result of part of an expression.
+    #[derive(Clone, Debug, PartialEq)]
+    pub enum Val {
+        Num(f64, String),
+        Bool(bool),
+    }
+
+    impl Val {
+        /// `false` and all zeros are false. `true` and all other numbers are true.
+        pub fn truthy(&self) -> bool {
+            match self {
+                Val::Bool(b) => *b,
+                Val::Num(v, _) => *v != 0.0,
+            }
+        }
+        fn show(&self) -> String {
+            match self {
+                Val::Num(v, u) => format!("{}{}", fmt_num(*v), u),
+                Val::Bool(b) => b.to_string(),
+            }
+        }
+    }
+
+    const BINARY: &[&str] = &["==", "!=", "<=", ">=", "&&", "||", "<", ">", "+", "-", "*", "/", "%"];
+
+    /// Reads the group from the `(` at `c[*i]` to the `)` that matches it.
+    /// Calculates the group to a number with a unit.
+    pub fn group(c: &[char], i: &mut usize) -> Result<(f64, String), TokErr> {
+        match eval_group(c, i)? {
+            Val::Num(v, u) => Ok((v, u)),
+            Val::Bool(b) => Err(err(
+                "boolean-result",
+                format!("this expression gives `{b}`, but a value needs a number or size; use a condition with `? :` to choose one"),
+            )),
+        }
+    }
+
+    /// Reads and calculates a group. A truth value stays a truth value.
+    pub fn eval_group(c: &[char], i: &mut usize) -> Result<Val, TokErr> {
+        let toks = lex(c, i)?;
+        let mut p = Parser { t: &toks, at: 0 };
+        p.primary()
+    }
+
+    fn lex(c: &[char], i: &mut usize) -> Result<Vec<T>, TokErr> {
+        let mut out = Vec::new();
+        let mut depth = 0usize;
+        while *i < c.len() {
+            let ch = c[*i];
+            let before = if *i == 0 { ' ' } else { c[*i - 1] };
+            let after = c.get(*i + 1).copied().unwrap_or(' ');
+            match ch {
+                ' ' | '\t' => *i += 1,
+                '(' => {
+                    depth += 1;
+                    out.push(T::Open);
+                    *i += 1;
+                }
+                ')' => {
+                    out.push(T::Close);
+                    *i += 1;
+                    depth -= 1;
+                    if depth == 0 {
+                        return Ok(out);
+                    }
+                }
+                '-' | '.' | '0'..='9'
+                    if ch.is_ascii_digit() || ch == '.' || ((after.is_ascii_digit() || after == '.') && (before == ' ' || before == '(' || before == '!')) =>
+                {
+                    let start = *i;
+                    *i += 1;
+                    while *i < c.len() && (c[*i].is_ascii_digit() || c[*i] == '.') {
+                        *i += 1;
+                    }
+                    let num: String = c[start..*i].iter().collect();
+                    let v: f64 = num.parse().map_err(|_| syntax(format!("`{num}` is not a number")))?;
+                    let mut unit = String::new();
+                    if *i < c.len() && c[*i] == '%' {
+                        unit.push('%');
+                        *i += 1;
+                    } else {
+                        while *i < c.len() && c[*i].is_ascii_alphabetic() {
+                            unit.push(c[*i]);
+                            *i += 1;
+                        }
+                    }
+                    out.push(T::Num(v, unit));
+                }
+                c0 if c0.is_ascii_alphabetic() => {
+                    let start = *i;
+                    while *i < c.len() && (c[*i].is_ascii_alphanumeric() || c[*i] == '-') {
+                        *i += 1;
+                    }
+                    let word: String = c[start..*i].iter().collect();
+                    match word.as_str() {
+                        "true" => out.push(T::Bool(true)),
+                        "false" => out.push(T::Bool(false)),
+                        _ => return Err(syntax(format!("`{word}` can't be used in an expression; expressions hold numbers, sizes, `true`, `false`, operators and parentheses"))),
+                    }
+                }
+                '!' if after != '=' => {
+                    // `!` comes directly before its value, or has spaces after it.
+                    if !(before.is_whitespace() || before == '(' || before == '!') {
+                        return Err(syntax("`!` needs a space or `(` before it"));
+                    }
+                    out.push(T::Not);
+                    *i += 1;
+                }
+                _ => {
+                    let rest: String = c[*i..c.len().min(*i + 2)].iter().collect();
+                    let op = BINARY
+                        .iter()
+                        .copied()
+                        .chain(["?", ":"])
+                        .find(|o| rest.starts_with(o))
+                        .ok_or_else(|| match ch {
+                            '=' => syntax("`=` is not an operator; compare with `==`"),
+                            '&' => syntax("`&` is not an operator; use `&&`"),
+                            '|' => syntax("`|` is not an operator; use `||`"),
+                            other => syntax(format!("`{other}` can't be used in an expression; expressions hold numbers, sizes, `true`, `false`, operators and parentheses")),
+                        })?;
+                    let after = c.get(*i + op.len()).copied().unwrap_or(' ');
+                    if before == '(' {
+                        return Err(match op {
+                            "?" => err("invalid-condition", "`?` needs a condition before it"),
+                            ":" => err("invalid-condition", "`:` needs a value before it, after `?`"),
+                            o => syntax(format!("`{o}` needs a value before it")),
+                        });
+                    }
+                    if !before.is_whitespace() || !after.is_whitespace() {
+                        return Err(syntax(format!("`{op}` in an expression needs a space on each side")));
+                    }
+                    out.push(match op {
+                        "?" => T::Question,
+                        ":" => T::Colon,
+                        o => T::Op(o),
+                    });
+                    *i += op.len();
+                }
+            }
+        }
+        Err(syntax("this `(` is never closed"))
+    }
+
+    struct Parser<'t> {
+        t: &'t [T],
+        at: usize,
+    }
+
+    /// Binary operators, from the loosest to the tightest. `? :` is looser than all of them.
+    const LEVELS: &[&[&str]] = &[&["||"], &["&&"], &["==", "!="], &["<", "<=", ">", ">="], &["+", "-"], &["*", "/", "%"]];
+
+    impl Parser<'_> {
+        fn peek(&self) -> Option<&T> {
+            self.t.get(self.at)
+        }
+
+        /// A value, `!` a value, or an expression in parentheses.
+        fn primary(&mut self) -> Result<Val, TokErr> {
+            match self.peek().cloned() {
+                Some(T::Num(v, u)) => {
+                    self.at += 1;
+                    Ok(Val::Num(v, u))
+                }
+                Some(T::Bool(b)) => {
+                    self.at += 1;
+                    Ok(Val::Bool(b))
+                }
+                Some(T::Not) => {
+                    self.at += 1;
+                    let v = self.primary()?;
+                    Ok(Val::Bool(!v.truthy()))
+                }
+                Some(T::Open) => {
+                    self.at += 1;
+                    if matches!(self.peek(), Some(T::Close)) {
+                        return Err(syntax("`()` is empty; an expression needs at least one value"));
+                    }
+                    let v = self.conditional()?;
+                    match self.peek() {
+                        Some(T::Close) => {
+                            self.at += 1;
+                            Ok(v)
+                        }
+                        Some(T::Colon) => Err(err("invalid-condition", "this `:` has no `?` before it")),
+                        Some(T::Question) => Err(err("invalid-condition", "this `?` has no condition before it")),
+                        Some(T::Num(..)) | Some(T::Bool(_)) | Some(T::Open) | Some(T::Not) => {
+                            Err(syntax("two values in an expression need an operator between them"))
+                        }
+                        _ => Err(syntax("this `(` is never closed")),
+                    }
+                }
+                Some(T::Op(o)) => Err(syntax(format!("`{o}` needs a value before it"))),
+                Some(T::Question) => Err(err("invalid-condition", "`?` needs a condition before it")),
+                Some(T::Colon) => Err(err("invalid-condition", "`:` needs a value before it, after `?`")),
+                _ => Err(syntax("an operator needs a value after it")),
+            }
+        }
+
+        /// `condition ? a : b`, which groups from the right.
+        fn conditional(&mut self) -> Result<Val, TokErr> {
+            let cond = self.binary(0)?;
+            if !matches!(self.peek(), Some(T::Question)) {
+                return Ok(cond);
+            }
+            self.at += 1;
+            if matches!(self.peek(), Some(T::Colon)) {
+                return Err(err("invalid-condition", "`?` needs a value after it, before `:`"));
+            }
+            let yes = self.conditional()?;
+            if !matches!(self.peek(), Some(T::Colon)) {
+                return Err(err("invalid-condition", "this `?` has no `:` after it to give the value when the condition is falsy"));
+            }
+            self.at += 1;
+            let no = self.conditional()?;
+            Ok(if cond.truthy() { yes } else { no })
+        }
+
+        fn binary(&mut self, level: usize) -> Result<Val, TokErr> {
+            if level == LEVELS.len() {
+                return self.primary();
+            }
+            let mut l = self.binary(level + 1)?;
+            while let Some(T::Op(o)) = self.peek().cloned() {
+                if !LEVELS[level].contains(&o) {
+                    break;
+                }
+                self.at += 1;
+                let r = self.binary(level + 1)?;
+                l = apply(o, l, r)?;
+            }
+            Ok(l)
+        }
+    }
+
+    /// Rounds a number as Emul writes numbers. Then comparisons agree with the output.
+    fn round(v: f64) -> f64 {
+        (v * 10000.0).round() / 10000.0
+    }
+
+    fn apply(op: &str, l: Val, r: Val) -> Result<Val, TokErr> {
+        match op {
+            "&&" => return Ok(Val::Bool(l.truthy() && r.truthy())),
+            "||" => return Ok(Val::Bool(l.truthy() || r.truthy())),
+            _ => {}
+        }
+        if let (Val::Bool(a), Val::Bool(b)) = (&l, &r) {
+            match op {
+                "==" => return Ok(Val::Bool(a == b)),
+                "!=" => return Ok(Val::Bool(a != b)),
+                _ => {}
+            }
+        }
+        let (Val::Num(a, au), Val::Num(b, bu)) = (&l, &r) else {
+            return Err(err(
+                "invalid-operand",
+                format!("`{op}` can't be used between `{}` and `{}`; it needs two numbers or sizes", l.show(), r.show()),
+            ));
+        };
+        let (a, b) = (*a, *b);
+        let mismatch = || {
+            let what = match op {
+                "+" => "added to",
+                "-" => "subtracted from",
+                "*" => "multiplied by",
+                "/" => "divided by",
+                "%" => "taken modulo",
+                _ => "compared with",
+            };
+            let (x, y) = if op == "-" { (r.show(), l.show()) } else { (l.show(), r.show()) };
+            err("incompatible-units", format!("`{x}` can't be {what} `{y}`; the units don't fit together"))
+        };
+        let num = |v: f64, u: &str| Ok(Val::Num(v, u.to_string()));
+        match op {
+            "==" | "!=" | "<" | "<=" | ">" | ">=" => {
+                if au != bu {
+                    return Err(mismatch());
+                }
+                let (x, y) = (round(a), round(b));
+                Ok(Val::Bool(match op {
+                    "==" => x == y,
+                    "!=" => x != y,
+                    "<" => x < y,
+                    "<=" => x <= y,
+                    ">" => x > y,
+                    _ => x >= y,
+                }))
+            }
+            "+" | "-" => {
+                if au != bu {
+                    return Err(mismatch());
+                }
+                num(if op == "+" { a + b } else { a - b }, au)
+            }
+            "*" => match (au.is_empty(), bu.is_empty()) {
+                (true, _) => num(a * b, bu),
+                (false, true) => num(a * b, au),
+                _ => Err(mismatch()),
+            },
+            _ => {
+                if !bu.is_empty() && bu != au {
+                    return Err(mismatch());
+                }
+                if b == 0.0 {
+                    return Err(err("division-by-zero", format!("`{}` {op} `{}` divides by zero", l.show(), r.show())));
+                }
+                if op == "/" {
+                    num(a / b, if bu.is_empty() { au } else { "" })
+                } else {
+                    num(a % b, au)
+                }
+            }
+        }
+    }
+
+    #[cfg(test)]
+    pub fn eval(s: &str) -> Result<Val, TokErr> {
+        let c: Vec<char> = s.chars().collect();
+        let mut i = 0;
+        let v = eval_group(&c, &mut i)?;
+        assert_eq!(i, c.len(), "the expression should end at its closing `)`");
+        Ok(v)
+    }
 }
 
 /// Splits tokens at top-level commas.
@@ -164,7 +547,7 @@ pub fn fmt_num(v: f64) -> String {
     }
 }
 
-/// Serializes tokens back to CSS text, normalizing spaces.
+/// Writes tokens as CSS text again, and normalizes the spaces.
 pub fn tokens_css(toks: &[Tok]) -> String {
     let mut s = String::new();
     for (i, t) in toks.iter().enumerate() {
@@ -189,7 +572,7 @@ pub fn tokens_css(toks: &[Tok]) -> String {
 
 // ---------------------------------------------------------------- lengths
 
-/// A length or percentage, possibly `auto` or `none`.
+/// A length or a percentage. It can also be `auto` or `none`.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Len {
     Auto,
@@ -254,7 +637,7 @@ pub struct Color {
     pub g: f32,
     pub b: f32,
     pub a: f32,
-    /// The colour as written, for the HTML output.
+    /// The colour as the author wrote it, for the HTML output.
     pub css: String,
 }
 
@@ -267,7 +650,7 @@ impl Color {
     pub fn black() -> Color {
         Color::rgba(0.0, 0.0, 0.0, 1.0)
     }
-    /// `#rrggbb`, ignoring alpha.
+    /// `#rrggbb`, without alpha.
     pub fn hex6(&self) -> String {
         let to = |v: f32| (v.clamp(0.0, 1.0) * 255.0).round() as u8;
         format!("#{:02x}{:02x}{:02x}", to(self.r), to(self.g), to(self.b))
@@ -368,7 +751,7 @@ pub fn parse_color(t: &Tok) -> Result<Color, String> {
     Ok(c)
 }
 
-/// Colour function arguments in either comma or space form, with alpha after `/`.
+/// The arguments of a colour function, in comma form or space form. Alpha comes after `/`.
 fn color_args(args: &[Tok]) -> Result<Vec<Tok>, String> {
     if args.contains(&Tok::Comma) {
         let parts = split_commas(args);
@@ -437,7 +820,7 @@ pub struct Shadow {
     pub y: f32,
     pub blur: f32,
     pub spread: f32,
-    /// `None` means the component's own `color`.
+    /// `None` means the own `color` of the component.
     pub color: Option<Color>,
 }
 
@@ -514,7 +897,7 @@ impl PosAxis {
             format!("calc({}% + {}px)", fmt_num(self.pct as f64), fmt_num(self.px as f64))
         }
     }
-    /// Places something `size` long inside `container`.
+    /// Places an item of length `size` in `container`.
     pub fn place(&self, container: f32, size: f32) -> f32 {
         (container - size) * self.pct / 100.0 + self.px
     }
@@ -565,7 +948,7 @@ pub struct Stop {
 #[derive(Clone, Debug, PartialEq)]
 pub enum Image {
     Url(std::path::PathBuf),
-    /// Angle in degrees, CSS convention (0 points up, clockwise).
+    /// The angle in degrees, with the CSS convention (0 points up, clockwise).
     Linear { angle: LinearDir, stops: Vec<Stop> },
     Radial { circle: bool, at: (PosAxis, PosAxis), stops: Vec<Stop> },
 }
@@ -573,7 +956,7 @@ pub enum Image {
 #[derive(Clone, Debug, PartialEq)]
 pub enum LinearDir {
     Angle(f32),
-    /// A `to` corner, which depends on the box's proportions: (x sign, y sign).
+    /// A `to` corner, which changes with the proportions of the box: (x sign, y sign).
     Corner(f32, f32),
 }
 
@@ -664,8 +1047,8 @@ pub fn stops_css(stops: &[Stop]) -> String {
         .join(", ")
 }
 
-/// Resolves stop positions along a gradient line `len` px long, as offsets from 0 to 1,
-/// filling in missing positions as CSS does.
+/// Calculates stop positions along a gradient line `len` px long, as offsets from 0 to 1.
+/// It adds the positions that are not there, as CSS does.
 pub fn resolve_stops(stops: &[Stop], len: f32) -> Vec<(f32, Color)> {
     let n = stops.len();
     let mut pos: Vec<Option<f32>> = stops
@@ -682,7 +1065,7 @@ pub fn resolve_stops(stops: &[Stop], len: f32) -> Vec<(f32, Color)> {
     if pos[n - 1].is_none() {
         pos[n - 1] = Some(1.0);
     }
-    // Positions never go backwards.
+    // A position is never less than the position before it.
     let mut maxp = 0.0f32;
     for p in pos.iter_mut().flatten() {
         if *p < maxp {
@@ -726,6 +1109,120 @@ mod tests {
         let c = parse_color(&tokenize("oklch(0.628 0.2577 29.23)").unwrap()[0]).unwrap();
         assert_eq!(c.hex6(), "#ff0000");
         assert!(parse_color(&tokenize("red").unwrap()[0]).is_err());
+    }
+
+    #[test]
+    fn arithmetic() {
+        let n = |s: &str| tokenize(s).unwrap();
+        assert_eq!(n("(8px + 4px)"), vec![Tok::Num(12.0, "px".into())]);
+        assert_eq!(n("(2px + 3 * 4px)"), vec![Tok::Num(14.0, "px".into())]);
+        assert_eq!(n("((2 + 3) * 4px)"), vec![Tok::Num(20.0, "px".into())]);
+        assert_eq!(n("(100% / 3)"), vec![Tok::Num(100.0 / 3.0, "%".into())]);
+        assert_eq!(n("(10px % 3)"), vec![Tok::Num(1.0, "px".into())]);
+        assert_eq!(n("(-7 % 3)"), vec![Tok::Num(-1.0, "".into())]);
+        assert_eq!(n("(10px - -4px)"), vec![Tok::Num(14.0, "px".into())]);
+        assert_eq!(n("(10px - 4px - 2px)"), vec![Tok::Num(4.0, "px".into())]);
+        assert_eq!(n("(32px / 8px)"), vec![Tok::Num(4.0, "".into())]);
+        assert_eq!(n("8px (8px * 2) 16 / 9").len(), 5);
+        let e = |s: &str| tokenize(s).unwrap_err().code;
+        assert_eq!(e("(8px + 50%)"), "incompatible-units");
+        assert_eq!(e("(8px * 2px)"), "incompatible-units");
+        assert_eq!(e("(8px / 0)"), "division-by-zero");
+        assert_eq!(e("(8px+4px)"), "invalid-expression");
+        assert_eq!(e("(8px +)"), "invalid-expression");
+        assert_eq!(e("(8px 4px)"), "invalid-expression");
+        assert_eq!(e("(8px + 4px"), "invalid-expression");
+        assert_eq!(e("()"), "invalid-expression");
+        assert_eq!(e("(auto + 4px)"), "invalid-expression");
+    }
+
+    #[test]
+    fn comparisons() {
+        use arith::{eval, Val::Bool};
+        let t = |s: &str| eval(s).unwrap();
+        assert_eq!(t("(8px == 8px)"), Bool(true));
+        assert_eq!(t("(8px != 8px)"), Bool(false));
+        assert_eq!(t("(4px < 8px)"), Bool(true));
+        assert_eq!(t("(8px <= 8px)"), Bool(true));
+        assert_eq!(t("(4px > 8px)"), Bool(false));
+        assert_eq!(t("(8px >= 9px)"), Bool(false));
+        assert_eq!(t("(0.1 + 0.2 == 0.3)"), Bool(true));
+        // Comparison is looser than arithmetic.
+        assert_eq!(t("(2px + 2px == 2 * 2px)"), Bool(true));
+        assert_eq!(t("(true == true)"), Bool(true));
+        assert_eq!(t("(true != false)"), Bool(true));
+        let e = |s: &str| eval(s).unwrap_err().code;
+        assert_eq!(e("(8px < 50%)"), "incompatible-units");
+        assert_eq!(e("(8px == 8)"), "incompatible-units");
+        assert_eq!(e("(true < false)"), "invalid-operand");
+        assert_eq!(e("(true == 1)"), "invalid-operand");
+        assert_eq!(e("(1 < 2 < 3)"), "invalid-operand");
+        assert_eq!(e("(8px<9px)"), "invalid-expression");
+        assert_eq!(e("(8px = 8px)"), "invalid-expression");
+    }
+
+    #[test]
+    fn logical() {
+        use arith::{eval, Val::Bool};
+        let t = |s: &str| eval(s).unwrap();
+        assert_eq!(t("(true && true)"), Bool(true));
+        assert_eq!(t("(true && false)"), Bool(false));
+        assert_eq!(t("(false || true)"), Bool(true));
+        assert_eq!(t("(false || false)"), Bool(false));
+        assert_eq!(t("(!true)"), Bool(false));
+        assert_eq!(t("(! false)"), Bool(true));
+        assert_eq!(t("(!!true)"), Bool(true));
+        assert_eq!(t("(!(1px > 2px))"), Bool(true));
+        // `&&` is tighter than `||`, and both are looser than comparison.
+        assert_eq!(t("(true || false && false)"), Bool(true));
+        assert_eq!(t("(1 < 2 && 3 > 4)"), Bool(false));
+        // `!` is tighter than everything, so this is `(!1) == false`.
+        assert_eq!(t("(!1 == false)"), Bool(true));
+        let e = |s: &str| eval(s).unwrap_err().code;
+        assert_eq!(e("(true & false)"), "invalid-expression");
+        assert_eq!(e("(true | false)"), "invalid-expression");
+        assert_eq!(e("(true&&false)"), "invalid-expression");
+        assert_eq!(e("(true + 1)"), "invalid-operand");
+        assert_eq!(e("(-true)"), "invalid-expression");
+    }
+
+    #[test]
+    fn truthiness() {
+        use arith::{eval, Val::Bool};
+        let t = |s: &str| eval(s).unwrap();
+        // False: `false` and zero, with or without a unit.
+        assert_eq!(t("(!false)"), Bool(true));
+        assert_eq!(t("(!0)"), Bool(true));
+        assert_eq!(t("(!0px)"), Bool(true));
+        assert_eq!(t("(!0%)"), Bool(true));
+        // True: `true` and all other numbers, also negatives and fractions.
+        assert_eq!(t("(!true)"), Bool(false));
+        assert_eq!(t("(!1)"), Bool(false));
+        assert_eq!(t("(!-2px)"), Bool(false));
+        assert_eq!(t("(!0.5)"), Bool(false));
+        assert_eq!(t("(8px && 0)"), Bool(false));
+        assert_eq!(t("(0px || 50%)"), Bool(true));
+    }
+
+    #[test]
+    fn ternary() {
+        let n = |s: &str| tokenize(s).unwrap();
+        assert_eq!(n("(true ? 8px : 16px)"), vec![Tok::Num(8.0, "px".into())]);
+        assert_eq!(n("(false ? 8px : 16px)"), vec![Tok::Num(16.0, "px".into())]);
+        assert_eq!(n("(4px > 8px ? 4px : 8px)"), vec![Tok::Num(8.0, "px".into())]);
+        assert_eq!(n("(0 ? 1 : 2)"), vec![Tok::Num(2.0, "".into())]);
+        // Branches are full expressions, and `? :` groups from the right.
+        assert_eq!(n("(1 > 2 ? 1px : 2 > 3 ? 2px : 3px + 1px)"), vec![Tok::Num(4.0, "px".into())]);
+        assert_eq!(n("(true && false ? 1 : 2)"), vec![Tok::Num(2.0, "".into())]);
+        assert_eq!(n("((1 < 2 ? 10px : 0px) * 2)"), vec![Tok::Num(20.0, "px".into())]);
+        let e = |s: &str| tokenize(s).unwrap_err().code;
+        assert_eq!(e("(true ? 8px)"), "invalid-condition");
+        assert_eq!(e("(? 8px : 4px)"), "invalid-condition");
+        assert_eq!(e("(true ? : 4px)"), "invalid-condition");
+        assert_eq!(e("(8px : 4px)"), "invalid-condition");
+        assert_eq!(e("(true ?8px : 4px)"), "invalid-expression");
+        assert_eq!(e("(1 < 2)"), "boolean-result");
+        assert_eq!(e("(true ? false : 1)"), "boolean-result");
     }
 
     #[test]

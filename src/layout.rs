@@ -1,5 +1,6 @@
-//! Lays out a composition with taffy, measuring text with cosmic-text. The result is a
-//! box for every instance and positioned lines of text, in absolute canvas coordinates.
+//! Arranges a composition with taffy, and measures text with cosmic-text. The result is a
+//! box for each instance and the lines of text with their positions. All positions are
+//! absolute canvas coordinates.
 
 use crate::project::{Child, Node};
 use crate::props::{self, GridLine, RepeatCount, Style, TemplateItem, Track, L, V};
@@ -25,7 +26,7 @@ pub struct LBox {
     pub src: Option<PathBuf>,
     /// The border box, in canvas coordinates.
     pub rect: Rect,
-    /// Border widths actually drawn: top, right, bottom, left.
+    /// The border widths that the code draws: top, right, bottom, left.
     pub border: [f32; 4],
     pub padding: [f32; 4],
     pub children: Vec<LItem>,
@@ -210,13 +211,13 @@ fn align_content(k: &str) -> Option<AlignContent> {
     })
 }
 
-/// Whether an element lays its children out as a block. Emul lays out blocks as flex
-/// columns, which never collapse margins; the HTML output does the same.
+/// True when an element arranges its children as a block. Emul arranges blocks as flex
+/// columns, which never collapse margins. The HTML output does the same.
 fn is_blockish(display: &str) -> bool {
     display == "block" || display == "inline"
 }
 
-/// Taffy style for an element.
+/// The taffy style of an element.
 fn element_style(s: &Style, in_block: bool) -> taffy::Style {
     let mut t = taffy::Style::default();
     t.box_sizing = taffy::BoxSizing::BorderBox;
@@ -313,13 +314,13 @@ fn element_style(s: &Style, in_block: bool) -> taffy::Style {
     }
     // As an item.
     if in_block {
-        // Children of a block don't grow, shrink or align themselves.
+        // Children of a block do not grow, shrink or align themselves.
         t.flex_grow = 0.0;
         t.flex_shrink = 0.0;
         t.flex_basis = Dimension::auto();
         t.align_self = None;
-        // A block child with an auto width and auto side margins still fills the line
-        // before its margins take up the rest, as in CSS block layout.
+        // A block child with an auto width and auto side margins still fills the line.
+        // Then its margins get the space that remains, as in CSS block layout.
         let auto_margin = matches!(s.len(L::MarginLeft), Len::Auto) || matches!(s.len(L::MarginRight), Len::Auto);
         if auto_margin && matches!(s.len(L::Width), Len::Auto) && !inline {
             t.size.width = Dimension::percent(1.0);
@@ -407,9 +408,9 @@ impl<'a> Builder<'a> {
         (tid, LText { rect: Rect::default(), para, styles, shaped: None, tid })
     }
 
-    /// Builds the taffy subtree for `node`. `positioned` is the taffy node absolutely
-    /// positioned descendants attach to. Returns the box and the taffy children to add to
-    /// the parent (absolutely positioned boxes are attached elsewhere).
+    /// Builds the taffy subtree for `node`. `positioned` is the taffy node that absolutely
+    /// positioned descendants attach to. Returns the box and the taffy children for
+    /// the parent (absolutely positioned boxes attach to a different node).
     fn element(&mut self, node: &Node, in_block: bool, positioned: NodeId) -> LBox {
         let style = node.style.clone();
         let mut ts = element_style(&style, in_block);
@@ -417,8 +418,8 @@ impl<'a> Builder<'a> {
         let tid = if is_img {
             let (w, h) = node.src.as_ref().and_then(|p| self.natural_size(p)).unwrap_or((0.0, 0.0));
             ts.item_is_replaced = true;
-            // As in browsers, an image with a percentage size can shrink below its
-            // natural width in a flex or grid container.
+            // An image with a percentage size can shrink below its natural width in a flex
+            // or grid container. Browsers do the same.
             ts.item_is_compressible_replaced = matches!(style.len(L::Width), Len::Pct(_)) || matches!(style.len(L::MaxWidth), Len::Pct(_));
             // Its automatic minimum width is then zero, as browsers compute it.
             if ts.item_is_compressible_replaced && matches!(style.len(L::MinWidth), Len::Auto) {
@@ -460,7 +461,7 @@ impl<'a> Builder<'a> {
                         flush(self, &mut run, &mut children);
                         if nd == "inline" {
                             // An inline child of a flex or grid container becomes an item
-                            // holding its own text.
+                            // that holds its own text.
                             let mut spans = Vec::new();
                             Self::inline_spans(n, &mut spans);
                             let para = self.paragraph(&n.style, spans);
@@ -501,8 +502,8 @@ impl<'a> Builder<'a> {
     }
 }
 
-/// The natural size of an image file, following the rules in the spec: raster images
-/// use their pixel size, SVGs their width and height, view box, or 300 by 150.
+/// The natural size of an image file, with the rules in the spec. Raster images
+/// use their pixel size. SVGs use their width and height, view box, or 300 by 150.
 pub fn natural_image_size(path: &PathBuf) -> Option<(f32, f32)> {
     let ext = path.extension()?.to_str()?.to_ascii_lowercase();
     if ext == "svg" {
@@ -533,8 +534,8 @@ pub fn natural_image_size(path: &PathBuf) -> Option<(f32, f32)> {
     Some((w as f32, h as f32))
 }
 
-/// Lays out a composition's root instances on a canvas `width` wide, and `height` tall
-/// unless it is `None` (auto).
+/// Arranges the root instances of a composition on a canvas `width` wide. The canvas is
+/// `height` tall when `height` is not `None` (auto).
 pub fn layout(roots: &[Node], width: f32, height: Option<f32>, fonts: &mut Fonts) -> Laid {
     let mut b = Builder { tree: TaffyTree::new(), paras: Vec::new(), fonts, natural: HashMap::new() };
     b.tree.disable_rounding();
@@ -586,7 +587,7 @@ pub fn layout(roots: &[Node], width: f32, height: Option<f32>, fonts: &mut Fonts
     })
     .unwrap();
 
-    // Absolute positions of every taffy node.
+    // The absolute positions of every taffy node.
     let mut abs: HashMap<NodeId, (f32, f32)> = HashMap::new();
     fn walk(tree: &TaffyTree<Ctx>, id: NodeId, origin: (f32, f32), abs: &mut HashMap<NodeId, (f32, f32)>) {
         let l = tree.layout(id).unwrap();
@@ -616,7 +617,7 @@ pub fn layout(roots: &[Node], width: f32, height: Option<f32>, fonts: &mut Fonts
                 let l = tree.layout(t.tid).unwrap();
                 let (x, y) = abs[&t.tid];
                 t.rect = Rect { x, y, w: l.size.width, h: l.size.height };
-                // A little slack so the text that fit when measured still fits.
+                // A small tolerance. Then text that fit when the code measured it still fits.
                 t.shaped = Some(text::shape(fonts, &t.para, Some(l.size.width + 0.01)));
             }
         }

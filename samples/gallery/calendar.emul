@@ -1,0 +1,447 @@
+// A month view calendar with today, days outside the month and event chips.
+
+component Page:
+    display: flex
+    flexDirection: column
+    gap: 24px
+    padding: 40px
+
+component Toolbar:
+    display: flex
+    alignItems: center
+    justifyContent: space-between
+
+component Heading:
+    display: flex
+    alignItems: center
+    gap: 16px
+
+component Month:
+    fontFamily: Outfit
+    fontSize: 32px
+    fontWeight: 600
+    letterSpacing: -0.5px
+    color: #111827
+
+component Year:
+    fontFamily: Outfit
+    fontSize: 32px
+    fontWeight: 300
+    color: #9ca3af
+
+component Arrows:
+    display: flex
+    gap: 6px
+
+component Arrow:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 34px
+    height: 34px
+    border: 1px solid #e5e7eb
+    borderRadius: 10px
+    fontSize: 20px
+    lineHeight: 1
+    color: #374151
+    backgroundColor: #ffffff
+
+component Controls:
+    display: flex
+    alignItems: center
+    gap: 12px
+
+component Segmented:
+    display: flex
+    padding: 4px
+    borderRadius: 12px
+    backgroundColor: #eceef1
+
+component Segment:
+    padding: 7px 16px
+    borderRadius: 8px
+    fontSize: 13px
+    fontWeight: 600
+    color: #6b7280
+    attribute active: no | yes = no
+
+    when active == yes:
+        color: #111827
+        backgroundColor: #ffffff
+        boxShadow: 0 1px 3px rgba(17, 24, 39, 0.12)
+
+component NewEvent:
+    padding: 10px 18px
+    borderRadius: 10px
+    fontSize: 14px
+    fontWeight: 600
+    color: #ffffff
+    backgroundColor: #111827
+
+component Sheet:
+    display: flex
+    flexDirection: column
+    border: 1px solid #e5e7eb
+    borderRadius: 18px
+    overflow: hidden
+    backgroundColor: #ffffff
+    boxShadow: 0 10px 30px -12px rgba(17, 24, 39, 0.15)
+
+component Weekdays:
+    display: grid
+    gridTemplateColumns: repeat(7, 1fr)
+    borderBottom: 1px solid #e5e7eb
+    backgroundColor: #fafafa
+
+component Weekday:
+    padding: 12px 14px
+    fontSize: 12px
+    fontWeight: 600
+    letterSpacing: 0.8px
+    textTransform: uppercase
+    color: #6b7280
+
+component Days:
+    display: grid
+    gridTemplateColumns: repeat(7, 1fr)
+    gridAutoRows: 112px
+    gap: 1px
+    backgroundColor: #eef0f3
+
+component Day:
+    display: flex
+    flexDirection: column
+    gap: 5px
+    padding: 8px 10px
+    backgroundColor: #ffffff
+    attribute state: normal | outside | weekend | today = normal
+
+    when state == outside:
+        backgroundColor: #f7f8fa
+
+    when state == weekend:
+        backgroundColor: #f9fafb
+
+    when state == today:
+        backgroundColor: #f5f3ff
+
+component Num:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 28px
+    height: 28px
+    marginBottom: 2px
+    borderRadius: 999px
+    fontSize: 13px
+    fontWeight: 600
+    color: #1f2937
+    attribute state: normal | outside | weekend | today = normal
+
+    when state == outside:
+        color: #c4c8cf
+
+    when state == weekend:
+        color: #6b7280
+
+    when state == today:
+        color: #ffffff
+        backgroundColor: #6d28d9
+        boxShadow: 0 4px 10px rgba(109, 40, 217, 0.35)
+
+component Chip:
+    padding: 4px 8px
+    borderLeft: 3px solid #6366f1
+    borderRadius: 6px
+    fontSize: 11px
+    fontWeight: 600
+    whiteSpace: nowrap
+    overflow: hidden
+    textOverflow: ellipsis
+    attribute kind: work | personal | travel | deadline = work
+
+    when kind == work:
+        borderLeft: 3px solid #6366f1
+        color: #3730a3
+        backgroundColor: #eef2ff
+
+    when kind == personal:
+        borderLeft: 3px solid #10b981
+        color: #065f46
+        backgroundColor: #ecfdf5
+
+    when kind == travel:
+        borderLeft: 3px solid #0ea5e9
+        color: #075985
+        backgroundColor: #f0f9ff
+
+    when kind == deadline:
+        borderLeft: 3px solid #f43f5e
+        color: #9f1239
+        backgroundColor: #fff1f2
+
+component More:
+    paddingLeft: 4px
+    fontSize: 11px
+    fontWeight: 600
+    color: #9ca3af
+
+component Legend:
+    display: flex
+    gap: 22px
+
+component Key:
+    display: flex
+    alignItems: center
+    gap: 8px
+
+component Swatch:
+    width: 10px
+    height: 10px
+    borderRadius: 3px
+    attribute kind: work | personal | travel | deadline = work
+
+    when kind == work:
+        backgroundColor: #6366f1
+
+    when kind == personal:
+        backgroundColor: #10b981
+
+    when kind == travel:
+        backgroundColor: #0ea5e9
+
+    when kind == deadline:
+        backgroundColor: #f43f5e
+
+component KeyText:
+    fontSize: 13px
+    fontWeight: 500
+    color: #4b5563
+
+export composition Calendar {
+    Page {
+        Toolbar {
+            Heading {
+                Arrows {
+                    Arrow { "‹" }
+                    Arrow { "›" }
+                }
+                Month { "November" }
+                Year { "2026" }
+            }
+            Controls {
+                Segmented {
+                    Segment { "Day" }
+                    Segment { "Week" }
+                    Segment { active: yes, "Month" }
+                }
+                NewEvent { "+  New event" }
+            }
+        }
+        Sheet {
+            Weekdays {
+                Weekday { "Mon" }
+                Weekday { "Tue" }
+                Weekday { "Wed" }
+                Weekday { "Thu" }
+                Weekday { "Fri" }
+                Weekday { "Sat" }
+                Weekday { "Sun" }
+            }
+            Days {
+                Day {
+                    state: outside
+                    Num { state: outside, "26" }
+                }
+                Day {
+                    state: outside
+                    Num { state: outside, "27" }
+                }
+                Day {
+                    state: outside
+                    Num { state: outside, "28" }
+                }
+                Day {
+                    state: outside
+                    Num { state: outside, "29" }
+                }
+                Day {
+                    state: outside
+                    Num { state: outside, "30" }
+                }
+                Day {
+                    state: outside
+                    Num { state: outside, "31" }
+                }
+                Day {
+                    state: weekend
+                    Num { state: weekend, "1" }
+                }
+
+                Day {
+                    Num { "2" }
+                    Chip { kind: work, "Q4 planning" }
+                }
+                Day {
+                    Num { "3" }
+                }
+                Day {
+                    Num { "4" }
+                    Chip { kind: personal, "Dentist 9:30" }
+                }
+                Day {
+                    Num { "5" }
+                    Chip { kind: work, "Design crit" }
+                }
+                Day {
+                    Num { "6" }
+                    Chip { kind: personal, "Climbing" }
+                }
+                Day {
+                    state: weekend
+                    Num { state: weekend, "7" }
+                }
+                Day {
+                    state: weekend
+                    Num { state: weekend, "8" }
+                    Chip { kind: personal, "Mum's birthday" }
+                }
+
+                Day {
+                    Num { "9" }
+                    Chip { kind: travel, "Flight to Lisbon" }
+                }
+                Day {
+                    Num { "10" }
+                    Chip { kind: travel, "Web Summit" }
+                }
+                Day {
+                    Num { "11" }
+                    Chip { kind: travel, "Web Summit" }
+                }
+                Day {
+                    state: today
+                    Num { state: today, "12" }
+                    Chip { kind: work, "Standup 10:00" }
+                    Chip { kind: deadline, "Launch review" }
+                    More { "+2 more" }
+                }
+                Day {
+                    Num { "13" }
+                    Chip { kind: travel, "Flight home" }
+                }
+                Day {
+                    state: weekend
+                    Num { state: weekend, "14" }
+                }
+                Day {
+                    state: weekend
+                    Num { state: weekend, "15" }
+                }
+
+                Day {
+                    Num { "16" }
+                    Chip { kind: work, "Sprint 25 starts" }
+                }
+                Day {
+                    Num { "17" }
+                }
+                Day {
+                    Num { "18" }
+                    Chip { kind: work, "1:1 with Priya" }
+                }
+                Day {
+                    Num { "19" }
+                    Chip { kind: deadline, "Copy freeze" }
+                }
+                Day {
+                    Num { "20" }
+                    Chip { kind: personal, "Climbing" }
+                }
+                Day {
+                    state: weekend
+                    Num { state: weekend, "21" }
+                    Chip { kind: personal, "Farmers market" }
+                }
+                Day {
+                    state: weekend
+                    Num { state: weekend, "22" }
+                }
+
+                Day {
+                    Num { "23" }
+                }
+                Day {
+                    Num { "24" }
+                    Chip { kind: work, "Board update" }
+                }
+                Day {
+                    Num { "25" }
+                }
+                Day {
+                    Num { "26" }
+                    Chip { kind: personal, "Thanksgiving" }
+                }
+                Day {
+                    Num { "27" }
+                    Chip { kind: personal, "Day off" }
+                }
+                Day {
+                    state: weekend
+                    Num { state: weekend, "28" }
+                }
+                Day {
+                    state: weekend
+                    Num { state: weekend, "29" }
+                }
+
+                Day {
+                    Num { "30" }
+                    Chip { kind: deadline, "Release 4.2" }
+                }
+                Day {
+                    state: outside
+                    Num { state: outside, "1" }
+                }
+                Day {
+                    state: outside
+                    Num { state: outside, "2" }
+                }
+                Day {
+                    state: outside
+                    Num { state: outside, "3" }
+                }
+                Day {
+                    state: outside
+                    Num { state: outside, "4" }
+                }
+                Day {
+                    state: outside
+                    Num { state: outside, "5" }
+                }
+                Day {
+                    state: outside
+                    Num { state: outside, "6" }
+                }
+            }
+        }
+        Legend {
+            Key {
+                Swatch { kind: work }
+                KeyText { "Work" }
+            }
+            Key {
+                Swatch { kind: personal }
+                KeyText { "Personal" }
+            }
+            Key {
+                Swatch { kind: travel }
+                KeyText { "Travel" }
+            }
+            Key {
+                Swatch { kind: deadline }
+                KeyText { "Deadlines" }
+            }
+        }
+    }
+}

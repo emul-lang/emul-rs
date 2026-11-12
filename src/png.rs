@@ -1,6 +1,6 @@
-//! The PNG output: the SVG output, with text in outline form, rasterized.
+//! The PNG output. It is a raster image of the SVG output, with text as outlines.
 
-/// Rasterizes an SVG at `scale`. Returns the PNG file and the RGBA pixels.
+/// Makes a raster image of an SVG at `scale`. Returns the PNG file and the RGBA pixels.
 pub fn rasterize(svg: &str, scale: f32) -> Result<(Vec<u8>, tiny_skia::Pixmap), String> {
     let opts = usvg::Options::default();
     let tree = usvg::Tree::from_str(svg, &opts).map_err(|e| format!("the SVG could not be read: {e}"))?;

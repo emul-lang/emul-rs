@@ -1,0 +1,348 @@
+// An invoice: a header, from and to blocks, a line-item table on a grid, totals and
+// a status stamp. The stamp, the table rows and the cells use attributes.
+
+component Desk:
+    display: flex
+    justifyContent: center
+    padding: 48px 40px
+    backgroundColor: #e9ecef
+
+component Paper:
+    position: relative
+    display: flex
+    flexDirection: column
+    gap: 36px
+    width: 100%
+    padding: 48px 52px
+    overflow: hidden
+    backgroundColor: #ffffff
+    borderTop: 6px solid #0f766e
+    borderRadius: 6px
+    boxShadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 16px 40px rgba(15, 23, 42, 0.10)
+
+component Top:
+    display: flex
+    justifyContent: space-between
+    alignItems: flex-start
+
+component Brand:
+    display: flex
+    alignItems: center
+    gap: 14px
+
+component Mark:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 44px
+    height: 44px
+    borderRadius: 12px
+    backgroundImage: linear-gradient(135deg, #2dd4bf, #0f766e)
+    color: #ffffff
+    fontFamily: "Space Grotesk"
+    fontSize: 22px
+    fontWeight: 700
+
+component BrandText:
+    display: flex
+    flexDirection: column
+    gap: 2px
+
+component BrandName:
+    fontFamily: "Space Grotesk"
+    fontSize: 20px
+    fontWeight: 700
+    color: #0f172a
+
+component Small:
+    fontFamily: Inter
+    fontSize: 13px
+    lineHeight: 1.5
+    color: #64748b
+
+component Heading:
+    display: flex
+    flexDirection: column
+    alignItems: flex-end
+    gap: 4px
+
+component Word:
+    fontFamily: "Space Grotesk"
+    fontSize: 34px
+    fontWeight: 700
+    letterSpacing: 6px
+    color: #0f172a
+
+component Number:
+    fontFamily: "IBM Plex Mono"
+    fontSize: 14px
+    color: #64748b
+
+// The stamp is rotated, and its colour follows the status.
+component Stamp:
+    attribute status: paid | due | overdue = due
+    position: absolute
+    top: 62px
+    left: 380px
+    padding: 6px 18px
+    rotate: -12deg
+    border: 3px solid #d97706
+    borderRadius: 8px
+    color: #d97706
+    fontFamily: "Space Grotesk"
+    fontSize: 22px
+    fontWeight: 700
+    letterSpacing: 4px
+    textTransform: uppercase
+    opacity: 0.85
+
+    when status == paid:
+        borderColor: #059669
+        color: #059669
+
+    when status == overdue:
+        borderColor: #dc2626
+        color: #dc2626
+
+component Parties:
+    display: grid
+    gridTemplateColumns: 1fr 1fr 1fr
+    gap: 32px
+    padding: 24px 0
+    borderTop: 1px solid #e2e8f0
+    borderBottom: 1px solid #e2e8f0
+
+component Party:
+    display: flex
+    flexDirection: column
+    gap: 6px
+
+component Label:
+    fontFamily: Inter
+    fontSize: 11px
+    fontWeight: 600
+    letterSpacing: 1.2px
+    textTransform: uppercase
+    color: #94a3b8
+
+component Name:
+    fontFamily: Inter
+    fontSize: 15px
+    fontWeight: 600
+    color: #0f172a
+
+component Items:
+    display: flex
+    flexDirection: column
+
+component ItemRow:
+    attribute kind: head | line = line
+    display: grid
+    gridTemplateColumns: 1fr 70px 110px 120px
+    gap: 16px
+    alignItems: center
+    padding: 14px 0
+    borderBottom: 1px solid #f1f5f9
+
+    when kind == head:
+        padding: 10px 0
+        borderBottom: 2px solid #0f172a
+
+component Cell:
+    attribute align: start | end = start
+    attribute kind: head | line = line
+    fontFamily: Inter
+    fontSize: 14px
+    color: #334155
+
+    when align == end:
+        textAlign: right
+
+    when kind == head:
+        fontSize: 11px
+        fontWeight: 600
+        letterSpacing: 1.2px
+        textTransform: uppercase
+        color: #64748b
+
+component Item:
+    display: flex
+    flexDirection: column
+    gap: 2px
+
+component ItemName:
+    fontFamily: Inter
+    fontSize: 14px
+    fontWeight: 600
+    color: #0f172a
+
+component Bottom:
+    display: flex
+    justifyContent: space-between
+    alignItems: flex-start
+    gap: 48px
+
+component Note:
+    display: flex
+    flexDirection: column
+    gap: 8px
+    maxWidth: 320px
+
+component Mono:
+    fontFamily: "IBM Plex Mono"
+    fontSize: 13px
+    lineHeight: 1.6
+    color: #334155
+
+component Totals:
+    display: flex
+    flexDirection: column
+    width: 300px
+
+component TotalRow:
+    attribute kind: sub | grand = sub
+    display: flex
+    justifyContent: space-between
+    padding: 8px 0
+
+    when kind == grand:
+        marginTop: 8px
+        padding: 14px 16px
+        borderRadius: 10px
+        backgroundColor: #f0fdfa
+
+component Figure:
+    attribute kind: sub | grand = sub
+    fontFamily: Inter
+    fontSize: 14px
+    color: #475569
+
+    when kind == grand:
+        fontSize: 18px
+        fontWeight: 700
+        color: #0f766e
+
+component Footer:
+    paddingTop: 20px
+    borderTop: 1px solid #e2e8f0
+    fontFamily: Inter
+    fontSize: 13px
+    color: #94a3b8
+    textAlign: center
+
+export composition Invoice {
+    Desk {
+        Paper {
+            Top {
+                Brand {
+                    Mark { "H" }
+                    BrandText {
+                        BrandName { "Halcyon Studio" }
+                        Small { "Brand & product design" }
+                    }
+                }
+                Heading {
+                    Word { "Invoice" }
+                    Number { "#HS-2027-0142" }
+                }
+            }
+
+            Stamp { status: paid, "Paid" }
+
+            Parties {
+                Party {
+                    Label { "From" }
+                    Name { "Halcyon Studio Ltd" }
+                    Small { "14 Wharf Road, London N1 7GR" }
+                    Small { "hello@halcyon.studio" }
+                }
+                Party {
+                    Label { "Bill to" }
+                    Name { "Northwind Coffee Co." }
+                    Small { "Attn: Priya Shah" }
+                    Small { "220 Market St, Bristol BS1 4DJ" }
+                }
+                Party {
+                    Label { "Details" }
+                    Small { "Issued 3 March 2027" }
+                    Small { "Due 2 April 2027" }
+                    Small { "Project: Spring rebrand" }
+                }
+            }
+
+            Items {
+                ItemRow {
+                    kind: head
+                    Cell { kind: head, "Description" }
+                    Cell { kind: head, align: end, "Qty" }
+                    Cell { kind: head, align: end, "Rate" }
+                    Cell { kind: head, align: end, "Amount" }
+                }
+                ItemRow {
+                    Item {
+                        ItemName { "Brand strategy workshop" }
+                        Small { "Two half-day sessions with the founding team" }
+                    }
+                    Cell { align: end, "2" }
+                    Cell { align: end, "£1,200" }
+                    Cell { align: end, "£2,400" }
+                }
+                ItemRow {
+                    Item {
+                        ItemName { "Visual identity" }
+                        Small { "Logo, colour, typography and usage guide" }
+                    }
+                    Cell { align: end, "1" }
+                    Cell { align: end, "£6,500" }
+                    Cell { align: end, "£6,500" }
+                }
+                ItemRow {
+                    Item {
+                        ItemName { "Packaging design" }
+                        Small { "Three bag sizes and a gift box" }
+                    }
+                    Cell { align: end, "4" }
+                    Cell { align: end, "£850" }
+                    Cell { align: end, "£3,400" }
+                }
+                ItemRow {
+                    Item {
+                        ItemName { "Website art direction" }
+                        Small { "Homepage, shop and journal templates" }
+                    }
+                    Cell { align: end, "12 h" }
+                    Cell { align: end, "£95" }
+                    Cell { align: end, "£1,140" }
+                }
+            }
+
+            Bottom {
+                Note {
+                    Label { "Payment" }
+                    Mono { "Barclays Business" }
+                    Mono { "Sort 20-45-77 · Acc 4419 0286" }
+                    Mono { "Ref HS-2027-0142" }
+                }
+                Totals {
+                    TotalRow {
+                        Figure { "Subtotal" }
+                        Figure { "£13,440" }
+                    }
+                    TotalRow {
+                        Figure { "VAT (20%)" }
+                        Figure { "£2,688" }
+                    }
+                    TotalRow {
+                        kind: grand
+                        Figure { kind: grand, "Total" }
+                        Figure { kind: grand, "£16,128" }
+                    }
+                }
+            }
+
+            Footer {
+                "Thank you for working with us — payment received 28 March 2027."
+            }
+        }
+    }
+}

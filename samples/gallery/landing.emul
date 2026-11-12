@@ -1,0 +1,390 @@
+// A product landing hero: nav, headline, calls to action and a mock app
+// window.
+
+component Hero:
+    position: relative
+    display: flex
+    flexDirection: column
+    alignItems: center
+    height: 100%
+    overflow: hidden
+    padding: 0 64px
+    backgroundImage: radial-gradient(ellipse at 50% 0%, #312e81, rgba(49, 46, 129, 0) 60%), linear-gradient(180deg, #0a0a1a, #05050d)
+    fontFamily: "Space Grotesk"
+
+// Nav
+
+component Nav:
+    display: flex
+    alignItems: center
+    gap: 36px
+    width: 100%
+    height: 76px
+
+component Logo:
+    display: flex
+    alignItems: center
+    gap: 10px
+    marginRight: auto
+
+component LogoMark:
+    width: 26px
+    height: 26px
+    borderRadius: 7px
+    rotate: 45deg
+    backgroundImage: linear-gradient(135deg, #a78bfa, #22d3ee)
+
+component LogoText:
+    fontSize: 19px
+    fontWeight: 700
+    letterSpacing: -0.4px
+    color: #ffffff
+    fontFamily: "Space Grotesk"
+
+component NavLink:
+    fontSize: 15px
+    fontWeight: 500
+    color: #a5a8c8
+    fontFamily: "Space Grotesk"
+
+component Button:
+    attribute kind: primary | ghost | small = primary
+    display: flex
+    alignItems: center
+    gap: 10px
+    height: 52px
+    padding: 0 26px
+    borderRadius: 14px
+    backgroundImage: linear-gradient(135deg, #8b5cf6, #6366f1)
+    boxShadow: 0 12px 30px rgba(139, 92, 246, 0.4)
+    fontSize: 16px
+    fontWeight: 600
+    color: #ffffff
+    fontFamily: "Space Grotesk"
+
+    when kind == ghost:
+        backgroundImage: none
+        backgroundColor: rgba(255, 255, 255, 0.06)
+        border: 1px solid rgba(255, 255, 255, 0.14)
+        boxShadow: none
+
+    when kind == small:
+        height: 40px
+        padding: 0 18px
+        borderRadius: 10px
+        fontSize: 14px
+        boxShadow: none
+
+// Copy
+
+component Copy:
+    display: flex
+    flexDirection: column
+    alignItems: center
+    gap: 24px
+    paddingTop: 44px
+
+component Pill:
+    display: flex
+    alignItems: center
+    gap: 10px
+    padding: 6px 14px 6px 6px
+    borderRadius: 999px
+    backgroundColor: rgba(139, 92, 246, 0.12)
+    border: 1px solid rgba(167, 139, 250, 0.3)
+    fontSize: 14px
+    color: #c4b5fd
+    fontFamily: "Space Grotesk"
+
+component PillTag:
+    padding: 3px 10px
+    borderRadius: 999px
+    backgroundColor: #8b5cf6
+    fontSize: 12px
+    fontWeight: 700
+    color: #ffffff
+    fontFamily: "Space Grotesk"
+
+component HeadLine:
+    fontSize: 68px
+    fontWeight: 700
+    lineHeight: 1.05
+    letterSpacing: -2.5px
+    color: #ffffff
+    fontFamily: "Space Grotesk"
+
+component Headline:
+    htmlTag: h1
+    display: flex
+    flexDirection: column
+    alignItems: center
+    textAlign: center
+    fontSize: 68px
+    fontWeight: 700
+    lineHeight: 1.05
+    letterSpacing: -2.5px
+    color: #ffffff
+    fontFamily: "Space Grotesk"
+
+component Accent:
+    color: #a78bfa
+    fontFamily: "Space Grotesk"
+    fontSize: 68px
+    fontWeight: 700
+    letterSpacing: -2.5px
+
+component Subhead:
+    maxWidth: 620px
+    textAlign: center
+    fontSize: 19px
+    lineHeight: 1.55
+    color: #a5a8c8
+    fontFamily: "Space Grotesk"
+
+component Ctas:
+    display: flex
+    gap: 14px
+    marginTop: 8px
+
+component Arrow:
+    fontSize: 18px
+    color: #ffffff
+    fontFamily: "Space Grotesk"
+
+// The mock app window
+
+component Window:
+    display: flex
+    flexDirection: column
+    width: 1000px
+    height: 420px
+    marginTop: 52px
+    overflow: hidden
+    borderRadius: 18px 18px 0 0
+    backgroundColor: #11121f
+    border: 1px solid #2a2b45
+    boxShadow: 0 -20px 80px rgba(99, 102, 241, 0.35)
+
+component TitleBar:
+    display: flex
+    alignItems: center
+    gap: 8px
+    height: 42px
+    flexShrink: 0
+    padding: 0 16px
+    backgroundColor: #171829
+    borderBottom: 1px solid #23243b
+
+component Dot:
+    attribute tone: red | amber | green = red
+    width: 12px
+    height: 12px
+    borderRadius: 999px
+    backgroundColor: #ff5f57
+
+    when tone == amber:
+        backgroundColor: #febc2e
+    when tone == green:
+        backgroundColor: #28c840
+
+component FileTab:
+    marginLeft: 16px
+    padding: 5px 12px
+    borderRadius: 8px
+    backgroundColor: #23243b
+    fontSize: 12px
+    color: #c7c9e6
+    fontFamily: "JetBrains Mono"
+
+component Panes:
+    display: flex
+    flexGrow: 1
+
+component Code:
+    display: flex
+    flexDirection: column
+    gap: 7px
+    width: 470px
+    padding: 22px 24px
+    borderRight: 1px solid #23243b
+
+component Line:
+    whiteSpace: pre
+    fontSize: 13px
+    color: #c7c9e6
+    fontFamily: "JetBrains Mono"
+
+component Kw:
+    htmlTag: span
+    display: inline
+    color: #c084fc
+    fontSize: 13px
+    fontFamily: "JetBrains Mono"
+
+component Name:
+    htmlTag: span
+    display: inline
+    color: #67e8f9
+    fontSize: 13px
+    fontFamily: "JetBrains Mono"
+
+component Val:
+    htmlTag: span
+    display: inline
+    color: #fbbf24
+    fontSize: 13px
+    fontFamily: "JetBrains Mono"
+
+component Dim:
+    htmlTag: span
+    display: inline
+    color: #565879
+    fontSize: 13px
+    fontFamily: "JetBrains Mono"
+
+component Preview:
+    display: flex
+    alignItems: flex-start
+    justifyContent: center
+    paddingTop: 36px
+    flexGrow: 1
+    backgroundImage: radial-gradient(circle at 50% 40%, #1e1b4b, #11121f 70%)
+
+component Demo:
+    display: flex
+    flexDirection: column
+    gap: 14px
+    width: 300px
+    padding: 24px
+    borderRadius: 18px
+    backgroundColor: #ffffff
+    boxShadow: 0 20px 40px rgba(0, 0, 0, 0.4)
+
+component DemoTitle:
+    fontSize: 20px
+    fontWeight: 700
+    color: #0f172a
+    fontFamily: "Space Grotesk"
+
+component DemoText:
+    fontSize: 14px
+    lineHeight: 1.5
+    color: #64748b
+    fontFamily: "Space Grotesk"
+
+component DemoButton:
+    display: flex
+    justifyContent: center
+    padding: 11px
+    borderRadius: 10px
+    backgroundColor: #8b5cf6
+    fontSize: 14px
+    fontWeight: 700
+    color: #ffffff
+    fontFamily: "Space Grotesk"
+
+export composition Landing {
+    Hero {
+        Nav {
+            Logo {
+                LogoMark {}
+                LogoText { "Prism" }
+            }
+            NavLink { "Product" }
+            NavLink { "Docs" }
+            NavLink { "Pricing" }
+            NavLink { "Changelog" }
+            Button { kind: small, "Get started" }
+        }
+        Copy {
+            Pill {
+                PillTag { "New" }
+                "Conditional variants are here"
+            }
+            Headline {
+                HeadLine { "Design once." }
+                Accent { "Render everywhere." }
+            }
+            Subhead {
+                "Write your interface as plain components and compositions. Prism turns them into pixel-identical HTML, SVG and PNG on every build."
+            }
+            Ctas {
+                Button {
+                    "Start building"
+                    Arrow { "→" }
+                }
+                Button { kind: ghost, "Read the docs" }
+            }
+        }
+        Window {
+            TitleBar {
+                Dot {}
+                Dot { tone: amber }
+                Dot { tone: green }
+                FileTab { "button.emul" }
+            }
+            Panes {
+                Code {
+                    Line {
+                        Kw { "component " }
+                        Name { "Card" }
+                        Dim { ":" }
+                    }
+                    Line {
+                        "    padding"
+                        Dim { ": " }
+                        Val { "24px" }
+                    }
+                    Line {
+                        "    backgroundColor"
+                        Dim { ": " }
+                        Val { "#ffffff" }
+                    }
+                    Line { " " }
+                    Line {
+                        Kw { "component " }
+                        Name { "Action" }
+                        Dim { ":" }
+                    }
+                    Line {
+                        "    "
+                        Kw { "attribute " }
+                        "tone"
+                        Dim { ": " }
+                        Val { "solid | soft" }
+                    }
+                    Line {
+                        "    padding"
+                        Dim { ": " }
+                        Val { "11px" }
+                    }
+                    Line {
+                        "    backgroundColor"
+                        Dim { ": " }
+                        Val { "#8b5cf6" }
+                    }
+                    Line {
+                        "    "
+                        Kw { "when " }
+                        "tone == soft"
+                        Dim { ":" }
+                    }
+                    Line {
+                        "        backgroundColor"
+                        Dim { ": " }
+                        Val { "#ede9fe" }
+                    }
+                }
+                Preview {
+                    Demo {
+                        DemoTitle { "Ship your first card" }
+                        DemoText {
+                            "Every save re-renders the HTML, SVG and PNG side by side."
+                        }
+                        DemoButton { "Publish" }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,263 @@
+// An editorial article page: a serif headline, a byline, a lead, a pull quote and body copy.
+
+component Page:
+    display: flex
+    flexDirection: column
+    alignItems: center
+    padding: 56px 0 96px
+    backgroundColor: #fbf9f5
+
+component Masthead:
+    display: flex
+    alignItems: center
+    justifyContent: space-between
+    width: 960px
+    paddingBottom: 20px
+    marginBottom: 72px
+    borderBottom: 1px solid #e7e1d6
+
+component Brand:
+    fontFamily: "Playfair Display"
+    fontSize: 26px
+    fontWeight: 800
+    letterSpacing: -0.5px
+    color: #1c1917
+
+component Nav:
+    display: flex
+    gap: 28px
+
+component NavLink:
+    attribute state: idle | current = idle
+    fontFamily: Inter
+    fontSize: 13px
+    fontWeight: 500
+    letterSpacing: 1px
+    textTransform: uppercase
+    color: #78716c
+
+    when state == current:
+        color: #b45309
+
+component Column:
+    display: flex
+    flexDirection: column
+    width: 680px
+
+component Kicker:
+    fontFamily: Inter
+    fontSize: 12px
+    fontWeight: 700
+    letterSpacing: 2.5px
+    textTransform: uppercase
+    color: #b45309
+    marginBottom: 20px
+
+component Headline:
+    htmlTag: h1
+    fontFamily: "Playfair Display"
+    fontSize: 56px
+    fontWeight: 700
+    lineHeight: 1.08
+    letterSpacing: -1.2px
+    color: #1c1917
+    marginBottom: 24px
+
+component Dek:
+    fontFamily: Lora
+    fontSize: 21px
+    fontStyle: italic
+    lineHeight: 1.5
+    color: #57534e
+    marginBottom: 36px
+
+component Byline:
+    display: flex
+    alignItems: center
+    gap: 14px
+    paddingTop: 20px
+    paddingBottom: 20px
+    marginBottom: 44px
+    borderTop: 1px solid #e7e1d6
+    borderBottom: 1px solid #e7e1d6
+
+component Avatar:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 48px
+    height: 48px
+    flexShrink: 0
+    fontFamily: "Playfair Display"
+    fontSize: 18px
+    fontWeight: 700
+    color: #fffbeb
+    borderRadius: 50%
+    backgroundImage: linear-gradient(135deg, #fbbf24, #b45309 55%, #78350f)
+    boxShadow: 0 0 0 3px #fbf9f5, 0 0 0 4px #e7e1d6
+
+component Who:
+    display: flex
+    flexDirection: column
+    gap: 3px
+    flexGrow: 1
+
+component Author:
+    fontFamily: Inter
+    fontSize: 15px
+    fontWeight: 600
+    color: #1c1917
+
+component Meta:
+    fontFamily: Inter
+    fontSize: 13px
+    color: #78716c
+
+component ReadTime:
+    fontFamily: Inter
+    fontSize: 12px
+    fontWeight: 600
+    letterSpacing: 0.5px
+    color: #92400e
+    backgroundColor: #fef3c7
+    padding: 6px 12px
+    borderRadius: 999px
+
+component Lead:
+    htmlTag: p
+    fontFamily: Lora
+    fontSize: 20px
+    lineHeight: 1.7
+    color: #292524
+    marginBottom: 28px
+
+component LeadIn:
+    display: inline
+    fontFamily: Inter
+    fontSize: 15px
+    fontWeight: 700
+    letterSpacing: 1.6px
+    textTransform: uppercase
+    color: #1c1917
+
+component Para:
+    htmlTag: p
+    fontFamily: Lora
+    fontSize: 18px
+    lineHeight: 1.75
+    color: #44403c
+    marginBottom: 24px
+
+component Em:
+    display: inline
+    fontFamily: Lora
+    fontSize: 18px
+    fontStyle: italic
+    color: #1c1917
+
+component Quote:
+    htmlTag: blockquote
+    display: flex
+    flexDirection: column
+    gap: 16px
+    margin: 24px -60px 48px
+    padding: 36px 60px
+    borderTop: 2px solid #1c1917
+    borderBottom: 1px solid #e7e1d6
+
+component QuoteText:
+    fontFamily: "Playfair Display"
+    fontSize: 34px
+    fontStyle: italic
+    fontWeight: 500
+    lineHeight: 1.3
+    letterSpacing: -0.4px
+    color: #1c1917
+
+component QuoteCite:
+    fontFamily: Inter
+    fontSize: 13px
+    fontWeight: 600
+    letterSpacing: 1.5px
+    textTransform: uppercase
+    color: #b45309
+
+component SubHead:
+    htmlTag: h2
+    fontFamily: "Playfair Display"
+    fontSize: 28px
+    fontWeight: 700
+    letterSpacing: -0.4px
+    color: #1c1917
+    marginTop: 16px
+    marginBottom: 16px
+
+component Tags:
+    display: flex
+    gap: 10px
+    marginTop: 24px
+
+component Tag:
+    fontFamily: Inter
+    fontSize: 13px
+    fontWeight: 500
+    color: #57534e
+    padding: 7px 14px
+    border: 1px solid #d6cfc2
+    borderRadius: 999px
+
+export composition Article {
+    Page {
+        Masthead {
+            Brand { "The Long Field" }
+            Nav {
+                NavLink { "Essays" }
+                NavLink { state: current, "Craft" }
+                NavLink { "Interviews" }
+                NavLink { "Archive" }
+            }
+        }
+        Column {
+            Kicker { "Craft · Essay" }
+            Headline { "The quiet discipline of making things slowly" }
+            Dek {
+                "In a decade of shipping fast, a small group of designers kept a different clock. What they learned about patience is worth stealing."
+            }
+            Byline {
+                Avatar { "ME" }
+                Who {
+                    Author { "Margot Ellery" }
+                    Meta { "March 14, 2026 · Lisbon" }
+                }
+                ReadTime { "11 min read" }
+            }
+            Lead {
+                LeadIn { "The studio sits above a bakery," }
+                " and by nine in the morning the whole floor smells of bread. Nobody there will tell you a deadline. They will tell you how long the oven takes, and that the dough cannot be rushed."
+            }
+            Para {
+                "It would be easy to read that as a pose. But the work coming out of that room — typefaces, a few books, a handful of very careful websites — has a weight that most of what we make does not. It looks like it was "
+                Em { "decided" }
+                ", line by line."
+            }
+            Quote {
+                QuoteText {
+                    "“Speed is a fine tool. It is a terrible goal. The moment it becomes the goal, you stop seeing the work.”"
+                }
+                QuoteCite { "— Inês Duarte, type designer" }
+            }
+            SubHead { "A different kind of clock" }
+            Para {
+                "Duarte keeps two lists on the wall. One is what the client asked for. The other is what the work is asking for. The second list is always longer, and it is the one she reads first each morning."
+            }
+            Para {
+                "None of this is an argument against shipping. It is an argument for knowing, every day, which of the two clocks you are looking at — and for having the nerve to say so out loud."
+            }
+            Tags {
+                Tag { "Design practice" }
+                Tag { "Typography" }
+                Tag { "Studios" }
+            }
+        }
+    }
+}

@@ -1,0 +1,30 @@
+---
+// One page for each module of the Emul specification. When the site builds, the
+// Piton compiler compiles the modules through astro-piton.
+import { Code } from '@astrojs/starlight/components';
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import spec from 'virtual:emul-spec';
+
+import { buildPages, type Page } from '../lib/pages';
+
+export function getStaticPaths() {
+  return buildPages(spec).map((page) => ({ params: { slug: page.slug }, props: { page } }));
+}
+
+const { page } = Astro.props as { page: Page };
+---
+
+<StarlightPage
+  frontmatter={{ title: page.title, description: page.description }}
+  headings={page.headings}
+>
+  {
+    page.blocks.map((block) =>
+      block.type === 'code' ? (
+        <Code code={block.code} lang={block.lang} />
+      ) : (
+        <Fragment set:html={block.html} />
+      ),
+    )
+  }
+</StarlightPage>

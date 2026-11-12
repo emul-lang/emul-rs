@@ -1,0 +1,388 @@
+// An airline boarding pass: a main ticket and a tear-off stub with a barcode.
+
+component Page:
+    display: flex
+    justifyContent: center
+    padding: 64px 48px
+    backgroundColor: #eef0f7
+    backgroundImage: radial-gradient(circle at 0% 0%, #c7d2fe, rgba(199, 210, 254, 0) 32%), radial-gradient(circle at 100% 100%, #fde68a, rgba(253, 230, 138, 0) 26%)
+
+component Pass:
+    display: flex
+    width: 860px
+    backgroundColor: #ffffff
+    borderRadius: 24px
+    overflow: hidden
+    boxShadow: 0 30px 60px -20px rgba(30, 41, 59, 0.35), 0 2px 6px rgba(30, 41, 59, 0.08)
+
+component Main:
+    display: flex
+    flexDirection: column
+    flexGrow: 1
+
+component Band:
+    attribute part: main | stub = main
+    display: flex
+    alignItems: center
+    justifyContent: space-between
+    height: 64px
+    padding: 0 32px
+    backgroundImage: linear-gradient(100deg, #1e1b4b, #312e81 60%, #4338ca)
+
+    when part == stub:
+        padding: 0 24px
+        backgroundImage: linear-gradient(100deg, #4338ca, #6366f1)
+
+component Airline:
+    fontFamily: "Space Grotesk", "Noto Color Emoji"
+    fontSize: 20px
+    fontWeight: 700
+    letterSpacing: -0.2px
+    color: #ffffff
+
+component Cabin:
+    fontFamily: Inter
+    fontSize: 11px
+    fontWeight: 700
+    letterSpacing: 2px
+    textTransform: uppercase
+    color: #1e1b4b
+    backgroundColor: #fcd34d
+    padding: 6px 12px
+    borderRadius: 999px
+
+component BandLabel:
+    fontFamily: Inter
+    fontSize: 11px
+    fontWeight: 600
+    letterSpacing: 2px
+    textTransform: uppercase
+    color: #e0e7ff
+
+component Route:
+    display: flex
+    alignItems: center
+    gap: 24px
+    padding: 36px 32px 28px
+
+component Airport:
+    attribute align: start | end = start
+    display: flex
+    flexDirection: column
+    gap: 4px
+
+    when align == end:
+        alignItems: flex-end
+
+component Code:
+    fontFamily: "Space Grotesk"
+    fontSize: 64px
+    fontWeight: 700
+    lineHeight: 1
+    letterSpacing: -2px
+    color: #0f172a
+
+component City:
+    fontFamily: Inter
+    fontSize: 14px
+    fontWeight: 500
+    color: #64748b
+
+component Time:
+    fontFamily: "Space Grotesk"
+    fontSize: 20px
+    fontWeight: 600
+    color: #312e81
+    marginTop: 6px
+
+component Path:
+    display: flex
+    flexDirection: column
+    alignItems: center
+    gap: 8px
+    flexGrow: 1
+
+component PathLine:
+    display: flex
+    alignItems: center
+    gap: 10px
+    width: 100%
+
+component Dash:
+    flexGrow: 1
+    borderTop: 2px dashed #c7d2fe
+
+component Dot:
+    width: 10px
+    height: 10px
+    borderRadius: 50%
+    border: 2px solid #4338ca
+    backgroundColor: #ffffff
+
+component Plane:
+    fontFamily: "Noto Color Emoji"
+    fontSize: 22px
+    rotate: 45deg
+
+component Duration:
+    fontFamily: Inter
+    fontSize: 12px
+    fontWeight: 600
+    letterSpacing: 1px
+    color: #6366f1
+    textTransform: uppercase
+
+component Fields:
+    display: grid
+    gridTemplateColumns: 2fr 1fr 1fr 1fr
+    rowGap: 22px
+    columnGap: 24px
+    margin: 0 32px 32px
+    paddingTop: 24px
+    borderTop: 1px solid #e2e8f0
+
+component Field:
+    display: flex
+    flexDirection: column
+    gap: 6px
+
+component Label:
+    fontFamily: Inter
+    fontSize: 10px
+    fontWeight: 700
+    letterSpacing: 1.8px
+    textTransform: uppercase
+    color: #94a3b8
+
+component Value:
+    attribute tone: plain | accent = plain
+    fontFamily: "Space Grotesk"
+    fontSize: 20px
+    fontWeight: 600
+    color: #0f172a
+
+    when tone == accent:
+        color: #4338ca
+
+// The perforation between the ticket and the stub, with a notch at each end.
+component Tear:
+    position: relative
+    display: flex
+    flexDirection: column
+    width: 2px
+    flexShrink: 0
+
+component Perf:
+    attribute on: paper | band = paper
+    flexGrow: 1
+    borderLeft: 2px dashed #cbd5e1
+
+    when on == band:
+        flexGrow: 0
+        height: 64px
+        backgroundColor: #4338ca
+        borderLeft: 2px dashed #818cf8
+
+component Notch:
+    attribute end: top | bottom = top
+    position: absolute
+    left: -16px
+    width: 30px
+    height: 30px
+    borderRadius: 50%
+    backgroundColor: #eceef5
+    boxShadow: inset 0 3px 6px rgba(30, 41, 59, 0.18)
+    top: -15px
+
+    when end == bottom:
+        top: auto
+        bottom: -15px
+        backgroundColor: #dfe3ea
+        boxShadow: inset 0 -3px 6px rgba(30, 41, 59, 0.12)
+
+component Stub:
+    display: flex
+    flexDirection: column
+    width: 250px
+    flexShrink: 0
+    backgroundColor: #f8fafc
+
+component StubBody:
+    display: flex
+    flexDirection: column
+    gap: 18px
+    padding: 28px 24px 24px
+    flexGrow: 1
+
+component StubRoute:
+    fontFamily: "Space Grotesk"
+    fontSize: 28px
+    fontWeight: 700
+    letterSpacing: -0.5px
+    color: #0f172a
+
+component StubGrid:
+    display: grid
+    gridTemplateColumns: 1fr 1fr
+    rowGap: 16px
+    columnGap: 12px
+
+component Barcode:
+    display: flex
+    alignItems: stretch
+    gap: 2px
+    height: 52px
+    marginTop: 4px
+
+component Bar:
+    attribute w: thin | mid | wide = thin
+    width: 2px
+    backgroundColor: #0f172a
+
+    when w == mid:
+        width: 4px
+
+    when w == wide:
+        width: 6px
+
+component Fine:
+    fontFamily: "JetBrains Mono"
+    fontSize: 10px
+    letterSpacing: 1.5px
+    color: #94a3b8
+
+export composition BoardingPass {
+    Page {
+        Pass {
+            Main {
+                Band {
+                    Airline { "Meridian Air" }
+                    Cabin { "Business" }
+                }
+                Route {
+                    Airport {
+                        Code { "LIS" }
+                        City { "Lisbon, Portugal" }
+                        Time { "10:45" }
+                    }
+                    Path {
+                        PathLine {
+                            Dot {}
+                            Dash {}
+                            Plane { "✈️" }
+                            Dash {}
+                            Dot {}
+                        }
+                        Duration { "Nonstop · 8h 05m" }
+                    }
+                    Airport {
+                        align: end
+                        Code { "JFK" }
+                        City { "New York, United States" }
+                        Time { "13:50" }
+                    }
+                }
+                Fields {
+                    Field {
+                        Label { "Passenger" }
+                        Value { "Amara Okafor" }
+                    }
+                    Field {
+                        Label { "Flight" }
+                        Value { "MR 214" }
+                    }
+                    Field {
+                        Label { "Date" }
+                        Value { "18 Jun" }
+                    }
+                    Field {
+                        Label { "Class" }
+                        Value { "J" }
+                    }
+                    Field {
+                        Label { "Boarding" }
+                        Value { tone: accent, "10:05" }
+                    }
+                    Field {
+                        Label { "Gate" }
+                        Value { tone: accent, "B27" }
+                    }
+                    Field {
+                        Label { "Seat" }
+                        Value { tone: accent, "3A" }
+                    }
+                    Field {
+                        Label { "Zone" }
+                        Value { "1" }
+                    }
+                }
+            }
+            Tear {
+                Perf { on: band }
+                Perf {}
+                Notch {}
+                Notch { end: bottom }
+            }
+            Stub {
+                Band {
+                    part: stub
+                    BandLabel { "Boarding pass" }
+                }
+                StubBody {
+                    StubRoute { "LIS → JFK" }
+                    StubGrid {
+                        Field {
+                            Label { "Flight" }
+                            Value { "MR 214" }
+                        }
+                        Field {
+                            Label { "Seat" }
+                            Value { tone: accent, "3A" }
+                        }
+                        Field {
+                            Label { "Gate" }
+                            Value { "B27" }
+                        }
+                        Field {
+                            Label { "Board" }
+                            Value { "10:05" }
+                        }
+                    }
+                    Barcode {
+                        Bar { w: wide }
+                        Bar {}
+                        Bar { w: mid }
+                        Bar {}
+                        Bar {}
+                        Bar { w: wide }
+                        Bar { w: mid }
+                        Bar {}
+                        Bar { w: wide }
+                        Bar {}
+                        Bar { w: mid }
+                        Bar { w: mid }
+                        Bar {}
+                        Bar { w: wide }
+                        Bar {}
+                        Bar {}
+                        Bar { w: mid }
+                        Bar { w: wide }
+                        Bar {}
+                        Bar { w: mid }
+                        Bar {}
+                        Bar { w: wide }
+                        Bar {}
+                        Bar { w: mid }
+                        Bar {}
+                        Bar { w: wide }
+                        Bar { w: mid }
+                        Bar {}
+                        Bar {}
+                        Bar { w: wide }
+                    }
+                    Fine { "MR214 18JUN LIS JFK 003A" }
+                }
+            }
+        }
+    }
+}

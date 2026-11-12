@@ -1,0 +1,309 @@
+// A three-tier pricing table. The middle plan is highlighted with the
+// `tier` attribute.
+
+component Page:
+    display: flex
+    flexDirection: column
+    alignItems: center
+    gap: 48px
+    padding: 72px 64px
+    backgroundImage: linear-gradient(180deg, #f8fafc, #eef2ff)
+    fontFamily: "DM Sans"
+
+component Header:
+    display: flex
+    flexDirection: column
+    alignItems: center
+    gap: 12px
+
+component Eyebrow:
+    fontSize: 13px
+    fontWeight: 700
+    letterSpacing: 2px
+    textTransform: uppercase
+    color: #6366f1
+    fontFamily: "DM Sans"
+
+component Headline:
+    htmlTag: h1
+    fontSize: 44px
+    fontWeight: 700
+    letterSpacing: -1px
+    color: #0f172a
+    fontFamily: "DM Sans"
+
+component Lede:
+    fontSize: 18px
+    color: #64748b
+    fontFamily: "DM Sans"
+
+component Plans:
+    display: flex
+    alignItems: center
+    gap: 24px
+
+component Plan:
+    attribute tier: standard | featured = standard
+    display: flex
+    flexDirection: column
+    gap: 24px
+    width: 320px
+    padding: 36px 32px
+    borderRadius: 20px
+    backgroundColor: #ffffff
+    border: 1px solid #e2e8f0
+    boxShadow: 0 1px 2px rgba(15, 23, 42, 0.04)
+    fontFamily: "DM Sans"
+
+    when tier == featured:
+        padding: 48px 32px
+        backgroundImage: linear-gradient(160deg, #4f46e5, #7c3aed)
+        border: 1px solid #4f46e5
+        boxShadow: 0 24px 48px rgba(79, 70, 229, 0.35)
+
+component PlanTop:
+    display: flex
+    alignItems: center
+    justifyContent: space-between
+
+component PlanName:
+    attribute tier: standard | featured = standard
+    fontSize: 18px
+    fontWeight: 700
+    color: #0f172a
+    fontFamily: "DM Sans"
+
+    when tier == featured:
+        color: #ffffff
+
+component Popular:
+    padding: 4px 10px
+    borderRadius: 999px
+    backgroundColor: rgba(255, 255, 255, 0.2)
+    fontSize: 12px
+    fontWeight: 700
+    letterSpacing: 0.5px
+    color: #ffffff
+    fontFamily: "DM Sans"
+
+component PriceRow:
+    display: flex
+    alignItems: flex-end
+    gap: 6px
+
+component Price:
+    attribute tier: standard | featured = standard
+    fontSize: 48px
+    fontWeight: 700
+    letterSpacing: -1.5px
+    lineHeight: 1
+    color: #0f172a
+    fontFamily: "DM Sans"
+
+    when tier == featured:
+        color: #ffffff
+
+component Per:
+    attribute tier: standard | featured = standard
+    paddingBottom: 4px
+    fontSize: 15px
+    color: #64748b
+    fontFamily: "DM Sans"
+
+    when tier == featured:
+        color: #c7d2fe
+
+component Blurb:
+    attribute tier: standard | featured = standard
+    fontSize: 15px
+    lineHeight: 1.5
+    color: #64748b
+    fontFamily: "DM Sans"
+
+    when tier == featured:
+        color: #e0e7ff
+
+component Rule:
+    attribute tier: standard | featured = standard
+    height: 1px
+    backgroundColor: #e2e8f0
+
+    when tier == featured:
+        backgroundColor: rgba(255, 255, 255, 0.2)
+
+component Features:
+    display: flex
+    flexDirection: column
+    gap: 14px
+
+component Feature:
+    attribute tier: standard | featured = standard
+    display: flex
+    alignItems: center
+    gap: 12px
+    fontSize: 15px
+    color: #334155
+    fontFamily: "DM Sans"
+
+    when tier == featured:
+        color: #ffffff
+
+component Check:
+    attribute tier: standard | featured = standard
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 20px
+    height: 20px
+    flexShrink: 0
+    borderRadius: 999px
+    backgroundColor: #e0e7ff
+    color: #4f46e5
+    fontSize: 11px
+    fontWeight: 700
+    fontFamily: "DM Sans", "Noto Sans Symbols 2"
+
+    when tier == featured:
+        backgroundColor: rgba(255, 255, 255, 0.22)
+        color: #ffffff
+
+component Cta:
+    attribute tier: standard | featured = standard
+    display: flex
+    justifyContent: center
+    padding: 14px 20px
+    borderRadius: 12px
+    backgroundColor: #0f172a
+    color: #ffffff
+    fontSize: 15px
+    fontWeight: 700
+    fontFamily: "DM Sans"
+
+    when tier == featured:
+        backgroundColor: #ffffff
+        color: #4f46e5
+
+component Footnote:
+    fontSize: 14px
+    color: #94a3b8
+    fontFamily: "DM Sans"
+
+export composition Pricing {
+    Page {
+        Header {
+            Eyebrow { "Pricing" }
+            Headline { "Plans that grow with your team" }
+            Lede {
+                "Start free. Upgrade when you need more seats, history and control."
+            }
+        }
+        Plans {
+            Plan {
+                PlanTop {
+                    PlanName { "Starter" }
+                }
+                PriceRow {
+                    Price { "$0" }
+                    Per { "/ month" }
+                }
+                Blurb { "For individuals sketching out their first designs." }
+                Rule {}
+                Features {
+                    Feature {
+                        Check { "✓" }
+                        "Up to 3 projects"
+                    }
+                    Feature {
+                        Check { "✓" }
+                        "HTML and PNG export"
+                    }
+                    Feature {
+                        Check { "✓" }
+                        "7-day version history"
+                    }
+                    Feature {
+                        Check { "✓" }
+                        "Community support"
+                    }
+                }
+                Cta { "Get started" }
+            }
+            Plan {
+                tier: featured
+                PlanTop {
+                    PlanName { tier: featured, "Team" }
+                    Popular { "Most popular" }
+                }
+                PriceRow {
+                    Price { tier: featured, "$24" }
+                    Per { tier: featured, "/ seat / month" }
+                }
+                Blurb {
+                    tier: featured
+                    "For product teams shipping a shared design system."
+                }
+                Rule { tier: featured }
+                Features {
+                    Feature {
+                        tier: featured
+                        Check { tier: featured, "✓" }
+                        "Unlimited projects"
+                    }
+                    Feature {
+                        tier: featured
+                        Check { tier: featured, "✓" }
+                        "HTML, SVG and PNG export"
+                    }
+                    Feature {
+                        tier: featured
+                        Check { tier: featured, "✓" }
+                        "Shared component libraries"
+                    }
+                    Feature {
+                        tier: featured
+                        Check { tier: featured, "✓" }
+                        "90-day version history"
+                    }
+                    Feature {
+                        tier: featured
+                        Check { tier: featured, "✓" }
+                        "Priority email support"
+                    }
+                }
+                Cta { tier: featured, "Start 14-day trial" }
+            }
+            Plan {
+                PlanTop {
+                    PlanName { "Enterprise" }
+                }
+                PriceRow {
+                    Price { "Custom" }
+                }
+                Blurb { "For organisations with security and scale needs." }
+                Rule {}
+                Features {
+                    Feature {
+                        Check { "✓" }
+                        "Everything in Team"
+                    }
+                    Feature {
+                        Check { "✓" }
+                        "SSO and SCIM provisioning"
+                    }
+                    Feature {
+                        Check { "✓" }
+                        "Unlimited history and audit log"
+                    }
+                    Feature {
+                        Check { "✓" }
+                        "Dedicated success manager"
+                    }
+                }
+                Cta { "Talk to sales" }
+            }
+        }
+        Footnote {
+            "Prices in USD. Cancel any time. Education and non-profit discounts available."
+        }
+    }
+}

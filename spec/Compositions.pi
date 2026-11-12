@@ -1,3 +1,4 @@
+from ./Conditions import Conditions
 from ./HtmlOutput import HtmlOutput
 from ./Layout import Layout
 from ./Modules import Modules
@@ -41,7 +42,9 @@ export anchor Compositions:
         curly braces: `\ MyButton { } \`. The name must refer to a component
         declared in the same file or imported into it, as described in
         @{Modules}.
-        The same component may be instanced any number of times.
+        The same component may be instanced any number of times. A
+        composition can be instanced in the same way, as described under
+        reuse.
 
     body:
         The body of an instance may hold any mix of the following:
@@ -87,12 +90,19 @@ export anchor Compositions:
         Styling is never set on an instance. An attribute named after a
         component property, such as `color`, is an error, as are the names
         `class` and `style`. An instance that should look different should use
-        a different component, usually one that extends the original.
+        a different component, usually one that extends the original, or set
+        an attribute that its component declares.
+
+        An attribute the component declares, as described in @{Conditions},
+        does not set styling directly. It picks which of the component's
+        `when` blocks apply. Its value must be one of the allowed values.
 
     variants:
-        Emul has no separate variant mechanism. A variant is a component that
-        extends another, such as `SecondaryButton extends MyButton`, and is
-        chosen by instancing it by name.
+        Emul has two ways to make a variant. A variant can be a component that
+        extends another, such as `SecondaryButton extends MyButton`, chosen by
+        instancing it by name. Or it can be a value of an attribute the
+        component declares, chosen by setting that attribute on the instance,
+        as in `\ Button { size: small } \`, as described in @{Conditions}.
 
     children:
         Children are laid out by their parent, using the parent component's
@@ -107,9 +117,29 @@ export anchor Compositions:
         styling of its own.
 
     reuse:
-        Only components can be instanced. A composition can't be placed
-        inside another composition; a part of a design that is reused should
-        be built from shared components instead.
+        A composition can be reused as a complex component. A composition
+        declared in the same file, or imported into it as described in
+        @{Modules}, is instanced by name like a component:
+        `\ Card { } \`. To share a composition between files, export it from
+        the file that declares it and import it where it is used.
+
+        A composition instance draws the instances in the root of the
+        referenced composition in its own place, in the order they are
+        written there. They become children of the instance's parent, or of
+        the root, and are laid out by that parent like any other children.
+        Each instance is a separate copy of the tree, and the composition
+        adds no element or styling of its own, since its root has none.
+
+        The body of a composition instance must be empty. It can't hold text,
+        attributes or children, because a composition has no place to put
+        them. A part of a design that changes from use to use should be built
+        from shared components instead.
+
+        A composition can't contain itself, either directly or through other
+        compositions that it instances. Such a cycle is an error.
+
+        A composition that is instanced is not rendered on its own unless it
+        is also exported from the entry file.
 
     example:
         ```emul

@@ -1,0 +1,299 @@
+// A settings panel: grouped rows with toggle switches, a segmented control and a
+// danger zone. The toggles and segments use attributes to pick their look.
+
+component Canvas:
+    display: flex
+    justifyContent: center
+    padding: 48px 40px
+    backgroundImage: linear-gradient(180deg, #eef2ff, #f8fafc)
+    fontFamily: Inter
+
+component Panel:
+    display: flex
+    flexDirection: column
+    gap: 28px
+    width: 100%
+    padding: 32px
+    backgroundColor: #ffffff
+    border: 1px solid #e4e4e7
+    borderRadius: 20px
+    boxShadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 32px rgba(15, 23, 42, 0.08)
+
+component Header:
+    display: flex
+    alignItems: center
+    gap: 16px
+
+component Avatar:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 52px
+    height: 52px
+    borderRadius: 999px
+    backgroundImage: linear-gradient(135deg, #818cf8, #4f46e5)
+    color: #ffffff
+    fontFamily: Inter
+    fontSize: 18px
+    fontWeight: 600
+
+component HeaderText:
+    display: flex
+    flexDirection: column
+    gap: 2px
+    flexGrow: 1
+
+component PanelTitle:
+    fontSize: 22px
+    fontWeight: 700
+    color: #0f172a
+    letterSpacing: -0.4px
+
+component Muted:
+    fontSize: 14px
+    color: #64748b
+
+component Plan:
+    padding: 6px 12px
+    borderRadius: 999px
+    backgroundColor: #eef2ff
+    color: #4338ca
+    fontSize: 12px
+    fontWeight: 600
+    letterSpacing: 0.4px
+    textTransform: uppercase
+
+component Section:
+    display: flex
+    flexDirection: column
+    gap: 12px
+
+component SectionLabel:
+    fontSize: 12px
+    fontWeight: 600
+    color: #94a3b8
+    letterSpacing: 1px
+    textTransform: uppercase
+
+component Group:
+    display: flex
+    flexDirection: column
+    border: 1px solid #e2e8f0
+    borderRadius: 14px
+    overflow: hidden
+
+component SettingRow:
+    attribute edge: middle | last = middle
+    display: flex
+    alignItems: center
+    gap: 20px
+    padding: 16px 20px
+    borderBottom: 1px solid #f1f5f9
+
+    when edge == last:
+        borderBottom: none
+
+component RowText:
+    display: flex
+    flexDirection: column
+    gap: 3px
+    flexGrow: 1
+
+component RowTitle:
+    fontSize: 15px
+    fontWeight: 500
+    color: #0f172a
+
+component RowHint:
+    fontSize: 13px
+    color: #64748b
+    lineHeight: 1.4
+
+// The track moves its knob to the right and turns indigo when it is on.
+component Toggle:
+    attribute state: on | off = off
+    display: flex
+    alignItems: center
+    justifyContent: flex-start
+    flexShrink: 0
+    width: 44px
+    height: 26px
+    padding: 3px
+    borderRadius: 999px
+    backgroundColor: #cbd5e1
+
+    when state == on:
+        justifyContent: flex-end
+        backgroundColor: #4f46e5
+
+component Knob:
+    width: 20px
+    height: 20px
+    borderRadius: 999px
+    backgroundColor: #ffffff
+    boxShadow: 0 1px 3px rgba(15, 23, 42, 0.3)
+
+component Segmented:
+    display: flex
+    flexShrink: 0
+    gap: 2px
+    padding: 3px
+    backgroundColor: #f1f5f9
+    borderRadius: 10px
+
+component Segment:
+    attribute active: yes | no = no
+    padding: 7px 14px
+    borderRadius: 8px
+    fontSize: 13px
+    fontWeight: 500
+    color: #64748b
+
+    when active == yes:
+        backgroundColor: #ffffff
+        color: #0f172a
+        boxShadow: 0 1px 3px rgba(15, 23, 42, 0.12)
+
+component Select:
+    display: flex
+    alignItems: center
+    gap: 10px
+    flexShrink: 0
+    padding: 8px 12px
+    border: 1px solid #e2e8f0
+    borderRadius: 10px
+    fontSize: 13px
+    fontWeight: 500
+    color: #0f172a
+
+component Caret:
+    fontSize: 9px
+    color: #94a3b8
+
+component Danger:
+    display: flex
+    alignItems: center
+    gap: 20px
+    padding: 18px 20px
+    border: 1px solid #fecaca
+    borderRadius: 14px
+    backgroundColor: #fef2f2
+
+component DangerTitle:
+    fontSize: 15px
+    fontWeight: 600
+    color: #991b1b
+
+component DangerHint:
+    fontSize: 13px
+    color: #b91c1c
+    lineHeight: 1.4
+
+component DangerButton:
+    htmlTag: button
+    flexShrink: 0
+    padding: 9px 16px
+    borderRadius: 10px
+    backgroundColor: #dc2626
+    color: #ffffff
+    fontSize: 13px
+    fontWeight: 600
+    boxShadow: 0 1px 2px rgba(127, 29, 29, 0.3)
+
+export composition Settings {
+    Canvas {
+        Panel {
+            Header {
+                Avatar { "MR" }
+                HeaderText {
+                    PanelTitle { "Settings" }
+                    Muted { "Maya Rodriguez · maya@northwind.studio" }
+                }
+                Plan { "Pro plan" }
+            }
+
+            Section {
+                SectionLabel { "Notifications" }
+                Group {
+                    SettingRow {
+                        RowText {
+                            RowTitle { "Email digests" }
+                            RowHint {
+                                "A summary of activity in your workspaces, every Monday."
+                            }
+                        }
+                        Toggle {
+                            state: on
+                            Knob {}
+                        }
+                    }
+                    SettingRow {
+                        RowText {
+                            RowTitle { "Mentions" }
+                            RowHint {
+                                "Notify me when someone mentions me in a comment."
+                            }
+                        }
+                        Toggle {
+                            state: on
+                            Knob {}
+                        }
+                    }
+                    SettingRow {
+                        edge: last
+                        RowText {
+                            RowTitle { "Product updates" }
+                            RowHint {
+                                "Occasional news about new features and improvements."
+                            }
+                        }
+                        Toggle {
+                            Knob {}
+                        }
+                    }
+                }
+            }
+
+            Section {
+                SectionLabel { "Appearance" }
+                Group {
+                    SettingRow {
+                        RowText {
+                            RowTitle { "Theme" }
+                            RowHint { "Match your system, or pick one." }
+                        }
+                        Segmented {
+                            Segment { "Light" }
+                            Segment { "Dark" }
+                            Segment { active: yes, "System" }
+                        }
+                    }
+                    SettingRow {
+                        edge: last
+                        RowText {
+                            RowTitle { "Language" }
+                            RowHint { "Used for menus, emails and dates." }
+                        }
+                        Select {
+                            "English (UK)"
+                            Caret { "▼" }
+                        }
+                    }
+                }
+            }
+
+            Section {
+                SectionLabel { "Danger zone" }
+                Danger {
+                    RowText {
+                        DangerTitle { "Delete workspace" }
+                        DangerHint {
+                            "Removes Northwind and all 24 projects, permanently."
+                        }
+                    }
+                    DangerButton { "Delete workspace" }
+                }
+            }
+        }
+    }
+}

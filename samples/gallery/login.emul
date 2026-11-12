@@ -1,0 +1,264 @@
+// A sign-in card on a soft gradient backdrop.
+
+component Backdrop:
+    position: relative
+    display: flex
+    alignItems: center
+    justifyContent: center
+    height: 100%
+    overflow: hidden
+    backgroundImage: radial-gradient(circle at 15% 20%, #fbcfe8, rgba(251, 207, 232, 0) 45%), radial-gradient(circle at 85% 80%, #bae6fd, rgba(186, 230, 253, 0) 50%), linear-gradient(135deg, #fdf4ff, #eff6ff)
+    fontFamily: Manrope
+
+component Blob:
+    attribute spot: top | bottom = top
+    position: absolute
+    width: 420px
+    height: 420px
+    borderRadius: 999px
+    opacity: 0.55
+    top: -140px
+    left: -120px
+    backgroundImage: radial-gradient(circle at 50% 50%, #f0abfc, rgba(240, 171, 252, 0) 70%)
+
+    when spot == bottom:
+        top: 520px
+        left: 880px
+        backgroundImage: radial-gradient(circle at 50% 50%, #7dd3fc, rgba(125, 211, 252, 0) 70%)
+
+component Card:
+    position: relative
+    display: flex
+    flexDirection: column
+    gap: 24px
+    width: 420px
+    padding: 40px
+    borderRadius: 24px
+    backgroundColor: rgba(255, 255, 255, 0.86)
+    border: 1px solid rgba(255, 255, 255, 0.9)
+    boxShadow: 0 30px 60px rgba(30, 41, 59, 0.12), 0 2px 6px rgba(30, 41, 59, 0.05)
+
+component Brand:
+    display: flex
+    alignItems: center
+    gap: 10px
+
+component Logo:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 36px
+    height: 36px
+    borderRadius: 10px
+    backgroundImage: linear-gradient(135deg, #ec4899, #6366f1)
+    color: #ffffff
+    fontSize: 18px
+    fontWeight: 800
+    fontFamily: Manrope
+
+component BrandName:
+    fontSize: 18px
+    fontWeight: 800
+    letterSpacing: -0.3px
+    color: #0f172a
+    fontFamily: Manrope
+
+component Intro:
+    display: flex
+    flexDirection: column
+    gap: 6px
+
+component Title:
+    htmlTag: h1
+    fontSize: 26px
+    fontWeight: 800
+    letterSpacing: -0.6px
+    color: #0f172a
+    fontFamily: Manrope
+
+component Sub:
+    fontSize: 15px
+    color: #64748b
+    fontFamily: Manrope
+
+component Form:
+    display: flex
+    flexDirection: column
+    gap: 16px
+
+component Field:
+    display: flex
+    flexDirection: column
+    gap: 8px
+
+component LabelRow:
+    display: flex
+    justifyContent: space-between
+    alignItems: center
+
+component Label:
+    fontSize: 13px
+    fontWeight: 700
+    color: #334155
+    fontFamily: Manrope
+
+component Link:
+    fontSize: 13px
+    fontWeight: 700
+    color: #6366f1
+    fontFamily: Manrope
+
+component Input:
+    attribute state: idle | focus = idle
+    display: flex
+    alignItems: center
+    height: 46px
+    padding: 0 14px
+    borderRadius: 12px
+    backgroundColor: #ffffff
+    border: 1px solid #e2e8f0
+    fontSize: 15px
+    color: #0f172a
+    fontFamily: Manrope
+
+    when state == focus:
+        border: 1px solid #6366f1
+        boxShadow: 0 0 0 4px rgba(99, 102, 241, 0.15)
+
+component Placeholder:
+    fontSize: 22px
+    color: #475569
+    letterSpacing: 1px
+    fontFamily: Manrope
+
+component Primary:
+    display: flex
+    justifyContent: center
+    alignItems: center
+    height: 48px
+    borderRadius: 12px
+    backgroundImage: linear-gradient(135deg, #6366f1, #8b5cf6)
+    boxShadow: 0 10px 20px rgba(99, 102, 241, 0.3)
+    color: #ffffff
+    fontSize: 15px
+    fontWeight: 700
+    fontFamily: Manrope
+
+component Divider:
+    display: flex
+    alignItems: center
+    gap: 12px
+
+component Line:
+    flexGrow: 1
+    height: 1px
+    backgroundColor: #e2e8f0
+
+component DividerText:
+    fontSize: 12px
+    fontWeight: 600
+    color: #94a3b8
+    textTransform: uppercase
+    letterSpacing: 1px
+    fontFamily: Manrope
+
+component Socials:
+    display: flex
+    gap: 12px
+
+component Social:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    gap: 10px
+    flexGrow: 1
+    flexBasis: 0
+    height: 46px
+    borderRadius: 12px
+    backgroundColor: #ffffff
+    border: 1px solid #e2e8f0
+    fontSize: 14px
+    fontWeight: 700
+    color: #334155
+    fontFamily: Manrope
+
+component Mark:
+    attribute brand: google | github = google
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 20px
+    height: 20px
+    borderRadius: 999px
+    backgroundImage: linear-gradient(135deg, #ea4335 25%, #fbbc05 25%, #fbbc05 50%, #34a853 50%, #34a853 75%, #4285f4 75%)
+    color: #ffffff
+    fontSize: 11px
+    fontWeight: 800
+    fontFamily: Manrope
+
+    when brand == github:
+        width: 24px
+        borderRadius: 6px
+        backgroundImage: none
+        backgroundColor: #0f172a
+        fontSize: 9px
+
+component Footer:
+    display: flex
+    justifyContent: center
+    gap: 6px
+    fontSize: 14px
+    color: #64748b
+    fontFamily: Manrope
+
+export composition Login {
+    Backdrop {
+        Blob {}
+        Blob { spot: bottom }
+        Card {
+            Brand {
+                Logo { "N" }
+                BrandName { "Northwind" }
+            }
+            Intro {
+                Title { "Welcome back" }
+                Sub { "Sign in to pick up where your team left off." }
+            }
+            Form {
+                Field {
+                    Label { "Work email" }
+                    Input { state: focus, "maya@northwind.studio" }
+                }
+                Field {
+                    LabelRow {
+                        Label { "Password" }
+                        Link { "Forgot password?" }
+                    }
+                    Input {
+                        Placeholder { "••••••••••" }
+                    }
+                }
+            }
+            Primary { "Sign in" }
+            Divider {
+                Line {}
+                DividerText { "or continue with" }
+                Line {}
+            }
+            Socials {
+                Social {
+                    Mark { "G" }
+                    "Google"
+                }
+                Social {
+                    Mark { brand: github, "</>" }
+                    "GitHub"
+                }
+            }
+            Footer {
+                "New to Northwind?"
+                Link { "Create an account" }
+            }
+        }
+    }
+}

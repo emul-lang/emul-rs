@@ -1,4 +1,4 @@
-//! Diagnostics: errors and warnings, reported with file, line, column and a code.
+//! Diagnostics: errors and warnings. Each has a file, line, column and code.
 
 use std::collections::HashMap;
 use std::fmt::Write as _;
@@ -10,7 +10,7 @@ pub enum Severity {
     Warning,
 }
 
-/// A position in a source file. Lines and columns are 1-based; `len` is in characters.
+/// A position in a source file. Lines and columns are 1-based. `len` counts characters.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct Span {
     pub line: usize,
@@ -53,7 +53,7 @@ impl Diags {
 
     fn push(&mut self, severity: Severity, code: &'static str, file: Option<&Path>, span: Option<Span>, message: String) {
         let d = Diagnostic { severity, code, message, file: file.map(|p| p.to_path_buf()), span };
-        // Avoid exact duplicates, which can arise when a file is reached through several imports.
+        // Prevent exact duplicates. These occur when more than one import gets the same file.
         if !self.list.iter().any(|e| {
             e.code == d.code && e.file == d.file && e.span == d.span && e.message == d.message
         }) {
@@ -88,7 +88,7 @@ impl Diags {
         v
     }
 
-    /// Renders every diagnostic, with the offending line and a marker under the problem.
+    /// Shows each diagnostic with the line that has the problem and a marker under the problem.
     pub fn render(&self, sources: &HashMap<PathBuf, String>, base: &Path) -> String {
         let mut out = String::new();
         for d in self.sorted() {
@@ -120,7 +120,7 @@ pub fn render_one(d: &Diagnostic, sources: &HashMap<PathBuf, String>, base: &Pat
                 let num = s.line.to_string();
                 let pad = " ".repeat(num.len());
                 let shown: String = line.replace('\t', "    ");
-                // Columns count characters; tabs were widened to four spaces for display.
+                // Columns count characters. The display shows each tab as four spaces.
                 let prefix: String = line.chars().take(s.col.saturating_sub(1)).collect();
                 let col = prefix.chars().map(|c| if c == '\t' { 4 } else { 1 }).sum::<usize>();
                 let _ = writeln!(out, "  {num} | {shown}");

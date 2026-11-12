@@ -1,5 +1,5 @@
-//! The HTML output. Nearly everything is a `div`; each component becomes one CSS class
-//! holding its complete, already-resolved style, and a reset stops anything cascading.
+//! The HTML output. Almost every element is a `div`. Each component becomes one CSS class.
+//! That class holds the full resolved style. A reset stops all CSS cascade.
 
 use crate::fonts::FontSet;
 use crate::project::{Child, Node};
@@ -19,7 +19,7 @@ pub struct HtmlOptions {
 
 pub struct HtmlOutput {
     pub html: String,
-    /// Files to copy next to the HTML: (source, published name).
+    /// The files to copy next to the HTML: (source, name in the output).
     pub assets: Vec<(PathBuf, String)>,
 }
 
@@ -63,8 +63,8 @@ impl Ctx {
     }
 }
 
-/// Whether a block's children are all blocks, so it is laid out as a flex column,
-/// which never collapses margins.
+/// True when all children of a block are blocks. Then the HTML arranges the block as a
+/// flex column. A flex column never collapses margins.
 fn flows_as_column(node: &Node) -> bool {
     let d = node.style.display();
     if d != "block" || node.style.tag() == "img" {
@@ -96,8 +96,8 @@ fn write_node(out: &mut String, node: &Node, ctx: &mut Ctx) {
     if props::VOID_TAGS.contains(&tag.as_str()) {
         return;
     }
-    // Clamped text goes in an inner box, so the clamp still hides the extra lines
-    // when the element itself is stretched taller than its text.
+    // Clamped text goes in an inner box. Then the clamp hides the extra lines, also when
+    // the layout makes the element taller than its text.
     let clamp = node.style.int(L::LineClamp).is_some();
     if clamp {
         out.push_str("<span data-emul-clamp>");
@@ -152,9 +152,9 @@ fn class_css(name: &str, style: &Style, ctx: &mut Ctx) -> String {
         let value = css_value(*l, v, &own, &|p| p.display().to_string());
         decls.push(format!("{}:{}", l.css(), value));
     }
-    // Text decoration and shadows default to the component's own colour.
+    // The default colour of text decoration and shadows is the own colour of the component.
     if style.get(L::TextDecoration).is_none() && style.get(L::Color).is_some() {
-        // Nothing to add: text-decoration is none by default.
+        // Nothing to add: the default text-decoration is none.
     }
     // A block child with auto side margins and an auto width still fills its line.
     let auto_margin = matches!(style.len(L::MarginLeft), Len::Auto) || matches!(style.len(L::MarginRight), Len::Auto);
@@ -202,7 +202,7 @@ pub fn render(roots: &[Node], fonts: &FontSet, opts: &HtmlOptions) -> HtmlOutput
     }
     // Blocks whose children are all blocks are flex columns, which never collapse
     // margins. Their children neither grow, shrink nor align themselves, as in block
-    // layout. These come after the classes so they win.
+    // layout. These rules come after the classes, so that they have priority.
     css.push_str("[data-emul-flow=\"column\"]{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;justify-content:flex-start}");
     css.push_str("[data-emul-flow=\"column\"]>*,body>*{flex:0 0 auto;align-self:auto}");
     let mut html = String::new();

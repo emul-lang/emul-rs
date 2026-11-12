@@ -1,0 +1,399 @@
+// A music player: gradient album art, the current track, controls and an up-next queue.
+
+component Page:
+    display: flex
+    justifyContent: center
+    padding: 56px 40px
+    backgroundColor: #0b0a12
+    backgroundImage: radial-gradient(circle at 15% 10%, rgba(236, 72, 153, 0.35), rgba(236, 72, 153, 0) 40%), radial-gradient(circle at 90% 90%, rgba(99, 102, 241, 0.35), rgba(99, 102, 241, 0) 45%)
+
+component Player:
+    display: flex
+    flexDirection: column
+    gap: 28px
+    width: 780px
+    padding: 32px
+    backgroundColor: rgba(255, 255, 255, 0.04)
+    border: 1px solid rgba(255, 255, 255, 0.08)
+    borderRadius: 28px
+    boxShadow: 0 40px 80px -30px rgba(0, 0, 0, 0.8)
+
+component Now:
+    display: flex
+    gap: 32px
+    alignItems: center
+
+// The cover is built from layered gradients and two circles.
+component Cover:
+    position: relative
+    width: 260px
+    height: 260px
+    flexShrink: 0
+    borderRadius: 20px
+    overflow: hidden
+    backgroundImage: radial-gradient(circle at 70% 30%, #fde047, rgba(253, 224, 71, 0) 35%), linear-gradient(140deg, #f43f5e, #a855f7 55%, #312e81)
+    boxShadow: 0 24px 48px -16px rgba(244, 63, 94, 0.5)
+
+component Sun:
+    position: absolute
+    left: -40px
+    bottom: -70px
+    width: 220px
+    height: 220px
+    borderRadius: 50%
+    border: 18px solid rgba(255, 255, 255, 0.18)
+
+component Moon:
+    position: absolute
+    right: 34px
+    top: 34px
+    width: 54px
+    height: 54px
+    borderRadius: 50%
+    backgroundColor: rgba(255, 255, 255, 0.85)
+
+component CoverTitle:
+    position: absolute
+    left: 20px
+    bottom: 18px
+    fontFamily: Manrope
+    fontSize: 13px
+    fontWeight: 800
+    letterSpacing: 4px
+    textTransform: uppercase
+    color: #ffffff
+
+component Info:
+    display: flex
+    flexDirection: column
+    flexGrow: 1
+    gap: 6px
+
+component Label:
+    fontFamily: Manrope
+    fontSize: 11px
+    fontWeight: 700
+    letterSpacing: 2.5px
+    textTransform: uppercase
+    color: #f472b6
+    marginBottom: 6px
+
+component Title:
+    fontFamily: Manrope
+    fontSize: 34px
+    fontWeight: 800
+    letterSpacing: -0.8px
+    color: #ffffff
+
+component Artist:
+    fontFamily: Manrope
+    fontSize: 16px
+    fontWeight: 500
+    color: #a1a1aa
+
+component Progress:
+    display: flex
+    flexDirection: column
+    gap: 10px
+    marginTop: 26px
+
+component Track:
+    position: relative
+    height: 6px
+    borderRadius: 999px
+    backgroundColor: rgba(255, 255, 255, 0.12)
+
+component Fill:
+    width: 62%
+    height: 6px
+    borderRadius: 999px
+    backgroundImage: linear-gradient(90deg, #f43f5e, #a855f7)
+
+component Knob:
+    position: absolute
+    left: 62%
+    top: -5px
+    width: 16px
+    height: 16px
+    marginLeft: -8px
+    borderRadius: 50%
+    backgroundColor: #ffffff
+    boxShadow: 0 0 0 4px rgba(168, 85, 247, 0.35)
+
+component Times:
+    display: flex
+    justifyContent: space-between
+
+component Time:
+    fontFamily: Manrope
+    fontSize: 12px
+    fontWeight: 600
+    color: #71717a
+
+component Controls:
+    display: flex
+    alignItems: center
+    gap: 18px
+    marginTop: 18px
+
+component Control:
+    attribute kind: plain | main = plain
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 44px
+    height: 44px
+    borderRadius: 50%
+    gap: 2px
+    fontFamily: Inter
+    fontSize: 17px
+    color: #e4e4e7
+    backgroundColor: rgba(255, 255, 255, 0.06)
+
+    when kind == main:
+        width: 64px
+        height: 64px
+        gap: 6px
+        color: #0b0a12
+        backgroundColor: #ffffff
+        boxShadow: 0 10px 30px -8px rgba(255, 255, 255, 0.45)
+
+// Transport icons, drawn with bars and border triangles.
+component IconBar:
+    attribute size: thin | thick = thin
+    width: 2px
+    height: 12px
+    borderRadius: 1px
+    backgroundColor: #e4e4e7
+
+    when size == thick:
+        width: 5px
+        height: 20px
+        borderRadius: 2px
+        backgroundColor: #0b0a12
+
+component Arrow:
+    attribute dir: left | right = left
+    width: 0px
+    height: 0px
+    borderTop: 6px solid rgba(0, 0, 0, 0)
+    borderBottom: 6px solid rgba(0, 0, 0, 0)
+    borderRight: 10px solid #e4e4e7
+
+    when dir == right:
+        borderRight: 0px solid rgba(0, 0, 0, 0)
+        borderLeft: 10px solid #e4e4e7
+
+component Spacer:
+    flexGrow: 1
+
+component Queue:
+    display: flex
+    flexDirection: column
+    gap: 4px
+    paddingTop: 22px
+    borderTop: 1px solid rgba(255, 255, 255, 0.08)
+
+component QueueHead:
+    display: flex
+    justifyContent: space-between
+    alignItems: baseline
+    marginBottom: 10px
+
+component QueueTitle:
+    fontFamily: Manrope
+    fontSize: 15px
+    fontWeight: 700
+    color: #ffffff
+
+component QueueMeta:
+    fontFamily: Manrope
+    fontSize: 12px
+    fontWeight: 600
+    color: #71717a
+
+component Row:
+    attribute state: queued | playing = queued
+    display: flex
+    alignItems: center
+    gap: 16px
+    padding: 10px 14px
+    borderRadius: 14px
+
+    when state == playing:
+        backgroundColor: rgba(244, 63, 94, 0.12)
+        boxShadow: inset 0 0 0 1px rgba(244, 63, 94, 0.3)
+
+component Index:
+    attribute state: queued | playing = queued
+    width: 20px
+    fontFamily: Manrope
+    fontSize: 13px
+    fontWeight: 700
+    color: #52525b
+    textAlign: center
+
+    when state == playing:
+        color: #fb7185
+
+component Thumb:
+    attribute art: dusk | ocean | forest | ember = dusk
+    width: 44px
+    height: 44px
+    flexShrink: 0
+    borderRadius: 10px
+    backgroundImage: linear-gradient(140deg, #f43f5e, #a855f7 55%, #312e81)
+
+    when art == ocean:
+        backgroundImage: linear-gradient(140deg, #22d3ee, #3b82f6 60%, #1e3a8a)
+
+    when art == forest:
+        backgroundImage: linear-gradient(140deg, #a3e635, #10b981 55%, #064e3b)
+
+    when art == ember:
+        backgroundImage: linear-gradient(140deg, #fde047, #f97316 55%, #7c2d12)
+
+component Song:
+    display: flex
+    flexDirection: column
+    gap: 3px
+    flexGrow: 1
+
+component SongTitle:
+    attribute state: queued | playing = queued
+    fontFamily: Manrope
+    fontSize: 15px
+    fontWeight: 700
+    color: #e4e4e7
+
+    when state == playing:
+        color: #ffffff
+
+component SongArtist:
+    fontFamily: Manrope
+    fontSize: 13px
+    fontWeight: 500
+    color: #71717a
+
+component Eq:
+    display: flex
+    alignItems: flex-end
+    gap: 3px
+    height: 16px
+
+component EqBar:
+    attribute h: low | mid | high = mid
+    width: 3px
+    height: 10px
+    borderRadius: 2px
+    backgroundColor: #fb7185
+
+    when h == low:
+        height: 6px
+
+    when h == high:
+        height: 16px
+
+component Length:
+    fontFamily: Manrope
+    fontSize: 13px
+    fontWeight: 600
+    color: #71717a
+    width: 40px
+    textAlign: right
+
+export composition MusicPlayer {
+    Page {
+        Player {
+            Now {
+                Cover {
+                    Sun {}
+                    Moon {}
+                    CoverTitle { "Night Swim" }
+                }
+                Info {
+                    Label { "Now playing" }
+                    Title { "Low Tide Lanterns" }
+                    Artist { "Halcyon Drive · Night Swim" }
+                    Progress {
+                        Track {
+                            Fill {}
+                            Knob {}
+                        }
+                        Times {
+                            Time { "2:24" }
+                            Time { "3:52" }
+                        }
+                    }
+                    Controls {
+                        Control { "↻" }
+                        Control {
+                            IconBar {}
+                            Arrow {}
+                        }
+                        Control {
+                            kind: main
+                            IconBar { size: thick }
+                            IconBar { size: thick }
+                        }
+                        Control {
+                            Arrow { dir: right }
+                            IconBar {}
+                        }
+                        Spacer {}
+                        Control { "♡" }
+                    }
+                }
+            }
+            Queue {
+                QueueHead {
+                    QueueTitle { "Up next" }
+                    QueueMeta { "4 songs · 15 min" }
+                }
+                Row {
+                    state: playing
+                    Index { state: playing, "1" }
+                    Thumb {}
+                    Song {
+                        SongTitle { state: playing, "Low Tide Lanterns" }
+                        SongArtist { "Halcyon Drive" }
+                    }
+                    Eq {
+                        EqBar { h: low }
+                        EqBar { h: high }
+                        EqBar {}
+                        EqBar { h: high }
+                    }
+                    Length { "3:52" }
+                }
+                Row {
+                    Index { "2" }
+                    Thumb { art: ocean }
+                    Song {
+                        SongTitle { "Glass Harbour" }
+                        SongArtist { "Mara Vey" }
+                    }
+                    Length { "4:08" }
+                }
+                Row {
+                    Index { "3" }
+                    Thumb { art: forest }
+                    Song {
+                        SongTitle { "Pinewire" }
+                        SongArtist { "The Understory" }
+                    }
+                    Length { "3:31" }
+                }
+                Row {
+                    Index { "4" }
+                    Thumb { art: ember }
+                    Song {
+                        SongTitle { "Slow Burn Summer" }
+                        SongArtist { "Odile & the Coast" }
+                    }
+                    Length { "3:45" }
+                }
+            }
+        }
+    }
+}

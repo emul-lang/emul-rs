@@ -1,5 +1,5 @@
-//! Fonts come from Google Fonts. The catalogue is looked up during compilation to
-//! check families and faces, and font files are downloaded on demand into a cache.
+//! Fonts come from Google Fonts. The compiler reads the catalogue to check families and
+//! faces. It downloads a font file into a cache when it needs the file.
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::path::{Path, PathBuf};
@@ -13,7 +13,7 @@ const CATALOGUE_MAX_AGE: Duration = Duration::from_secs(24 * 60 * 60);
 #[derive(Clone, Debug)]
 pub struct FamilyInfo {
     pub name: String,
-    /// Static faces offered: (weight, italic).
+    /// The static faces of the family: (weight, italic).
     pub faces: BTreeSet<(u16, bool)>,
     /// The weight axis range of a variable family.
     pub wght: Option<(u16, u16)>,
@@ -185,16 +185,16 @@ pub fn face_file(cache: &Path, key: &FaceKey) -> Result<Arc<Vec<u8>>, FontError>
     Ok(Arc::new(data))
 }
 
-/// The fonts a set of compositions needs, gathered while walking their text.
+/// The fonts that a set of compositions needs. The code collects them from the text.
 #[derive(Default, Debug, Clone)]
 pub struct FontNeeds {
-    /// For each (family list, weight, italic) used by some text.
+    /// For each (family list, weight, italic) that some text uses.
     pub uses: BTreeSet<(Vec<String>, u16, bool)>,
 }
 
 pub struct FontSet {
     pub faces: Vec<LoadedFace>,
-    /// Families and the faces requested, for the HTML stylesheet link.
+    /// The families and the faces that the text uses, for the HTML stylesheet link.
     pub families: BTreeMap<String, BTreeSet<(u16, bool)>>,
 }
 
@@ -203,7 +203,7 @@ impl FontSet {
         FontSet { faces: Vec::new(), families: BTreeMap::new() }
     }
 
-    /// The Google Fonts stylesheet URL for exactly the faces used.
+    /// The Google Fonts stylesheet URL for the faces that the text uses, and no others.
     pub fn stylesheet_url(&self) -> Option<String> {
         if self.families.is_empty() {
             return None;
@@ -221,8 +221,8 @@ impl FontSet {
     }
 }
 
-/// Checks every use against the catalogue and loads the faces needed. Errors are
-/// returned as (code, message) pairs, along with the family they concern.
+/// Checks every use against the catalogue and loads the faces that the text needs. It returns
+/// each error as a (code, message) pair, with the family of the error.
 pub fn resolve(needs: &FontNeeds, cache: &Path) -> Result<FontSet, Vec<(&'static str, String, String)>> {
     let cat = match Catalogue::load(cache) {
         Ok(c) => c,
@@ -268,7 +268,7 @@ pub fn resolve(needs: &FontNeeds, cache: &Path) -> Result<FontSet, Vec<(&'static
         return Err(errors);
     }
     let mut set = FontSet::empty();
-    // Download in parallel; there may be several faces.
+    // Download in parallel, because there can be several faces.
     let keys: Vec<FaceKey> = wanted.into_iter().collect();
     let results: Vec<(FaceKey, Result<Arc<Vec<u8>>, FontError>)> = std::thread::scope(|s| {
         let handles: Vec<_> = keys.iter().map(|k| (k.clone(), s.spawn(|| face_file(cache, k)))).collect();

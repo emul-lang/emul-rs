@@ -1,5 +1,5 @@
-//! The SVG output, Emul's reference rendering. Every box, border, shadow and glyph is
-//! drawn at its final position; the SVG holds no layout of its own.
+//! The SVG output. It is the reference render of Emul. The code draws each box, border,
+//! shadow and glyph at its final position. The SVG has no layout of its own.
 
 use crate::config::SvgFonts;
 use crate::layout::{LBox, LItem, LText, Laid, Rect};
@@ -30,7 +30,7 @@ fn esc(s: &str) -> String {
     s.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;").replace('"', "&quot;")
 }
 
-/// Fill attributes for a colour, keeping SVG 1.1 viewers happy with separate opacity.
+/// The fill attributes for a colour. SVG 1.1 viewers need a separate opacity attribute.
 fn fill(c: &Color) -> String {
     if c.a >= 1.0 { format!("fill=\"{}\"", c.hex6()) } else { format!("fill=\"{}\" fill-opacity=\"{}\"", c.hex6(), n(c.a)) }
 }
@@ -41,8 +41,8 @@ fn stroke(c: &Color) -> String {
 
 type Radii = [(f32, f32); 4];
 
-/// A rounded rectangle path. Radii are for the top-left, top-right, bottom-right and
-/// bottom-left corners, each (horizontal, vertical).
+/// A path for a rectangle with round corners. The radii are for the top-left, top-right,
+/// bottom-right and bottom-left corners. Each radius is (horizontal, vertical).
 fn rrect(r: Rect, rad: Radii) -> String {
     let [tl, tr, br, bl] = rad;
     if rad.iter().all(|c| c.0 <= 0.0 || c.1 <= 0.0) {
@@ -70,7 +70,8 @@ fn rrect(r: Rect, rad: Radii) -> String {
     d
 }
 
-/// The used corner radii of a box, scaled down as CSS does when they would overlap.
+/// The used corner radii of a box. When the radii overlap, the code makes them smaller,
+/// as CSS does.
 fn radii(s: &Style, r: Rect) -> Radii {
     let mut out = [(0.0, 0.0); 4];
     for (i, l) in props::RADII.iter().enumerate() {
@@ -96,7 +97,7 @@ fn radii(s: &Style, r: Rect) -> Radii {
     out
 }
 
-/// Radii shrunk by border widths, for the inner edge of a border.
+/// The radii minus the border widths, for the inner edge of a border.
 fn inner_radii(rad: Radii, b: [f32; 4]) -> Radii {
     let [t, r, bo, l] = b;
     [
@@ -128,11 +129,12 @@ struct Writer<'a> {
 
 #[derive(Clone)]
 enum GlyphShape {
-    /// An outline in font units (y up), and the font's units per em.
+    /// An outline in font units (y up), and the units per em of the font.
     Outline(String, f32),
-    /// Colour layers: (path in font units, colour), and units per em.
+    /// The colour layers: (path in font units, colour), and the units per em.
     Layers(Vec<(String, Option<Color>)>, f32),
-    /// A bitmap: PNG data, x, y, width, height in font units scaled from pixels-per-em.
+    /// A bitmap: PNG data, x, y, width and height. The values are in font units, scaled
+    /// from pixels per em.
     Bitmap(String, f32, f32, f32, f32, f32),
 }
 
@@ -193,7 +195,7 @@ impl<'a, 'f> ttf_parser::colr::Painter<'a> for ColorPainter<'f> {
     fn pop_transform(&mut self) {}
 }
 
-/// Rewrites a path in font units into canvas coordinates.
+/// Changes a path in font units into canvas coordinates.
 fn place_path(d: &str, ox: f32, oy: f32, scale: f32, out: &mut String) {
     let mut num = String::new();
     let mut is_x = true;
@@ -272,7 +274,7 @@ impl<'a> Writer<'a> {
         id
     }
 
-    // ------------------------------------------------------------ painting order
+    // ------------------------------------------------------------ paint order
 
     fn paint_root(&mut self, laid: &Laid) {
         let mut layers: Vec<(i32, usize, &LBox)> = Vec::new();
@@ -305,7 +307,7 @@ impl<'a> Writer<'a> {
                     return;
                 }
                 match layer_of(b) {
-                    Some(_) => {} // painted in a layer pass
+                    Some(_) => {} // A layer pass paints this box.
                     None if is_atomic(b) => self.paint_atomic(b),
                     None => {
                         self.paint_decorations(b);
@@ -321,7 +323,7 @@ impl<'a> Writer<'a> {
         }
     }
 
-    /// Paints a box and everything inside it as a unit: its own stacking context.
+    /// Paints a box and all its contents as a unit. The box has its own stack context.
     fn paint_atomic(&mut self, b: &LBox) {
         if b.style.display() == "none" {
             return;
@@ -380,7 +382,7 @@ impl<'a> Writer<'a> {
         let rad = radii(s, r);
         let own = s.color();
         let shadows = s.shadows(L::BoxShadow);
-        // Outer shadows, the first listed on top.
+        // The outer shadows. The first shadow in the list is on top.
         for sh in shadows.iter().rev().filter(|sh| !sh.inset) {
             let color = sh.color.clone().unwrap_or_else(|| own.clone());
             let shape = grow(Rect { x: r.x + sh.x, y: r.y + sh.y, ..r }, sh.spread);
@@ -391,7 +393,7 @@ impl<'a> Writer<'a> {
             let filter = if sh.blur > 0.0 { format!(" filter=\"url(#{})\"", self.blur_filter(sh.blur / 2.0, big)) } else { String::new() };
             let _ = write!(self.body, "<g clip-path=\"url(#{clip})\"><path d=\"{d}\" {}{filter}/></g>", fill(&color));
         }
-        // Background colour and images, clipped to the border box.
+        // The background colour and images. The code clips them to the border box.
         let border_path = rrect(r, rad);
         if let Some(V::OptColor(Some(c))) = s.get(L::BackgroundColor) {
             let _ = write!(self.body, "<path d=\"{border_path}\" {}/>", fill(c));
@@ -406,7 +408,7 @@ impl<'a> Writer<'a> {
                 self.body.push_str("</g>");
             }
         }
-        // Inset shadows, inside the padding box.
+        // The inset shadows, in the padding box.
         let pb = b.padding_box();
         let irad = inner_radii(rad, b.border);
         for sh in shadows.iter().rev().filter(|sh| sh.inset) {
@@ -439,7 +441,7 @@ impl<'a> Writer<'a> {
         let irad = inner_radii(rad, w);
         let uniform = (1..4).all(|i| styles[i] == styles[0] && colors[i] == colors[0] && (w[i] > 0.0) == (w[0] > 0.0));
         let ring = |outer: Rect, orad: Radii, inn: Rect, inrad: Radii| format!("{}{}", rrect(outer, orad), rrect(inn, inrad));
-        // Trapezoid for each side, from the outer corners to the inner ones.
+        // A trapezoid for each side, from the outer corners to the inner corners.
         let side_poly = |i: usize| -> String {
             let (ox0, oy0, ox1, oy1) = (r.x, r.y, r.x + r.w, r.y + r.h);
             let (ix0, iy0, ix1, iy1) = (inner.x, inner.y, inner.x + inner.w, inner.y + inner.h);
@@ -502,7 +504,7 @@ impl<'a> Writer<'a> {
             },
             _ => (area.w, area.h, None),
         };
-        // Size of one tile.
+        // The size of one tile.
         let (tw, th) = match s.get(L::BackgroundSize) {
             Some(V::BgSize(BgSize::Cover)) if href.is_some() => {
                 let k = (area.w / iw).max(area.h / ih);
@@ -562,7 +564,7 @@ impl<'a> Writer<'a> {
             n(pw),
             n(ph)
         );
-        // Without repeat on an axis, only the band the tile covers is painted.
+        // Without repeat on an axis, the code paints only the band that the tile covers.
         let fx = if rx { br.x } else { x };
         let fy = if ry { br.y } else { y };
         let fw = if rx { br.w } else { tw };
@@ -570,7 +572,7 @@ impl<'a> Writer<'a> {
         let _ = write!(self.body, "<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" fill=\"url(#{pid})\"/>", n(fx), n(fy), n(fw), n(fh));
     }
 
-    /// Defines a gradient filling `r` and returns its id.
+    /// Defines a gradient that fills `r`. Returns the id of the gradient.
     fn gradient(&mut self, img: &Image, r: Rect) -> String {
         let id = self.id("g");
         let stops_xml = |stops: Vec<(f32, Color)>| -> String {
@@ -715,7 +717,8 @@ impl<'a> Writer<'a> {
 
     fn paint_text(&mut self, t: &LText) {
         let Some(shaped) = &t.shaped else { return };
-        // Gather positioned glyphs: (span, font, glyph, x, baseline y, size, advance).
+        // Collect the glyphs and their positions:
+        // (span, font, glyph, x, baseline y, size, advance).
         struct G {
             span: usize,
             font: cosmic_text::fontdb::ID,
@@ -729,7 +732,8 @@ impl<'a> Writer<'a> {
         let mut glyphs = Vec::new();
         let keep_spaces = matches!(t.para.white_space, "pre" | "pre-wrap");
         for run in shaped.buffer.layout_runs() {
-            // Spaces at the start of a wrapped line are not drawn, and the line closes up.
+            // The code does not draw spaces at the start of a wrapped line.
+            // It moves the line to the left by the width of those spaces.
             let mut lead = 0usize;
             let mut shift = 0.0f32;
             if !keep_spaces {
@@ -759,7 +763,7 @@ impl<'a> Writer<'a> {
         let styles = &t.styles;
         let style_of = |i: usize| -> &SpanStyle { styles.get(i).unwrap_or(&t.para.strut) };
 
-        // Shadows first, behind the text.
+        // Draw the shadows first, behind the text.
         let max_span = styles.len().max(1);
         for si in 0..max_span {
             let st = style_of(si).clone();
@@ -827,7 +831,7 @@ impl<'a> Writer<'a> {
                 }
                 self.body.push_str(&extra);
             }
-            // Decoration lines, per line of text.
+            // The decoration lines, for each line of text.
             if let Some(dec) = &st.decoration {
                 let font = mine[0].font;
                 let data = self.fonts.faces.get(&font).map(|f| f.data.clone());
@@ -847,7 +851,7 @@ impl<'a> Writer<'a> {
                     })
                     .unwrap_or((-100.0, 50.0, 250.0, 50.0, 900.0, 1000.0));
                 let color = dec.color.clone().unwrap_or_else(|| st.color.clone());
-                // Group glyphs by baseline into line segments.
+                // Put the glyphs into line segments, one segment for each baseline.
                 let mut lines: Vec<(f32, f32, f32, f32)> = Vec::new(); // y, x0, x1, size
                 for g in &mine {
                     match lines.last_mut() {
@@ -975,8 +979,8 @@ fn transform_attr(s: &Style, r: Rect) -> Option<String> {
     ))
 }
 
-/// The paint layer of a box: `None` for normal flow, or its z-index for positioned
-/// boxes and boxes that form a stacking context.
+/// The paint layer of a box. It is `None` for normal flow. It is the z-index for a
+/// positioned box and for a box with its own stack context.
 fn layer_of(b: &LBox) -> Option<i32> {
     let s = &b.style;
     if s.is_positioned() {
@@ -992,8 +996,8 @@ fn is_atomic(b: &LBox) -> bool {
     layer_of(b).is_some() || b.style.kw(L::Overflow) == "hidden"
 }
 
-/// Collects the boxes painted in layer passes, without descending into boxes that are
-/// painted as a unit.
+/// Collects the boxes that the layer passes paint. It does not go into a box that the
+/// code paints as a unit.
 fn collect_layers<'a>(b: &'a LBox, out: &mut Vec<(i32, usize, &'a LBox)>, order: &mut usize) {
     *order += 1;
     if let Some(z) = layer_of(b) {

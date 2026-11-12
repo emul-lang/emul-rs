@@ -1,0 +1,91 @@
+{
+  "name": "emul",
+  "displayName": "Emul",
+  "scopeName": "source.emul",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#import" },
+    { "include": "#component" },
+    { "include": "#composition" },
+    { "include": "#property" },
+    { "include": "#instance" },
+    { "include": "#attribute" },
+    { "include": "#value" }
+  ],
+  "repository": {
+    "comment": {
+      "name": "comment.line.double-slash.emul",
+      "match": "^\\s*//.*$"
+    },
+    "import": {
+      "match": "^\\s*(from)\\s+(\\S+)\\s+(import)\\b",
+      "captures": {
+        "1": { "name": "keyword.control.import.emul" },
+        "2": { "name": "string.unquoted.module.emul" },
+        "3": { "name": "keyword.control.import.emul" }
+      }
+    },
+    "component": {
+      "match": "^(?:(export)\\s+)?(component)\\s+([A-Z][A-Za-z0-9]*)(?:\\s+(extends)\\s+([A-Za-z0-9_,\\s]+?))?\\s*(:)",
+      "captures": {
+        "1": { "name": "storage.modifier.export.emul" },
+        "2": { "name": "storage.type.component.emul" },
+        "3": { "name": "entity.name.type.component.emul" },
+        "4": { "name": "storage.modifier.extends.emul" },
+        "5": { "name": "entity.other.inherited-class.emul" },
+        "6": { "name": "punctuation.separator.key-value.emul" }
+      }
+    },
+    "composition": {
+      "match": "^(?:(export)\\s+)?(composition)\\s+([A-Z][A-Za-z0-9]*)",
+      "captures": {
+        "1": { "name": "storage.modifier.export.emul" },
+        "2": { "name": "storage.type.composition.emul" },
+        "3": { "name": "entity.name.type.composition.emul" }
+      }
+    },
+    "property": {
+      "match": "^\\s+([a-z][A-Za-z0-9]*)(:)(?=\\s)",
+      "captures": {
+        "1": { "name": "support.type.property-name.emul" },
+        "2": { "name": "punctuation.separator.key-value.emul" }
+      }
+    },
+    "instance": {
+      "match": "\\b([A-Z][A-Za-z0-9]*)(?=\\s*\\{)",
+      "name": "entity.name.tag.instance.emul"
+    },
+    "attribute": {
+      "match": "(?<=[{,])\\s*([a-z][a-z0-9-]*)(:)(?=\\s)",
+      "captures": {
+        "1": { "name": "entity.other.attribute-name.emul" },
+        "2": { "name": "punctuation.separator.key-value.emul" }
+      }
+    },
+    "value": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.emul",
+          "begin": "\"",
+          "end": "\"|$",
+          "patterns": [{ "name": "constant.character.escape.emul", "match": "\\\\." }]
+        },
+        { "name": "constant.other.color.hex.emul", "match": "#[0-9A-Fa-f]{3,8}\\b" },
+        {
+          "match": "(?<![A-Za-z0-9_-])(-?(?:\\d+\\.?\\d*|\\.\\d+))(px|%|deg|fr)?",
+          "captures": {
+            "1": { "name": "constant.numeric.emul" },
+            "2": { "name": "keyword.other.unit.emul" }
+          }
+        },
+        {
+          "match": "\\b([a-z][a-z-]*)(?=\\()",
+          "captures": { "1": { "name": "support.function.emul" } }
+        },
+        { "name": "constant.language.boolean.emul", "match": "\\b(?:true|false)\\b" },
+        { "name": "keyword.operator.emul", "match": "(?<=\\s)(?:==|!=|<=|>=|&&|\\|\\||[-+*/%<>?:])(?=\\s)|(?<=[\\s(])!" },
+        { "name": "punctuation.section.braces.emul", "match": "[{}]" }
+      ]
+    }
+  }
+}

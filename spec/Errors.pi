@@ -1,8 +1,10 @@
 from ./Components import Components
 from ./Compositions import Compositions
+from ./Conditions import Conditions
 from ./Config import Config
 from ./Escapes import Escapes
 from ./Fonts import Fonts
+from ./Init import Init
 from ./Layout import Layout
 from ./Modules import Modules
 from ./Values import Values
@@ -79,6 +81,30 @@ export anchor Errors:
             `%` for a size, a percentage where the property takes only `px`, a
             negative value where it is not allowed, an unknown keyword, and a
             colour in a format Emul does not accept.
+        - invalid-expression
+            An expression in a value is malformed, as described in
+            @{Values}: an operator without the spaces it needs, a missing
+            value, two values with no operator between them, empty or
+            unclosed parentheses, a single `=`, `&` or `|`, or something other
+            than a number, a truth value or an operator inside.
+        - incompatible-units
+            The units of the two values in an expression don't fit the
+            operator, such as `(8px + 50%)`, `(8px * 2px)` or `(8px < 50%)`,
+            as described in @{Values}.
+        - division-by-zero
+            An expression divides by zero, or takes a remainder after
+            dividing by zero.
+        - invalid-operand
+            An expression uses a truth value with an arithmetic operator or
+            with `<`, `<=`, `>` or `>=`, or compares a truth value with a
+            number using `==` or `!=`.
+        - invalid-condition
+            A ternary `condition ? a : b` is missing its condition, its `?`,
+            its `:`, or a value after either of them.
+        - boolean-result
+            The final result of an expression is the truth value `true` or
+            `false`. A property takes only numbers and sizes, so a truth value
+            is used as a condition instead.
         - duplicate-property
             A component sets the same property more than once.
         - empty-value
@@ -90,19 +116,53 @@ export anchor Errors:
             An @{HtmlTag} value is not a lowercase element name, or is one of
             the tags that are not allowed.
 
+    conditionErrors:
+        - invalid-attribute-declaration
+            An attribute declaration is malformed, as described in
+            @{Conditions}: a bad name or value, fewer than two values, a
+            value listed twice, or a missing default or one not in the list.
+        - duplicate-attribute-declaration
+            A component declares the same attribute more than once.
+        - redeclared-attribute
+            A component gives a new values list for an attribute it
+            inherits, or two components it extends declare the same
+            attribute with different values.
+        - unknown-attribute
+            A `when` condition names an attribute the component does not
+            declare or inherit, or a default is changed for one it does not
+            inherit.
+        - unknown-attribute-value
+            A `when` condition compares an attribute with a value not in its
+            list, or an instance sets a declared attribute to such a value.
+        - invalid-when
+            A `when` condition is malformed, or uses something other than
+            declared attributes, their values and the operators `==`, `!=`,
+            `&&`, `||` and `!`.
+        - content-in-when
+            A `when` block holds something other than property lines, or
+            sets htmlTag.
+        - conflicting-conditions
+            Two `when` blocks in the same component can both be true for one
+            instance and set the same property, or a shorthand and a
+            property it covers.
+
     inheritanceErrors:
         - unknown-component
             A component extends, or a composition instances, a name that is
-            not a component declared in the same file or imported into it.
+            not a component or composition declared in the same file or
+            imported into it.
         - extends-cycle
             A component extends itself, directly or through other components.
         - extends-composition
             A component extends a composition.
 
     compositionErrors:
-        - instance-of-composition
-            An instance names a composition rather than a component.
-            Compositions can't be placed inside one another.
+        - composition-cycle
+            A composition contains itself, directly or through other
+            compositions that it instances.
+        - content-in-composition-instance
+            An instance of a composition has text, attributes or children.
+            The body of a composition instance must be empty.
         - content-in-root
             The root of a composition holds text or attributes. The root holds
             instances only.
@@ -176,6 +236,10 @@ export anchor Errors:
             A config setting has a value of the wrong kind, such as an
             svgFonts value other than `outline` or `embed`, or a size entry
             for a composition that does not exist.
+        - project-exists
+            `emul init` was run in a directory that already has an
+            `emul.config.pi` or an `index.emul`, without `--force`, as
+            described in @{Init}.
 
     warnings:
         - no-effect
@@ -192,7 +256,8 @@ export anchor Errors:
             canvas.
         - unused-declaration
             A component or composition that is not exported is never used in
-            its own file.
+            its own file. A composition that is not exported counts as used
+            when another composition instances it.
         - unused-import
             An imported name is never used.
         - duplicate-extends
@@ -205,8 +270,9 @@ export anchor Errors:
         - nothing-to-render
             The entry file exports no compositions, so nothing is rendered.
         - not-rendered
-            A composition is exported from a file other than the entry, and
-            is not exported from the entry either, so it is never rendered.
+            A composition is exported from a file other than the entry, is
+            not exported from the entry either, and is not instanced in any
+            other composition, so it is never used.
 
     notErrors:
         Some things look wrong but are allowed:

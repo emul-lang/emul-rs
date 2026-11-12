@@ -1,0 +1,185 @@
+from ./Components import Components
+from ./Compositions import Compositions
+from ./Errors import Errors
+from ./HtmlOutput import HtmlOutput
+from ./Values import Values
+
+export anchor Conditions:
+    description:
+        Conditions let one component look different depending on an attribute
+        set on its instance. A component declares the attributes it accepts,
+        and `when` blocks inside it override properties for some values.
+
+    purpose:
+        A design often needs a few versions of one component, such as a small
+        and a large button. With `extends`, each version is a separate
+        component. With conditions, the versions live in one component, and
+        the instance picks one by setting an attribute, as in
+        `\ Button { size: small } \`.
+
+        Both ways are allowed. Use `extends` when a version is its own thing
+        with its own name. Use a condition when the versions are settings of
+        the same thing.
+
+    declaration:
+        A component declares an attribute on its own line, written as the
+        word `attribute`, the attribute's name, a colon, the allowed values
+        separated by `|`, an `=`, and the default value:
+        `attribute size: small | medium | large = medium`.
+
+        - name
+            Follows the rules for attribute names in @{Compositions}:
+            lowercase letters, digits and hyphens, starting with a letter. It
+            can't be the name of a component property, or `class`, `style`
+            or `src`.
+        - values
+            Each value is lowercase letters, digits and hyphens, starting
+            with a letter. A list needs at least two values, and no value
+            may appear twice.
+        - default
+            Required. It must be one of the allowed values. It is used when
+            an instance does not set the attribute.
+
+        A component may declare any number of attributes, each with a
+        different name. Attribute lines may sit anywhere among the property
+        lines, since the order of lines has no meaning.
+
+    whenBlocks:
+        A `when` block is the word `when`, a condition, and a colon. The lines
+        indented beneath it are property lines, written exactly as at the top
+        level of the component. They apply only when the condition is true
+        for the instance.
+
+        A block holds property lines only. It can't hold attribute
+        declarations, other `when` blocks, or the htmlTag property, because an
+        element's tag never depends on an attribute. Within one block, a
+        property may be set only once, and the shorthand rule in
+        @{Components} applies as usual.
+
+    conditions:
+        A condition compares a declared attribute with one of its allowed
+        values, using `==` or `!=`, as in `size == small`. Comparisons are
+        combined with `&&`, `||` and `!`, and grouped with parentheses, with
+        the meaning and precedence they have in @{Values}. The condition is
+        not wrapped in parentheses as a whole.
+
+        - names
+            The left side of a comparison is the name of an attribute
+            declared by the component or one it extends.
+        - values
+            The right side is one of that attribute's allowed values.
+        - only attributes
+            Numbers, sizes and arithmetic can't appear in a condition. A
+            condition only reads attributes.
+
+    instances:
+        An instance sets a declared attribute in its body like any other
+        attribute, as in `\ Button { size: small, "Save" } \`. The value must
+        be one of the allowed values. It may be quoted. An instance that does
+        not set the attribute gets the default.
+
+    resolution:
+        An instance's style is worked out in this order:
+
+        - base
+            The component's plain properties, merged along the whole extends
+            chain as described in @{Components}, with the shorthand rule
+            applied.
+        - blocks
+            Every `when` block in the chain whose condition is true for the
+            instance is applied on top. A property set in a block replaces
+            the base value. A shorthand in a block replaces every property it
+            covers, even one set directly in the base.
+
+        Blocks always win over base properties, wherever each came from. So a
+        component that extends another and sets its own `padding` does not
+        undo the `padding` of an inherited block for `small`.
+
+    clashes:
+        Two blocks may both be true for the same instance. The compiler checks
+        every combination of allowed values to find these pairs.
+
+        - same component
+            If two such blocks are declared in the same component and set the
+            same property, or a shorthand and a property it covers, that is
+            an error. The order of the blocks never decides. Fix it by
+            narrowing one condition, as in `size == small && tone == plain`.
+        - along the chain
+            A block in a component overrides a block in a component it
+            extends. This is ordinary overriding and is not an error.
+        - several bases
+            When a component extends more than one component, their blocks
+            are merged left to right, and the last in line wins, the same as
+            for properties.
+
+    inheritance:
+        A component inherits the attributes declared by the components it
+        extends, with their values and default.
+
+        - default
+            A component may change the default of an inherited attribute,
+            with a line that names the attribute and a new default, as in
+            `attribute size = small`.
+        - values
+            A component can't change the allowed values of an inherited
+            attribute. Declaring it again with a values list is an error.
+        - new attributes
+            A component may declare new attributes of its own, and add `when`
+            blocks for inherited or new attributes.
+        - same name
+            When two components it extends both declare an attribute with
+            the same name, their values lists must be the same, or it is an
+            error. The default of the last in line wins.
+
+    output:
+        Conditions are resolved before any output is written, so SVG and PNG
+        output simply draw each instance with its resolved style. HTML
+        output is described in @{HtmlOutput}.
+
+    errors:
+        The errors for conditions are listed in @{Errors}.
+
+    example:
+        ```emul
+        \\\
+        component Button:
+            htmlTag: button
+            attribute size: small | large = large
+            attribute tone: plain | danger = plain
+            padding: 8px 12px
+            fontSize: 14px
+            backgroundColor: #e4e4e7
+
+            when size == small:
+                padding: 4px 8px
+                fontSize: 12px
+
+            when tone == danger:
+                backgroundColor: #dc2626
+                color: #ffffff
+
+        composition Toolbar {
+            Row {
+                Button { "Save" }
+                Button { size: small, "Cancel" }
+                Button { size: small, tone: danger, "Delete" }
+            }
+        }
+        \\\
+        ```
+
+        `Save` uses the defaults, so it has the base style. `Cancel` is small.
+        `Delete` is small and red. Both of its blocks are true, but they set
+        different properties, so they do not clash. If the `danger` block also
+        set `padding`, that would be a `conflicting-conditions` error.
+
+    openQuestions:
+        compositionAttributes:
+            Should a composition instance be able to pass attributes on to
+            the instances inside it? Today its body must be empty.
+        requiredAttributes:
+            Should an attribute with no sensible default be allowed, making
+            the attribute required on every instance?
+        flagAttributes:
+            Should there be on and off attributes, written without a values
+            list and read as `when compact` with no comparison?

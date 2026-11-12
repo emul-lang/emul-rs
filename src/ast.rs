@@ -1,5 +1,5 @@
-//! The syntax tree of an `.emul` file. It keeps comments and blank lines, so the
-//! formatter can rewrite a file without losing anything.
+//! The syntax tree of an `.emul` file. It keeps comments and blank lines. Then the
+//! formatter can rewrite a file and keep all of its content.
 
 use crate::diag::Span;
 use std::path::PathBuf;
@@ -23,7 +23,7 @@ pub enum Item {
 
 #[derive(Clone, Debug)]
 pub struct Comment {
-    /// The comment text after `//`, with leading spaces removed.
+    /// The comment text after `//`, without the spaces at its start.
     pub text: String,
     pub span: Span,
 }
@@ -36,7 +36,7 @@ pub struct ImportName {
 }
 
 impl ImportName {
-    /// The name this import is known by in the importing file.
+    /// The name of this import in the file that imports it.
     pub fn local(&self) -> &str {
         self.alias.as_deref().unwrap_or(&self.name)
     }
@@ -60,7 +60,7 @@ pub struct ReExport {
     pub span: Span,
 }
 
-/// `export A, B`, exporting names declared or imported earlier.
+/// `export A, B`. It exports names that the file declared or imported before.
 #[derive(Clone, Debug)]
 pub struct ExportNames {
     pub names: Vec<(String, Span)>,
@@ -82,15 +82,73 @@ pub enum ComponentItem {
     Blank,
     Comment(Comment),
     Property(Property),
+    Attribute(AttributeDecl),
+    When(When),
+}
+
+/// `attribute size: small | large = large`, or `attribute size = small` to change the
+/// default of an inherited attribute.
+#[derive(Clone, Debug)]
+pub struct AttributeDecl {
+    pub name: String,
+    pub name_span: Span,
+    /// `None` when the line only changes the default.
+    pub values: Option<Vec<(String, Span)>>,
+    pub default: Option<(String, Span)>,
+    pub span: Span,
+}
+
+/// `when <condition>:` with indented property lines.
+#[derive(Clone, Debug)]
+pub struct When {
+    /// The condition as the author wrote it.
+    pub raw: String,
+    pub cond: Cond,
+    pub span: Span,
+    /// Blank lines, comments and properties.
+    pub body: Vec<ComponentItem>,
+}
+
+#[derive(Clone, Debug)]
+pub enum Cond {
+    /// `attr == value` (eq true) or `attr != value`.
+    Cmp { attr: (String, Span), eq: bool, value: (String, Span) },
+    Not(Box<Cond>),
+    And(Box<Cond>, Box<Cond>),
+    Or(Box<Cond>, Box<Cond>),
+}
+
+impl Cond {
+    /// Calls `f` with every comparison in the condition.
+    pub fn each_cmp(&self, f: &mut impl FnMut(&(String, Span), &(String, Span))) {
+        match self {
+            Cond::Cmp { attr, value, .. } => f(attr, value),
+            Cond::Not(c) => c.each_cmp(f),
+            Cond::And(a, b) | Cond::Or(a, b) => {
+                a.each_cmp(f);
+                b.each_cmp(f);
+            }
+        }
+    }
+
+    /// The value of the condition. `get` gives the value of an attribute.
+    pub fn eval(&self, get: &impl Fn(&str) -> Option<String>) -> bool {
+        match self {
+            Cond::Cmp { attr, eq, value } => (get(&attr.0).as_deref() == Some(value.0.as_str())) == *eq,
+            Cond::Not(c) => !c.eval(get),
+            Cond::And(a, b) => a.eval(get) && b.eval(get),
+            Cond::Or(a, b) => a.eval(get) || b.eval(get),
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
 pub struct Property {
     pub name: String,
     pub name_span: Span,
-    /// The value as written, escapes included.
+    /// The value as the author wrote it, with escapes.
     pub raw: String,
-    /// The value with escapes removed.
+    /// The value without escapes.
     pub value: String,
     pub value_span: Span,
 }
@@ -115,7 +173,7 @@ pub enum Entry {
 
 #[derive(Clone, Debug)]
 pub struct Text {
-    /// As written, quotes and escapes included.
+    /// As the author wrote it, with quotes and escapes.
     pub raw: String,
     pub value: String,
     pub span: Span,
@@ -125,7 +183,7 @@ pub struct Text {
 pub struct Attribute {
     pub name: String,
     pub name_span: Span,
-    /// As written, quotes and escapes included.
+    /// As the author wrote it, with quotes and escapes.
     pub raw: String,
     pub value: String,
     pub value_span: Span,

@@ -34,7 +34,7 @@ export anchor Comments:
     example:
         ```emul
         \\\
-        // Buttons used across the marketing site
+        // The buttons for the marketing site
         component HeroBanner:
             // The image URL keeps its // because this is not its own line
             backgroundImage: url(https://example.com/hero.png)

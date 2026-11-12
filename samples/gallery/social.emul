@@ -1,0 +1,382 @@
+// Two social pieces: a 1200×630 share card, and a post with a link preview.
+
+// The share card.
+
+component Share:
+    position: relative
+    display: flex
+    flexDirection: column
+    height: 100%
+    padding: 64px 72px
+    overflow: hidden
+    backgroundImage: linear-gradient(135deg, #1e1b4b 0%, #4338ca 55%, #db2777 100%)
+
+component Glow:
+    position: absolute
+    top: -180px
+    right: -160px
+    width: 640px
+    height: 640px
+    borderRadius: 999px
+    backgroundImage: radial-gradient(circle, rgba(251, 191, 36, 0.55), rgba(251, 191, 36, 0) 70%)
+
+// Outlined tiles stacked at the right, each turned a little more.
+component Tile:
+    attribute turn: one | two | three = one
+    position: absolute
+    top: 150px
+    right: 70px
+    width: 300px
+    height: 300px
+    border: 2px solid rgba(255, 255, 255, 0.35)
+    borderRadius: 48px
+    rotate: 8deg
+
+    when turn == two:
+        rotate: 20deg
+        border: 2px solid rgba(255, 255, 255, 0.22)
+
+    when turn == three:
+        rotate: 32deg
+        border: 2px solid rgba(255, 255, 255, 0.12)
+
+component TileFill:
+    position: absolute
+    top: 210px
+    right: 130px
+    width: 180px
+    height: 180px
+    borderRadius: 36px
+    rotate: 8deg
+    backgroundImage: linear-gradient(135deg, #fbbf24, #f472b6)
+    boxShadow: 0 24px 48px rgba(30, 27, 75, 0.3)
+
+component Brand:
+    position: relative
+    display: flex
+    alignItems: center
+    gap: 14px
+
+component Logo:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 44px
+    height: 44px
+    borderRadius: 12px
+    backgroundColor: #ffffff
+    color: #4338ca
+    fontFamily: "Space Grotesk"
+    fontSize: 24px
+    fontWeight: 700
+
+component BrandName:
+    fontFamily: "Space Grotesk"
+    fontSize: 24px
+    fontWeight: 700
+    color: #ffffff
+
+component Kicker:
+    position: relative
+    marginTop: 64px
+    fontFamily: Inter
+    fontSize: 18px
+    fontWeight: 600
+    letterSpacing: 2px
+    textTransform: uppercase
+    color: #fbcfe8
+
+component Headline:
+    position: relative
+    maxWidth: 700px
+    marginTop: 16px
+    fontFamily: "Space Grotesk"
+    fontSize: 60px
+    fontWeight: 700
+    lineHeight: 1.05
+    letterSpacing: -1.5px
+    color: #ffffff
+
+component Fill:
+    flexGrow: 1
+
+component Byline:
+    position: relative
+    display: flex
+    alignItems: center
+    gap: 16px
+
+component Face:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 56px
+    height: 56px
+    borderRadius: 999px
+    border: 3px solid rgba(255, 255, 255, 0.8)
+    backgroundImage: linear-gradient(135deg, #fde68a, #f97316)
+    color: #7c2d12
+    fontFamily: Inter
+    fontSize: 20px
+    fontWeight: 700
+
+component Who:
+    display: flex
+    flexDirection: column
+    gap: 2px
+
+component WhoName:
+    fontFamily: Inter
+    fontSize: 20px
+    fontWeight: 600
+    color: #ffffff
+
+component WhoMeta:
+    fontFamily: Inter
+    fontSize: 16px
+    color: #c7d2fe
+
+export composition SocialCard {
+    Share {
+        Glow {}
+        Tile { turn: three }
+        Tile { turn: two }
+        Tile {}
+        TileFill {}
+        Brand {
+            Logo { "L" }
+            BrandName { "Lattice" }
+        }
+        Kicker { "Engineering blog" }
+        Headline {
+            "Shipping one design system to 40 teams without breaking a thing"
+        }
+        Fill {}
+        Byline {
+            Face { "AK" }
+            Who {
+                WhoName { "Amara Kofi" }
+                WhoMeta { "Design Systems Lead · 8 min read" }
+            }
+        }
+    }
+}
+
+// The post.
+
+component Feed:
+    display: flex
+    justifyContent: center
+    padding: 40px 32px
+    backgroundColor: #f1f5f9
+
+component Post:
+    display: flex
+    flexDirection: column
+    gap: 16px
+    width: 100%
+    padding: 24px
+    backgroundColor: #ffffff
+    border: 1px solid #e2e8f0
+    borderRadius: 20px
+    boxShadow: 0 8px 24px rgba(15, 23, 42, 0.06)
+
+component Author:
+    display: flex
+    alignItems: center
+    gap: 12px
+
+component Avatar:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    flexShrink: 0
+    width: 48px
+    height: 48px
+    borderRadius: 999px
+    backgroundImage: linear-gradient(135deg, #a78bfa, #6366f1)
+    color: #ffffff
+    fontFamily: Inter
+    fontSize: 17px
+    fontWeight: 700
+
+component Names:
+    display: flex
+    flexDirection: column
+    gap: 1px
+    flexGrow: 1
+
+component NameLine:
+    display: flex
+    alignItems: center
+    gap: 6px
+
+component DisplayName:
+    fontFamily: Inter
+    fontSize: 16px
+    fontWeight: 700
+    color: #0f172a
+
+component Verified:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 18px
+    height: 18px
+    borderRadius: 999px
+    backgroundColor: #3b82f6
+    color: #ffffff
+    fontFamily: Inter
+    fontSize: 11px
+    fontWeight: 700
+
+component Handle:
+    fontFamily: Inter
+    fontSize: 14px
+    color: #64748b
+
+component Follow:
+    htmlTag: button
+    padding: 8px 16px
+    borderRadius: 999px
+    backgroundColor: #0f172a
+    color: #ffffff
+    fontFamily: Inter
+    fontSize: 14px
+    fontWeight: 600
+
+component Body:
+    fontFamily: Inter
+    fontSize: 17px
+    lineHeight: 1.55
+    color: #0f172a
+
+component Tag:
+    display: inline
+    fontFamily: Inter
+    fontSize: 17px
+    lineHeight: 1.55
+    color: #4f46e5
+    fontWeight: 500
+
+component Preview:
+    display: flex
+    flexDirection: column
+    overflow: hidden
+    border: 1px solid #e2e8f0
+    borderRadius: 16px
+
+component Thumb:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    gap: 18px
+    height: 200px
+    backgroundImage: linear-gradient(135deg, #1e1b4b, #4338ca 55%, #db2777)
+
+component Glyph:
+    fontFamily: "Noto Color Emoji"
+    fontSize: 56px
+    lineHeight: 1
+
+component PreviewText:
+    display: flex
+    flexDirection: column
+    gap: 4px
+    padding: 14px 16px
+    backgroundColor: #f8fafc
+
+component Domain:
+    fontFamily: Inter
+    fontSize: 13px
+    color: #64748b
+
+component PreviewTitle:
+    fontFamily: Inter
+    fontSize: 15px
+    fontWeight: 600
+    color: #0f172a
+
+component Time:
+    fontFamily: Inter
+    fontSize: 14px
+    color: #64748b
+
+component Stats:
+    display: flex
+    justifyContent: space-between
+    paddingTop: 14px
+    borderTop: 1px solid #f1f5f9
+
+component Stat:
+    attribute tone: plain | liked = plain
+    display: flex
+    alignItems: center
+    gap: 8px
+    fontFamily: Inter
+    fontSize: 14px
+    fontWeight: 500
+    color: #64748b
+
+    when tone == liked:
+        color: #e11d48
+
+component StatIcon:
+    fontFamily: "Noto Color Emoji"
+    fontSize: 16px
+
+export composition Tweet {
+    Feed {
+        Post {
+            Author {
+                Avatar { "AK" }
+                Names {
+                    NameLine {
+                        DisplayName { "Amara Kofi" }
+                        Verified { "✓" }
+                    }
+                    Handle { "@amarakofi" }
+                }
+                Follow { "Follow" }
+            }
+            Body {
+                "We rolled one design system out to 40 product teams in six months. No big-bang migration, no frozen roadmaps. Here's the playbook "
+                Tag { "#designsystems" }
+                " "
+                Tag { "#frontend" }
+            }
+            Preview {
+                Thumb {
+                    Glyph { "🧩" }
+                    Glyph { "🚀" }
+                }
+                PreviewText {
+                    Domain { "lattice.dev/blog" }
+                    PreviewTitle {
+                        "Shipping one design system to 40 teams without breaking a thing"
+                    }
+                }
+            }
+            Time { "9:41 AM · 14 Apr 2027 · 120K views" }
+            Stats {
+                Stat {
+                    StatIcon { "💬" }
+                    "248"
+                }
+                Stat {
+                    StatIcon { "🔁" }
+                    "1.2K"
+                }
+                Stat {
+                    tone: liked
+                    StatIcon { "❤️" }
+                    "8.4K"
+                }
+                Stat {
+                    StatIcon { "🔖" }
+                    "960"
+                }
+            }
+        }
+    }
+}

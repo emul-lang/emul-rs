@@ -1,0 +1,5 @@
+use @piton/test
+
+export test ASDSTE100:
+    expects:
+        All spec and code comments should be written in ASD-STE100

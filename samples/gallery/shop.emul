@@ -1,0 +1,420 @@
+// A storefront grid: product tiles with gradient art, ratings, prices and sale or new badges.
+
+component Page:
+    display: flex
+    flexDirection: column
+    gap: 28px
+    padding: 36px 48px 48px
+
+component Nav:
+    display: flex
+    alignItems: center
+    gap: 28px
+    paddingBottom: 24px
+    borderBottom: 1px solid #ebe7e1
+
+component Logo:
+    fontFamily: "DM Sans"
+    fontSize: 24px
+    fontWeight: 700
+    letterSpacing: -0.8px
+    color: #1c1917
+
+component NavLink:
+    fontFamily: "DM Sans"
+    fontSize: 15px
+    fontWeight: 500
+    color: #57534e
+
+component Spacer:
+    flexGrow: 1
+
+component Search:
+    width: 280px
+    padding: 10px 16px
+    border: 1px solid #e7e5e4
+    borderRadius: 999px
+    fontFamily: "DM Sans", "Noto Color Emoji"
+    fontSize: 14px
+    color: #a8a29e
+    backgroundColor: #ffffff
+
+component Cart:
+    padding: 10px 18px
+    borderRadius: 999px
+    fontFamily: "DM Sans", "Noto Color Emoji"
+    fontSize: 14px
+    fontWeight: 700
+    whiteSpace: nowrap
+    color: #ffffff
+    backgroundColor: #1c1917
+
+component TitleRow:
+    display: flex
+    alignItems: flex-end
+    justifyContent: space-between
+
+component TitleGroup:
+    display: flex
+    flexDirection: column
+    gap: 6px
+
+component Title:
+    fontFamily: "DM Sans"
+    fontSize: 34px
+    fontWeight: 700
+    letterSpacing: -1px
+    color: #1c1917
+
+component Subtitle:
+    fontFamily: "DM Sans"
+    fontSize: 15px
+    color: #78716c
+
+component Chips:
+    display: flex
+    gap: 8px
+
+component Chip:
+    padding: 8px 14px
+    border: 1px solid #e7e5e4
+    borderRadius: 999px
+    fontFamily: "DM Sans"
+    fontSize: 13px
+    fontWeight: 500
+    color: #44403c
+    backgroundColor: #ffffff
+    attribute active: no | yes = no
+
+    when active == yes:
+        border: 1px solid #1c1917
+        color: #ffffff
+        backgroundColor: #1c1917
+
+component Grid:
+    display: grid
+    gridTemplateColumns: repeat(4, 1fr)
+    gap: 24px
+
+component Product:
+    display: flex
+    flexDirection: column
+    gap: 14px
+
+component Art:
+    position: relative
+    display: flex
+    alignItems: center
+    justifyContent: center
+    height: 230px
+    borderRadius: 18px
+    fontFamily: "Noto Color Emoji"
+    fontSize: 84px
+    attribute tone: peach | mint | sky | lilac | sand | rose | lime | slate = peach
+
+    when tone == peach:
+        backgroundImage: radial-gradient(circle at 30% 25%, #fff7ed, #fed7aa 55%, #fdba74)
+
+    when tone == mint:
+        backgroundImage: radial-gradient(circle at 30% 25%, #f0fdf4, #bbf7d0 55%, #86efac)
+
+    when tone == sky:
+        backgroundImage: radial-gradient(circle at 30% 25%, #f0f9ff, #bae6fd 55%, #7dd3fc)
+
+    when tone == lilac:
+        backgroundImage: radial-gradient(circle at 30% 25%, #faf5ff, #e9d5ff 55%, #d8b4fe)
+
+    when tone == sand:
+        backgroundImage: radial-gradient(circle at 30% 25%, #fafaf9, #e7e5e4 55%, #d6d3d1)
+
+    when tone == rose:
+        backgroundImage: radial-gradient(circle at 30% 25%, #fff1f2, #fecdd3 55%, #fda4af)
+
+    when tone == lime:
+        backgroundImage: radial-gradient(circle at 30% 25%, #f7fee7, #d9f99d 55%, #bef264)
+
+    when tone == slate:
+        backgroundImage: radial-gradient(circle at 30% 25%, #f8fafc, #cbd5e1 55%, #94a3b8)
+
+component Badge:
+    position: absolute
+    top: 14px
+    left: 14px
+    padding: 5px 10px
+    borderRadius: 999px
+    fontFamily: "DM Sans"
+    fontSize: 11px
+    fontWeight: 700
+    letterSpacing: 0.6px
+    textTransform: uppercase
+    attribute kind: sale | new = sale
+
+    when kind == sale:
+        color: #ffffff
+        backgroundColor: #e11d48
+
+    when kind == new:
+        color: #1c1917
+        backgroundColor: #ffffff
+        boxShadow: 0 2px 8px rgba(28, 25, 23, 0.12)
+
+component Heart:
+    position: absolute
+    top: 12px
+    right: 12px
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 34px
+    height: 34px
+    borderRadius: 999px
+    fontFamily: "DM Sans"
+    fontSize: 16px
+    color: #1c1917
+    backgroundColor: rgba(255, 255, 255, 0.85)
+    attribute saved: no | yes = no
+
+    when saved == yes:
+        color: #e11d48
+
+component Info:
+    display: flex
+    flexDirection: column
+    gap: 5px
+    paddingLeft: 2px
+    paddingRight: 2px
+
+component Brand:
+    fontFamily: "DM Sans"
+    fontSize: 12px
+    fontWeight: 700
+    letterSpacing: 1px
+    textTransform: uppercase
+    color: #a8a29e
+
+component Name:
+    fontFamily: "DM Sans"
+    fontSize: 16px
+    fontWeight: 600
+    color: #1c1917
+
+component Rating:
+    display: flex
+    alignItems: center
+    gap: 6px
+
+component Stars:
+    fontFamily: "DM Sans"
+    fontSize: 13px
+    letterSpacing: 1px
+    color: #f59e0b
+
+component Reviews:
+    fontFamily: "DM Sans"
+    fontSize: 13px
+    color: #a8a29e
+
+component Prices:
+    display: flex
+    alignItems: baseline
+    gap: 8px
+    marginTop: 4px
+
+component Price:
+    fontFamily: "DM Sans"
+    fontSize: 18px
+    fontWeight: 700
+    color: #1c1917
+    attribute deal: no | yes = no
+
+    when deal == yes:
+        color: #e11d48
+
+component Was:
+    fontFamily: "DM Sans"
+    fontSize: 14px
+    textDecoration: line-through
+    color: #a8a29e
+
+export composition Shop {
+    Page {
+        Nav {
+            Logo { "fernwood." }
+            NavLink { "Shop" }
+            NavLink { "Collections" }
+            NavLink { "Journal" }
+            Spacer {}
+            Search { "🔍  Search the shop" }
+            Cart { "Cart · 2" }
+        }
+        TitleRow {
+            TitleGroup {
+                Title { "Slow living, fast shipping" }
+                Subtitle {
+                    "Small-batch goods for the kitchen, desk and garden. 128 products."
+                }
+            }
+            Chips {
+                Chip { active: yes, "All" }
+                Chip { "Kitchen" }
+                Chip { "Desk" }
+                Chip { "Garden" }
+                Chip { "On sale" }
+            }
+        }
+        Grid {
+            Product {
+                Art {
+                    tone: peach
+                    "☕"
+                    Badge { kind: sale, "-20%" }
+                    Heart { "♡" }
+                }
+                Info {
+                    Brand { "Kiln & Co" }
+                    Name { "Speckled pour-over set" }
+                    Rating {
+                        Stars { "★★★★★" }
+                        Reviews { "(214)" }
+                    }
+                    Prices {
+                        Price { deal: yes, "$56" }
+                        Was { "$70" }
+                    }
+                }
+            }
+            Product {
+                Art {
+                    tone: mint
+                    "🪴"
+                    Badge { kind: new, "New" }
+                    Heart { saved: yes, "♥" }
+                }
+                Info {
+                    Brand { "Greenhouse" }
+                    Name { "Self-watering planter" }
+                    Rating {
+                        Stars { "★★★★☆" }
+                        Reviews { "(88)" }
+                    }
+                    Prices {
+                        Price { "$34" }
+                    }
+                }
+            }
+            Product {
+                Art {
+                    tone: sky
+                    "🎧"
+                    Heart { "♡" }
+                }
+                Info {
+                    Brand { "Aural" }
+                    Name { "Studio wireless headphones" }
+                    Rating {
+                        Stars { "★★★★★" }
+                        Reviews { "(1,032)" }
+                    }
+                    Prices {
+                        Price { "$189" }
+                    }
+                }
+            }
+            Product {
+                Art {
+                    tone: lilac
+                    "🕯️"
+                    Badge { kind: sale, "-35%" }
+                    Heart { "♡" }
+                }
+                Info {
+                    Brand { "Hearth" }
+                    Name { "Fig & cedar candle" }
+                    Rating {
+                        Stars { "★★★★☆" }
+                        Reviews { "(342)" }
+                    }
+                    Prices {
+                        Price { deal: yes, "$19" }
+                        Was { "$29" }
+                    }
+                }
+            }
+            Product {
+                Art {
+                    tone: sand
+                    "📓"
+                    Heart { "♡" }
+                }
+                Info {
+                    Brand { "Paperworks" }
+                    Name { "Linen dot-grid notebook" }
+                    Rating {
+                        Stars { "★★★★★" }
+                        Reviews { "(506)" }
+                    }
+                    Prices {
+                        Price { "$24" }
+                    }
+                }
+            }
+            Product {
+                Art {
+                    tone: rose
+                    "🧣"
+                    Badge { kind: new, "New" }
+                    Heart { "♡" }
+                }
+                Info {
+                    Brand { "Loom" }
+                    Name { "Merino winter scarf" }
+                    Rating {
+                        Stars { "★★★★☆" }
+                        Reviews { "(61)" }
+                    }
+                    Prices {
+                        Price { "$78" }
+                    }
+                }
+            }
+            Product {
+                Art {
+                    tone: lime
+                    "🍋"
+                    Heart { saved: yes, "♥" }
+                }
+                Info {
+                    Brand { "Pantry" }
+                    Name { "Preserved lemon trio" }
+                    Rating {
+                        Stars { "★★★★★" }
+                        Reviews { "(129)" }
+                    }
+                    Prices {
+                        Price { "$22" }
+                    }
+                }
+            }
+            Product {
+                Art {
+                    tone: slate
+                    "⌚"
+                    Badge { kind: sale, "-15%" }
+                    Heart { "♡" }
+                }
+                Info {
+                    Brand { "Meridian" }
+                    Name { "Field watch, 38 mm" }
+                    Rating {
+                        Stars { "★★★★☆" }
+                        Reviews { "(274)" }
+                    }
+                    Prices {
+                        Price { deal: yes, "$212" }
+                        Was { "$250" }
+                    }
+                }
+            }
+        }
+    }
+}

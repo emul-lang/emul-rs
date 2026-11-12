@@ -1,0 +1,486 @@
+// A kanban board: four columns of task cards with priority tags, assignees and counts.
+
+component Board:
+    display: flex
+    flexDirection: column
+    gap: 28px
+    padding: 40px 48px 48px
+    backgroundColor: #f4f5f7
+
+component Header:
+    display: flex
+    alignItems: center
+    justifyContent: space-between
+
+component HeaderText:
+    display: flex
+    flexDirection: column
+    gap: 6px
+
+component Crumb:
+    fontSize: 13px
+    fontWeight: 500
+    color: #64748b
+
+component BoardTitle:
+    fontFamily: "Space Grotesk"
+    fontSize: 30px
+    fontWeight: 700
+    letterSpacing: -0.5px
+
+component Actions:
+    display: flex
+    alignItems: center
+    gap: 12px
+
+component Faces:
+    display: flex
+    alignItems: center
+
+component Face:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 34px
+    height: 34px
+    marginLeft: -8px
+    border: 2px solid #f4f5f7
+    borderRadius: 999px
+    fontSize: 12px
+    fontWeight: 600
+    color: #ffffff
+    attribute tint: violet | teal | amber | rose | slate = violet
+
+    when tint == violet:
+        backgroundImage: linear-gradient(135deg, #a78bfa, #6d28d9)
+
+    when tint == teal:
+        backgroundImage: linear-gradient(135deg, #5eead4, #0f766e)
+
+    when tint == amber:
+        backgroundImage: linear-gradient(135deg, #fcd34d, #d97706)
+
+    when tint == rose:
+        backgroundImage: linear-gradient(135deg, #fda4af, #e11d48)
+
+    when tint == slate:
+        backgroundColor: #e2e8f0
+        color: #475569
+
+component Ghost:
+    padding: 9px 16px
+    border: 1px solid #d8dde6
+    borderRadius: 10px
+    fontSize: 14px
+    fontWeight: 600
+    color: #334155
+    backgroundColor: #ffffff
+
+component Primary:
+    padding: 10px 18px
+    borderRadius: 10px
+    fontSize: 14px
+    fontWeight: 600
+    color: #ffffff
+    backgroundColor: #4f46e5
+    boxShadow: 0 4px 12px rgba(79, 70, 229, 0.3)
+
+component Columns:
+    display: grid
+    gridTemplateColumns: repeat(4, 1fr)
+    gap: 20px
+    alignItems: flex-start
+
+component Column:
+    display: flex
+    flexDirection: column
+    gap: 12px
+    padding: 14px
+    borderRadius: 16px
+    backgroundColor: #eceef2
+
+component ColumnHead:
+    display: flex
+    alignItems: center
+    gap: 10px
+    padding: 2px 4px 4px
+
+component Dot:
+    width: 9px
+    height: 9px
+    borderRadius: 999px
+    attribute stage: todo | doing | review | done = todo
+
+    when stage == todo:
+        backgroundColor: #94a3b8
+
+    when stage == doing:
+        backgroundColor: #6366f1
+
+    when stage == review:
+        backgroundColor: #f59e0b
+
+    when stage == done:
+        backgroundColor: #10b981
+
+component ColumnName:
+    flexGrow: 1
+    fontSize: 14px
+    fontWeight: 700
+    color: #1e293b
+
+component Count:
+    padding: 2px 9px
+    borderRadius: 999px
+    fontSize: 12px
+    fontWeight: 600
+    color: #475569
+    backgroundColor: #dfe3ea
+
+component Task:
+    display: flex
+    flexDirection: column
+    gap: 12px
+    padding: 16px
+    borderRadius: 12px
+    backgroundColor: #ffffff
+    boxShadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04)
+
+component Tags:
+    display: flex
+    gap: 6px
+
+component Tag:
+    padding: 3px 8px
+    borderRadius: 6px
+    fontSize: 11px
+    fontWeight: 600
+    letterSpacing: 0.2px
+    attribute priority: low | medium | high = low
+
+    when priority == low:
+        color: #047857
+        backgroundColor: #d1fae5
+
+    when priority == medium:
+        color: #b45309
+        backgroundColor: #fef3c7
+
+    when priority == high:
+        color: #be123c
+        backgroundColor: #ffe4e6
+
+component Label:
+    padding: 3px 8px
+    borderRadius: 6px
+    fontSize: 11px
+    fontWeight: 600
+    color: #475569
+    backgroundColor: #f1f5f9
+
+component TaskTitle:
+    fontSize: 14px
+    fontWeight: 600
+    lineHeight: 1.45
+    color: #0f172a
+
+component TaskNote:
+    fontSize: 13px
+    lineHeight: 1.5
+    color: #64748b
+
+component Progress:
+    height: 6px
+    borderRadius: 999px
+    backgroundColor: #eef0f4
+
+component Fill:
+    height: 6px
+    borderRadius: 999px
+    backgroundImage: linear-gradient(90deg, #818cf8, #4f46e5)
+    attribute amount: quarter | half | most | full = half
+
+    when amount == quarter:
+        width: 25%
+
+    when amount == half:
+        width: 50%
+
+    when amount == most:
+        width: 80%
+
+    when amount == full:
+        width: 100%
+        backgroundImage: linear-gradient(90deg, #34d399, #059669)
+
+component Meta:
+    display: flex
+    alignItems: center
+    justifyContent: space-between
+    paddingTop: 12px
+    borderTop: 1px solid #f1f5f9
+
+component Stats:
+    display: flex
+    gap: 14px
+
+component Stat:
+    fontFamily: Inter, "Noto Color Emoji"
+    fontSize: 12px
+    fontWeight: 500
+    color: #64748b
+
+component Small:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 26px
+    height: 26px
+    marginLeft: -6px
+    border: 2px solid #ffffff
+    borderRadius: 999px
+    fontSize: 10px
+    fontWeight: 600
+    color: #ffffff
+    attribute tint: violet | teal | amber | rose = violet
+
+    when tint == violet:
+        backgroundImage: linear-gradient(135deg, #a78bfa, #6d28d9)
+
+    when tint == teal:
+        backgroundImage: linear-gradient(135deg, #5eead4, #0f766e)
+
+    when tint == amber:
+        backgroundImage: linear-gradient(135deg, #fcd34d, #d97706)
+
+    when tint == rose:
+        backgroundImage: linear-gradient(135deg, #fda4af, #e11d48)
+
+component AddCard:
+    padding: 12px
+    border: 1.5px dashed #c7cdd8
+    borderRadius: 12px
+    fontSize: 13px
+    fontWeight: 600
+    textAlign: center
+    color: #64748b
+
+export composition Kanban {
+    Board {
+        Header {
+            HeaderText {
+                Crumb { "Northwind  /  Product  /  Sprint 24" }
+                BoardTitle { "Checkout redesign" }
+            }
+            Actions {
+                Faces {
+                    Face { tint: violet, "AM" }
+                    Face { tint: teal, "JK" }
+                    Face { tint: amber, "SR" }
+                    Face { tint: slate, "+4" }
+                }
+                Ghost { "Filter" }
+                Primary { "+  New task" }
+            }
+        }
+        Columns {
+            Column {
+                ColumnHead {
+                    Dot { stage: todo }
+                    ColumnName { "To do" }
+                    Count { "3" }
+                }
+                Task {
+                    Tags {
+                        Tag { priority: high, "High" }
+                        Label { "Payments" }
+                    }
+                    TaskTitle { "Support Apple Pay on the mobile web checkout" }
+                    TaskNote {
+                        "Needs the merchant ID from finance before we can test in staging."
+                    }
+                    Meta {
+                        Stats {
+                            Stat { "💬 4" }
+                            Stat { "📎 2" }
+                        }
+                        Faces {
+                            Small { tint: rose, "SR" }
+                        }
+                    }
+                }
+                Task {
+                    Tags {
+                        Tag { priority: low, "Low" }
+                        Label { "Copy" }
+                    }
+                    TaskTitle { "Rewrite empty cart message" }
+                    Meta {
+                        Stats {
+                            Stat { "💬 1" }
+                        }
+                        Faces {
+                            Small { tint: teal, "JK" }
+                        }
+                    }
+                }
+                Task {
+                    Tags {
+                        Tag { priority: medium, "Medium" }
+                        Label { "Research" }
+                    }
+                    TaskTitle {
+                        "Interview five users who abandoned at shipping"
+                    }
+                    Meta {
+                        Stats {
+                            Stat { "💬 7" }
+                            Stat { "📎 1" }
+                        }
+                        Faces {
+                            Small { tint: violet, "AM" }
+                            Small { tint: amber, "LP" }
+                        }
+                    }
+                }
+                AddCard { "+  Add a card" }
+            }
+            Column {
+                ColumnHead {
+                    Dot { stage: doing }
+                    ColumnName { "In progress" }
+                    Count { "2" }
+                }
+                Task {
+                    Tags {
+                        Tag { priority: high, "High" }
+                        Label { "Frontend" }
+                    }
+                    TaskTitle {
+                        "One-page checkout with inline address validation"
+                    }
+                    Progress {
+                        Fill { amount: most }
+                    }
+                    Meta {
+                        Stats {
+                            Stat { "✅ 8/10" }
+                            Stat { "💬 12" }
+                        }
+                        Faces {
+                            Small { tint: violet, "AM" }
+                            Small { tint: teal, "JK" }
+                        }
+                    }
+                }
+                Task {
+                    Tags {
+                        Tag { priority: medium, "Medium" }
+                        Label { "Design" }
+                    }
+                    TaskTitle { "Order summary drawer for small screens" }
+                    Progress {
+                        Fill { amount: quarter }
+                    }
+                    Meta {
+                        Stats {
+                            Stat { "✅ 1/4" }
+                            Stat { "💬 3" }
+                        }
+                        Faces {
+                            Small { tint: amber, "LP" }
+                        }
+                    }
+                }
+            }
+            Column {
+                ColumnHead {
+                    Dot { stage: review }
+                    ColumnName { "In review" }
+                    Count { "2" }
+                }
+                Task {
+                    Tags {
+                        Tag { priority: medium, "Medium" }
+                        Label { "Backend" }
+                    }
+                    TaskTitle { "Cache shipping quotes for 10 minutes" }
+                    TaskNote {
+                        "PR #482 is open. Load test shows p95 down from 840 ms to 120 ms."
+                    }
+                    Meta {
+                        Stats {
+                            Stat { "💬 5" }
+                        }
+                        Faces {
+                            Small { tint: teal, "JK" }
+                        }
+                    }
+                }
+                Task {
+                    Tags {
+                        Tag { priority: low, "Low" }
+                        Label { "QA" }
+                    }
+                    TaskTitle { "Regression pass on saved cards" }
+                    Progress {
+                        Fill { amount: half }
+                    }
+                    Meta {
+                        Stats {
+                            Stat { "✅ 6/12" }
+                        }
+                        Faces {
+                            Small { tint: rose, "SR" }
+                        }
+                    }
+                }
+            }
+            Column {
+                ColumnHead {
+                    Dot { stage: done }
+                    ColumnName { "Done" }
+                    Count { "2" }
+                }
+                Task {
+                    Tags {
+                        Tag { priority: high, "High" }
+                        Label { "Security" }
+                    }
+                    TaskTitle { "3-D Secure 2 challenge flow" }
+                    Progress {
+                        Fill { amount: full }
+                    }
+                    Meta {
+                        Stats {
+                            Stat { "✅ 9/9" }
+                            Stat { "💬 18" }
+                        }
+                        Faces {
+                            Small { tint: violet, "AM" }
+                            Small { tint: rose, "SR" }
+                        }
+                    }
+                }
+                Task {
+                    Tags {
+                        Tag { priority: low, "Low" }
+                        Label { "Analytics" }
+                    }
+                    TaskTitle { "Track coupon field focus and errors" }
+                    Progress {
+                        Fill { amount: full }
+                    }
+                    Meta {
+                        Stats {
+                            Stat { "✅ 3/3" }
+                        }
+                        Faces {
+                            Small { tint: amber, "LP" }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

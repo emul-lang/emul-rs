@@ -1,0 +1,9 @@
+from @piton/test import Test
+
+abstract anchor MyTest extends Test as test:
+    tags: [components]
+
+export test DeclareComponent:
+    expects:
+        Should be able to declare a component with the `component` keyword and
+        use indent-based syntax.

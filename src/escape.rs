@@ -1,10 +1,10 @@
-//! Escapes, following Piton: special characters are wrapped in backslashes with a
-//! space on each side, as in `\ { \`. Backslashes may be stacked, and the closing
-//! wrapper must match the opening one.
+//! Escapes, as Piton specifies. Backslashes wrap special characters, with a space on
+//! each side, as in `\ { \`. You can stack backslashes. The wrapper at the end must
+//! be the same as the wrapper at the start.
 
-/// If an escape wrapper opens at byte `i` of `s`, returns `(end, content)`, where `end`
-/// is the byte just past the closing wrapper. Returns `Err(())` when a wrapper opens
-/// but never closes, and `Ok(None)` when `i` does not start a wrapper.
+/// If an escape wrapper opens at byte `i` of `s`, returns `(end, content)`. `end` is
+/// the byte just after the wrapper that closes the escape. Returns `Err(())` when a
+/// wrapper opens but does not close. Returns `Ok(None)` when `i` does not start a wrapper.
 pub fn scan_wrapper(s: &str, i: usize) -> Result<Option<(usize, String)>, ()> {
     let bytes = s.as_bytes();
     if bytes.get(i) != Some(&b'\\') {
@@ -20,15 +20,15 @@ pub fn scan_wrapper(s: &str, i: usize) -> Result<Option<(usize, String)>, ()> {
     let content_start = i + n + 1;
     let closing: String = format!(" {}", "\\".repeat(n));
     let mut search = content_start;
-    // The content may be empty only in the degenerate form `\  \`; search from the
-    // space that opens the content so `\ \` is not read as a wrapper of nothing.
+    // The content can be empty only in the special form `\  \`. The search starts at
+    // the space that opens the content. Thus `\ \` is not an empty wrapper.
     if search > 0 {
         search -= 1;
     }
     while let Some(rel) = s[search..].find(&closing) {
         let at = search + rel;
         let end = at + closing.len();
-        // The closing run must be exactly n backslashes long.
+        // The run at the end must have exactly n backslashes.
         if bytes.get(end) == Some(&b'\\') {
             search = at + 1;
             continue;
@@ -42,7 +42,7 @@ pub fn scan_wrapper(s: &str, i: usize) -> Result<Option<(usize, String)>, ()> {
     Err(())
 }
 
-/// Removes every escape wrapper from `s`. On an unclosed wrapper, returns the byte
+/// Removes all escape wrappers from `s`. If a wrapper does not close, returns the byte
 /// offset where it opens.
 pub fn unescape(s: &str) -> Result<String, usize> {
     let mut out = String::with_capacity(s.len());

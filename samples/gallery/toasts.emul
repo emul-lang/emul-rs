@@ -1,0 +1,399 @@
+// Notification toasts and inline alerts in four kinds: info, success, warning and error.
+
+component Page:
+    display: grid
+    gridTemplateColumns: 1fr 400px
+    gap: 40px
+    padding: 48px
+
+component Section:
+    display: flex
+    flexDirection: column
+    gap: 16px
+
+component SectionHead:
+    display: flex
+    flexDirection: column
+    gap: 6px
+    marginBottom: 8px
+
+component Kicker:
+    fontFamily: "JetBrains Mono"
+    fontSize: 12px
+    fontWeight: 500
+    letterSpacing: 0.5px
+    color: #8b5cf6
+
+component Heading:
+    fontFamily: "Space Grotesk"
+    fontSize: 26px
+    fontWeight: 700
+    letterSpacing: -0.5px
+    color: #111827
+
+component Lede:
+    fontFamily: Inter
+    fontSize: 14px
+    lineHeight: 1.6
+    color: #6b7280
+
+component Alert:
+    display: flex
+    gap: 14px
+    padding: 16px 18px
+    borderTop: 1px solid #bfdbfe
+    borderRight: 1px solid #bfdbfe
+    borderBottom: 1px solid #bfdbfe
+    borderLeft: 4px solid #3b82f6
+    borderRadius: 12px
+    backgroundColor: #eff6ff
+    attribute kind: info | success | warning | error = info
+
+    when kind == success:
+        borderTop: 1px solid #bbf7d0
+        borderRight: 1px solid #bbf7d0
+        borderBottom: 1px solid #bbf7d0
+        borderLeft: 4px solid #22c55e
+        backgroundColor: #f0fdf4
+
+    when kind == warning:
+        borderTop: 1px solid #fde68a
+        borderRight: 1px solid #fde68a
+        borderBottom: 1px solid #fde68a
+        borderLeft: 4px solid #f59e0b
+        backgroundColor: #fffbeb
+
+    when kind == error:
+        borderTop: 1px solid #fecaca
+        borderRight: 1px solid #fecaca
+        borderBottom: 1px solid #fecaca
+        borderLeft: 4px solid #ef4444
+        backgroundColor: #fef2f2
+
+component Icon:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    flexShrink: 0
+    width: 24px
+    height: 24px
+    borderRadius: 999px
+    fontFamily: Inter
+    fontSize: 13px
+    fontWeight: 800
+    color: #ffffff
+    backgroundColor: #3b82f6
+    attribute kind: info | success | warning | error = info
+
+    when kind == success:
+        backgroundColor: #22c55e
+
+    when kind == warning:
+        backgroundColor: #f59e0b
+
+    when kind == error:
+        backgroundColor: #ef4444
+
+component Body:
+    display: flex
+    flexDirection: column
+    gap: 4px
+    flexGrow: 1
+
+component AlertTitle:
+    fontFamily: Inter
+    fontSize: 14px
+    fontWeight: 600
+    color: #1e3a8a
+    attribute kind: info | success | warning | error = info
+
+    when kind == success:
+        color: #14532d
+
+    when kind == warning:
+        color: #78350f
+
+    when kind == error:
+        color: #7f1d1d
+
+component AlertText:
+    fontFamily: Inter
+    fontSize: 13px
+    lineHeight: 1.55
+    color: #1d4ed8
+    attribute kind: info | success | warning | error = info
+
+    when kind == success:
+        color: #15803d
+
+    when kind == warning:
+        color: #b45309
+
+    when kind == error:
+        color: #b91c1c
+
+component AlertActions:
+    display: flex
+    gap: 16px
+    marginTop: 6px
+
+component AlertLink:
+    fontFamily: Inter
+    fontSize: 13px
+    fontWeight: 600
+    textDecoration: underline
+    color: #1e3a8a
+    attribute kind: info | success | warning | error = info
+
+    when kind == success:
+        color: #14532d
+
+    when kind == warning:
+        color: #78350f
+
+    when kind == error:
+        color: #7f1d1d
+
+component Stack:
+    display: flex
+    flexDirection: column
+    alignSelf: flex-start
+    gap: 12px
+    padding: 24px
+    borderRadius: 20px
+    backgroundImage: linear-gradient(160deg, #1e1b4b, #0f172a 70%)
+    boxShadow: 0 24px 48px -20px rgba(15, 23, 42, 0.5)
+
+component StackLabel:
+    marginBottom: 4px
+    fontFamily: "JetBrains Mono"
+    fontSize: 12px
+    color: #a5b4fc
+
+component Toast:
+    display: flex
+    alignItems: flex-start
+    gap: 12px
+    padding: 14px 16px
+    borderRadius: 14px
+    backgroundColor: #ffffff
+    boxShadow: 0 10px 24px -8px rgba(0, 0, 0, 0.45)
+
+component Glyph:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    flexShrink: 0
+    width: 34px
+    height: 34px
+    borderRadius: 10px
+    fontFamily: Inter, "Noto Color Emoji"
+    fontSize: 17px
+    attribute kind: info | success | warning | error = info
+
+    when kind == info:
+        backgroundColor: #dbeafe
+
+    when kind == success:
+        backgroundColor: #dcfce7
+
+    when kind == warning:
+        backgroundColor: #fef3c7
+
+    when kind == error:
+        backgroundColor: #fee2e2
+
+component ToastBody:
+    display: flex
+    flexDirection: column
+    gap: 3px
+    flexGrow: 1
+
+component ToastTitle:
+    fontFamily: Inter
+    fontSize: 14px
+    fontWeight: 600
+    color: #111827
+
+component ToastText:
+    fontFamily: Inter
+    fontSize: 13px
+    lineHeight: 1.45
+    color: #6b7280
+
+component Time:
+    fontFamily: Inter
+    fontSize: 12px
+    whiteSpace: nowrap
+    color: #9ca3af
+
+component Undo:
+    alignSelf: flex-start
+    marginTop: 8px
+    padding: 5px 12px
+    borderRadius: 8px
+    fontFamily: Inter
+    fontSize: 12px
+    fontWeight: 600
+    color: #ffffff
+    backgroundColor: #111827
+
+component Buttons:
+    display: flex
+    gap: 8px
+    marginTop: 10px
+
+component Accept:
+    padding: 6px 14px
+    borderRadius: 8px
+    fontFamily: Inter
+    fontSize: 12px
+    fontWeight: 600
+    color: #ffffff
+    backgroundColor: #4f46e5
+
+component Decline:
+    padding: 6px 14px
+    border: 1px solid #e5e7eb
+    borderRadius: 8px
+    fontFamily: Inter
+    fontSize: 12px
+    fontWeight: 600
+    color: #374151
+
+component Bar:
+    height: 3px
+    marginTop: 10px
+    borderRadius: 999px
+    backgroundColor: #f3f4f6
+
+component BarFill:
+    width: 62%
+    height: 3px
+    borderRadius: 999px
+    backgroundColor: #22c55e
+
+export composition Toasts {
+    Page {
+        Section {
+            SectionHead {
+                Kicker { "components / feedback" }
+                Heading { "Inline alerts" }
+                Lede {
+                    "Alerts sit in the flow of the page and stay until the problem is solved. Pick the kind by what the reader needs to do next."
+                }
+            }
+            Alert {
+                kind: info
+                Icon { kind: info, "i" }
+                Body {
+                    AlertTitle { kind: info, "A new version is available" }
+                    AlertText {
+                        kind: info
+                        "Version 4.2 adds shared workspaces and faster exports. Your projects will not change until you update."
+                    }
+                    AlertActions {
+                        AlertLink { kind: info, "Update now" }
+                        AlertLink { kind: info, "Read the notes" }
+                    }
+                }
+            }
+            Alert {
+                kind: success
+                Icon { kind: success, "✓" }
+                Body {
+                    AlertTitle { kind: success, "Payment received" }
+                    AlertText {
+                        kind: success
+                        "We charged $240.00 to the Visa ending 4242. A receipt is on its way to billing@acme.studio."
+                    }
+                }
+            }
+            Alert {
+                kind: warning
+                Icon { kind: warning, "!" }
+                Body {
+                    AlertTitle {
+                        kind: warning
+                        "You have used 92% of your storage"
+                    }
+                    AlertText {
+                        kind: warning
+                        "Uploads will pause at 100%. Archive old projects or move to the Studio plan for 1 TB."
+                    }
+                    AlertActions {
+                        AlertLink { kind: warning, "Manage storage" }
+                    }
+                }
+            }
+            Alert {
+                kind: error
+                Icon { kind: error, "×" }
+                Body {
+                    AlertTitle { kind: error, "We couldn't publish your site" }
+                    AlertText {
+                        kind: error
+                        "The domain lumen.design is not pointing at our servers yet. DNS changes can take up to 24 hours."
+                    }
+                    AlertActions {
+                        AlertLink { kind: error, "Check DNS" }
+                        AlertLink { kind: error, "Contact support" }
+                    }
+                }
+            }
+        }
+        Stack {
+            StackLabel { "toasts — bottom right" }
+            Toast {
+                Glyph { kind: success, "✅" }
+                ToastBody {
+                    ToastTitle { "Moved to Archive" }
+                    ToastText { "3 projects are now in Archive." }
+                    Undo { "Undo" }
+                    Bar {
+                        BarFill {}
+                    }
+                }
+                Time { "now" }
+            }
+            Toast {
+                Glyph { kind: info, "💬" }
+                ToastBody {
+                    ToastTitle { "Sofia mentioned you" }
+                    ToastText {
+                        "“Can you check the spacing on the pricing cards before we ship?”"
+                    }
+                }
+                Time { "2m" }
+            }
+            Toast {
+                Glyph { kind: info, "📅" }
+                ToastBody {
+                    ToastTitle { "Leo invited you to Q4 roadmap" }
+                    ToastText { "Thursday, 14:00 to 15:00 · Room Atlas" }
+                    Buttons {
+                        Accept { "Accept" }
+                        Decline { "Decline" }
+                    }
+                }
+                Time { "5m" }
+            }
+            Toast {
+                Glyph { kind: warning, "⏳" }
+                ToastBody {
+                    ToastTitle { "Export is taking longer" }
+                    ToastText { "We'll email you when the 4K render is ready." }
+                }
+                Time { "8m" }
+            }
+            Toast {
+                Glyph { kind: error, "🚫" }
+                ToastBody {
+                    ToastTitle { "Upload failed" }
+                    ToastText { "hero-final-v3.mov is over the 2 GB limit." }
+                }
+                Time { "14m" }
+            }
+        }
+    }
+}

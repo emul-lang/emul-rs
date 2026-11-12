@@ -1,4 +1,4 @@
-//! Project automation, run with `cargo xtask <task>`.
+//! Project tasks. Use `cargo xtask <task>` to run a task.
 
 use std::env;
 use std::path::{Path, PathBuf};
@@ -30,7 +30,7 @@ fn main() -> ExitCode {
     }
 }
 
-/// The workspace root: the parent of this crate's directory.
+/// The workspace root: the parent of the directory of this crate.
 fn project_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).parent().expect("xtask lives inside the workspace").to_path_buf()
 }

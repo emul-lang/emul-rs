@@ -1,3 +1,4 @@
+from ./Conditions import Conditions
 from ./Config import Config
 from ./Fonts import Fonts
 from ./Output import Output
@@ -41,6 +42,12 @@ export anchor HtmlOutput:
         as described for images in values, and the file is copied into the
         output directory alongside the HTML.
 
+        An attribute declared by the component, as described in
+        @{Conditions}, is written with a `data-` prefix, such as
+        `data-size="small"`, so it never means anything to the browser.
+        Every declared attribute is written, including one left at its
+        default, so the HTML shows which values were used.
+
     classes:
         Each component used in the composition becomes one CSS class, named
         after the name the component was declared with, not any alias it was
@@ -66,6 +73,15 @@ export anchor HtmlOutput:
         the component's complete set of properties, after merging everything
         it extends and applying the shorthand rule. Emul's inheritance never
         relies on CSS combining several classes.
+
+        Conditions follow the same rule. Each combination of attribute values
+        used in the composition gets its own class, holding the complete
+        resolved style. Its name is the component's class followed by each
+        value that differs from its default, in the order the attributes are
+        declared, joined with hyphens, such as `Button-small` or
+        `Button-small-danger`. An instance with every attribute at its
+        default gets the plain class, such as `Button`. Values start with a
+        letter, so these names never clash with a numeric suffix.
 
     properties:
         Each property becomes the CSS property it corresponds to, with the

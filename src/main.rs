@@ -14,36 +14,62 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Command {
-    /// Check the project, then render every composition exported from the entry file.
+    /// Create a new project with a starter config and entry file.
+    Init {
+        /// The directory for the new project. The default is the current directory.
+        dir: Option<PathBuf>,
+        /// The project name, in PascalCase. The default is the name of the directory.
+        #[arg(long)]
+        name: Option<String>,
+        /// The canvas width in px. The default is 1280.
+        #[arg(long)]
+        width: Option<String>,
+        /// The canvas height in px, or `auto`. The default is auto.
+        #[arg(long)]
+        height: Option<String>,
+        /// The canvas background colour. The default is transparent.
+        #[arg(long)]
+        background: Option<String>,
+        /// The format to render: html, svg or png. You can repeat it. The default is all three.
+        #[arg(long = "format")]
+        format: Vec<String>,
+        /// The output directory. The default is ./out.
+        #[arg(long = "out")]
+        out: Option<String>,
+        /// Overwrite emul.config.pi or index.emul if it exists.
+        #[arg(long)]
+        force: bool,
+    },
+    /// Check the project. Then render every composition that the entry file exports.
     Build {
         /// Render only these compositions.
         compositions: Vec<String>,
         #[command(flatten)]
         flags: RenderFlags,
     },
-    /// Report errors and warnings without rendering anything.
+    /// Report errors and warnings. Do not render.
     Check {
         #[arg(long)]
         config: Option<PathBuf>,
     },
     /// Rewrite .emul files in their canonical layout.
     Format {
-        /// Files or directories to format. Defaults to the project's source root.
+        /// The files or directories to format. The default is the source root of the project.
         paths: Vec<PathBuf>,
-        /// Change nothing, and exit with code 1 if any file is not formatted.
+        /// Change nothing, and exit with code 1 if a file does not have the canonical format.
         #[arg(long)]
         check: bool,
         #[arg(long)]
         config: Option<PathBuf>,
     },
-    /// Open a viewer that refreshes whenever a file is saved.
+    /// Open a viewer that refreshes when you save a file.
     Preview {
         #[command(flatten)]
         flags: RenderFlags,
-        /// The port the HTML view is served on.
+        /// The port of the HTML view.
         #[arg(long, default_value_t = 4400)]
         port: u16,
-        /// Also open the HTML view in the browser at start-up.
+        /// Also open the HTML view in the browser when the preview starts.
         #[arg(long)]
         html: bool,
     },
@@ -51,28 +77,28 @@ enum Command {
 
 #[derive(Args, Clone)]
 struct RenderFlags {
-    /// Canvas width in px.
+    /// The canvas width in px.
     #[arg(long)]
     width: Option<String>,
-    /// Canvas height in px, or `auto`.
+    /// The canvas height in px, or `auto`.
     #[arg(long)]
     height: Option<String>,
-    /// PNG pixel density.
+    /// The pixel density of the PNG output.
     #[arg(long)]
     scale: Option<f32>,
-    /// Canvas background colour.
+    /// The canvas background colour.
     #[arg(long)]
     background: Option<String>,
-    /// Render only this format: html, svg or png. May be repeated.
+    /// Render only this format: html, svg or png. You can repeat it.
     #[arg(long = "format")]
     format: Vec<String>,
-    /// How SVG text is written: outline or embed.
+    /// How the SVG output writes text: outline or embed.
     #[arg(long = "svg-fonts")]
     svg_fonts: Option<String>,
-    /// Output directory.
+    /// The output directory.
     #[arg(long = "out")]
     out: Option<PathBuf>,
-    /// Config file to use.
+    /// The config file.
     #[arg(long)]
     config: Option<PathBuf>,
 }
@@ -121,7 +147,8 @@ fn overrides(f: &RenderFlags) -> Result<Overrides, String> {
 
 fn report(diags: &Diags, sources: &std::collections::HashMap<PathBuf, String>) {
     let base = std::env::current_dir().unwrap_or_default();
-    // Files without their text loaded, such as the config, are read here for display.
+    // Some files do not have their text in memory, for example the config.
+    // This code reads them for display.
     let mut sources = sources.clone();
     for d in &diags.list {
         if let Some(f) = &d.file {
@@ -161,6 +188,70 @@ fn emul_files(dir: &Path, out: &mut Vec<PathBuf>) {
 fn main() -> ExitCode {
     let cli = Cli::parse();
     match cli.command {
+        Command::Init { dir, name, width, height, background, format, out, force } => {
+            let flags = RenderFlags {
+                width: width.clone(),
+                height: height.clone(),
+                scale: None,
+                background: background.clone(),
+                format: format.clone(),
+                svg_fonts: None,
+                out: None,
+                config: None,
+            };
+            let ov = match overrides(&flags) {
+                Ok(o) => o,
+                Err(e) => return usage(&e),
+            };
+            if let Some(n) = &name {
+                if !emul::init::is_pascal(n) {
+                    return usage(&format!("--name `{n}` must be PascalCase: a capital letter, then letters and digits"));
+                }
+            }
+            let height = ov.height.map(|h| match h {
+                config::Height::Auto => "auto".to_string(),
+                config::Height::Px(p) => p.to_string(),
+            });
+            let dir = dir.unwrap_or_default();
+            let opts = emul::init::InitOptions {
+                dir: dir.clone(),
+                name,
+                width: ov.width,
+                height,
+                background: background.map(|b| b.trim().to_string()),
+                formats: ov.formats.unwrap_or_default(),
+                out_dir: out,
+                force,
+            };
+            let base = std::env::current_dir().unwrap_or_default();
+            match emul::init::run(&opts) {
+                Ok(files) => {
+                    for f in files {
+                        eprintln!("created {}", emul::diag::display_path(&f, &base));
+                    }
+                    eprintln!();
+                    eprintln!("next:");
+                    let here = dir.as_os_str().is_empty() || std::fs::canonicalize(&dir).ok() == std::fs::canonicalize(&base).ok();
+                    if !here {
+                        eprintln!("  cd {}", emul::diag::display_path(&dir, &base));
+                    }
+                    eprintln!("  emul preview");
+                    ExitCode::SUCCESS
+                }
+                Err(emul::init::InitError::Exists(paths)) => {
+                    let mut diags = Diags::new();
+                    for p in paths {
+                        diags.error("project-exists", Some(&p), None, "this directory already has this file; use --force to overwrite it");
+                    }
+                    report(&diags, &Default::default());
+                    ExitCode::from(1)
+                }
+                Err(emul::init::InitError::Io(e)) => {
+                    eprintln!("error: {e}");
+                    ExitCode::from(1)
+                }
+            }
+        }
         Command::Check { config } => {
             let mut diags = Diags::new();
             let cfg = build::load_config(config.as_deref(), &mut diags);

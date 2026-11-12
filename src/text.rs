@@ -1,4 +1,4 @@
-//! Text shaping and line breaking, using cosmic-text with the project's Google Fonts.
+//! Shapes text and breaks it into lines, with cosmic-text and the Google Fonts of the project.
 
 use crate::fonts::FontSet;
 use crate::props::{Decoration, LineHeight, Style, L};
@@ -7,7 +7,7 @@ use cosmic_text::{Attrs, Buffer, Ellipsize, EllipsizeHeightLimit, Family, FontSy
 use std::collections::HashMap;
 use std::sync::Arc;
 
-/// Text styled by one component: a run of text and how it looks.
+/// The text that one component styles: a run of text and its appearance.
 #[derive(Clone, Debug)]
 pub struct Span {
     pub text: String,
@@ -46,26 +46,26 @@ impl SpanStyle {
     }
 }
 
-/// A block of text laid out together: the inline content of one element.
+/// A block of text that the layout arranges as one unit: the inline content of one element.
 #[derive(Clone, Debug)]
 pub struct Paragraph {
     pub spans: Vec<Span>,
-    /// The containing element's own text style, which sets the minimum line height.
+    /// The own text style of the parent element, which sets the minimum line height.
     pub strut: SpanStyle,
     pub align: &'static str,
     pub white_space: &'static str,
     pub clamp: Option<usize>,
-    /// An ellipsis on a single unwrapped line, from textOverflow.
+    /// An ellipsis at the end of one line that does not wrap. `textOverflow` sets it.
     pub ellipsis: bool,
 }
 
 pub struct Fonts {
     pub system: FontSystem,
-    /// Google Fonts family name to the family name inside the font files.
+    /// Maps each Google Fonts family name to the family name in the font files.
     pub names: HashMap<String, String>,
-    /// Line metrics per family: ascent + descent + gap, as a fraction of the size.
+    /// The line metrics of each family: ascent + descent + gap, as a fraction of the size.
     metrics: HashMap<String, f32>,
-    /// Each loaded font, by its id in the font database.
+    /// Each font that the code loaded, by its id in the font database.
     pub faces: HashMap<cosmic_text::fontdb::ID, crate::fonts::LoadedFace>,
 }
 
@@ -105,8 +105,8 @@ impl Fonts {
         self.names.get(family).cloned().unwrap_or_else(|| family.to_string())
     }
 
-    /// The used line height in px for a style, following CSS: `normal` uses the font's
-    /// own line spacing.
+    /// The used line height in px for a style, as CSS specifies. `normal` uses the
+    /// line space of the font.
     pub fn line_height(&self, s: &SpanStyle) -> f32 {
         match s.line_height {
             LineHeight::Normal => {
@@ -161,15 +161,15 @@ pub fn transform(s: &str, t: &str) -> String {
     }
 }
 
-/// Applies whitespace processing across the spans of a paragraph: adjacent spans are
-/// joined before collapsing, and spaces at the start and end are trimmed.
+/// Applies the whitespace rules to the spans of a paragraph. Adjacent spans join
+/// before the spaces collapse. It removes the spaces at the start and at the end.
 pub fn process_whitespace(spans: &[Span], white_space: &str) -> Vec<Span> {
     let keep = matches!(white_space, "pre" | "pre-wrap");
     if keep {
         return spans.to_vec();
     }
     let mut out: Vec<Span> = Vec::new();
-    let mut prev_space = true; // trims leading spaces
+    let mut prev_space = true; // Removes the spaces at the start.
     for sp in spans {
         let mut t = String::new();
         for c in collapse(&sp.text).chars() {
@@ -185,7 +185,7 @@ pub fn process_whitespace(spans: &[Span], white_space: &str) -> Vec<Span> {
         }
         out.push(Span { text: t, style: sp.style.clone() });
     }
-    // Trim trailing spaces.
+    // Remove the spaces at the end.
     for sp in out.iter_mut().rev() {
         let trimmed = sp.text.trim_end_matches(' ').to_string();
         let was_empty = trimmed.is_empty();
@@ -204,7 +204,7 @@ pub struct Shaped {
     pub height: f32,
 }
 
-/// Shapes a paragraph at a given width; `None` means unlimited (max-content).
+/// Shapes a paragraph at a given width. `None` means no limit (max-content).
 pub fn shape(fonts: &mut Fonts, para: &Paragraph, width: Option<f32>) -> Shaped {
     let strut_lh = fonts.line_height(&para.strut);
     let metrics = Metrics::new(para.strut.size, strut_lh.max(0.01));
@@ -266,7 +266,7 @@ pub fn shape(fonts: &mut Fonts, para: &Paragraph, width: Option<f32>) -> Shaped 
     Shaped { buffer, width: w, height: h }
 }
 
-/// The styles of the spans after whitespace processing, in metadata order.
+/// The styles of the spans after the whitespace rules, in metadata order.
 pub fn span_styles(para: &Paragraph) -> Vec<SpanStyle> {
     process_whitespace(&para.spans, para.white_space).into_iter().map(|s| s.style).collect()
 }

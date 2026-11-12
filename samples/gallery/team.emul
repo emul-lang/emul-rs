@@ -1,0 +1,436 @@
+// A team directory: profile cards with gradient avatars, status pills and social links.
+
+component Page:
+    display: flex
+    flexDirection: column
+    gap: 32px
+    padding: 48px
+
+component Intro:
+    display: flex
+    alignItems: flex-end
+    justifyContent: space-between
+
+component IntroText:
+    display: flex
+    flexDirection: column
+    gap: 10px
+
+component Eyebrow:
+    fontFamily: Manrope
+    fontSize: 13px
+    fontWeight: 700
+    letterSpacing: 1.5px
+    textTransform: uppercase
+    color: #7c3aed
+
+component Heading:
+    fontFamily: Manrope
+    fontSize: 36px
+    fontWeight: 800
+    letterSpacing: -1px
+    color: #0f172a
+
+component Lede:
+    maxWidth: 620px
+    fontFamily: Manrope
+    fontSize: 16px
+    lineHeight: 1.6
+    color: #64748b
+
+component Tabs:
+    display: flex
+    gap: 8px
+
+component TabItem:
+    padding: 8px 16px
+    border: 1px solid #e2e8f0
+    borderRadius: 999px
+    fontFamily: Manrope
+    fontSize: 14px
+    fontWeight: 600
+    color: #475569
+    backgroundColor: #ffffff
+    attribute active: no | yes = no
+
+    when active == yes:
+        border: 1px solid #0f172a
+        color: #ffffff
+        backgroundColor: #0f172a
+
+component Grid:
+    display: grid
+    gridTemplateColumns: repeat(4, 1fr)
+    gap: 20px
+
+component Card:
+    display: flex
+    flexDirection: column
+    alignItems: center
+    padding: 28px 20px 20px
+    border: 1px solid #edf0f4
+    borderRadius: 20px
+    backgroundColor: #ffffff
+    boxShadow: 0 12px 32px -16px rgba(15, 23, 42, 0.18)
+
+component Avatar:
+    position: relative
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 80px
+    height: 80px
+    marginBottom: 16px
+    borderRadius: 999px
+    fontFamily: Manrope
+    fontSize: 26px
+    fontWeight: 700
+    color: #ffffff
+    boxShadow: 0 0 0 4px #ffffff, 0 0 0 6px #eef0f5
+    attribute hue: sunset | ocean | forest | grape | rose | sky | gold | ink = sunset
+
+    when hue == sunset:
+        backgroundImage: linear-gradient(135deg, #fbbf24, #f97316 50%, #db2777)
+
+    when hue == ocean:
+        backgroundImage: linear-gradient(135deg, #22d3ee, #2563eb)
+
+    when hue == forest:
+        backgroundImage: linear-gradient(135deg, #a3e635, #059669)
+
+    when hue == grape:
+        backgroundImage: linear-gradient(135deg, #c084fc, #6d28d9)
+
+    when hue == rose:
+        backgroundImage: linear-gradient(135deg, #fda4af, #e11d48)
+
+    when hue == sky:
+        backgroundImage: linear-gradient(135deg, #7dd3fc, #6366f1)
+
+    when hue == gold:
+        backgroundImage: linear-gradient(135deg, #fde68a, #ca8a04)
+
+    when hue == ink:
+        backgroundImage: linear-gradient(135deg, #64748b, #0f172a)
+
+component Presence:
+    position: absolute
+    right: 2px
+    bottom: 2px
+    width: 16px
+    height: 16px
+    border: 3px solid #ffffff
+    borderRadius: 999px
+    attribute status: online | away | offline = online
+
+    when status == online:
+        backgroundColor: #22c55e
+
+    when status == away:
+        backgroundColor: #f59e0b
+
+    when status == offline:
+        backgroundColor: #cbd5e1
+
+component Name:
+    fontFamily: Manrope
+    fontSize: 17px
+    fontWeight: 700
+    color: #0f172a
+
+component Role:
+    marginTop: 4px
+    fontFamily: Manrope
+    fontSize: 14px
+    color: #64748b
+
+component Pill:
+    marginTop: 14px
+    padding: 4px 12px
+    borderRadius: 999px
+    fontFamily: Manrope
+    fontSize: 12px
+    fontWeight: 700
+    attribute status: online | away | offline = online
+
+    when status == online:
+        color: #15803d
+        backgroundColor: #dcfce7
+
+    when status == away:
+        color: #b45309
+        backgroundColor: #fef3c7
+
+    when status == offline:
+        color: #64748b
+        backgroundColor: #f1f5f9
+
+component Numbers:
+    display: grid
+    gridTemplateColumns: 1fr 1fr
+    width: 100%
+    marginTop: 20px
+    paddingTop: 16px
+    borderTop: 1px solid #f1f5f9
+
+component Number:
+    display: flex
+    flexDirection: column
+    alignItems: center
+    gap: 2px
+
+component Value:
+    fontFamily: Manrope
+    fontSize: 18px
+    fontWeight: 800
+    color: #0f172a
+
+component Caption:
+    fontFamily: Manrope
+    fontSize: 12px
+    fontWeight: 500
+    color: #94a3b8
+
+component Links:
+    display: flex
+    gap: 8px
+    width: 100%
+    marginTop: 18px
+
+component Social:
+    flexGrow: 1
+    flexBasis: 0px
+    padding: 8px 0px
+    borderRadius: 10px
+    fontFamily: Manrope
+    fontSize: 13px
+    fontWeight: 700
+    textAlign: center
+    color: #334155
+    backgroundColor: #f4f6f9
+
+component Message:
+    flexGrow: 1
+    flexBasis: 0px
+    padding: 8px 0px
+    borderRadius: 10px
+    fontFamily: Manrope
+    fontSize: 13px
+    fontWeight: 700
+    textAlign: center
+    color: #ffffff
+    backgroundColor: #7c3aed
+
+export composition Team {
+    Page {
+        Intro {
+            IntroText {
+                Eyebrow { "Meet the crew" }
+                Heading { "The people behind Lumen" }
+                Lede {
+                    "Eight people in four time zones, building a calmer way to run a studio."
+                }
+            }
+            Tabs {
+                TabItem { active: yes, "Everyone" }
+                TabItem { "Design" }
+                TabItem { "Engineering" }
+                TabItem { "Ops" }
+            }
+        }
+        Grid {
+            Card {
+                Avatar {
+                    hue: sunset
+                    "MO"
+                    Presence { status: online }
+                }
+                Name { "Maya Okafor" }
+                Role { "Founder & CEO" }
+                Pill { status: online, "Online" }
+                Numbers {
+                    Number {
+                        Value { "42" }
+                        Caption { "Projects" }
+                    }
+                    Number {
+                        Value { "9y" }
+                        Caption { "Tenure" }
+                    }
+                }
+                Links {
+                    Social { "Profile" }
+                    Message { "Message" }
+                }
+            }
+            Card {
+                Avatar {
+                    hue: ocean
+                    "LC"
+                    Presence { status: away }
+                }
+                Name { "Leo Chen" }
+                Role { "Head of Engineering" }
+                Pill { status: away, "Away · back 2pm" }
+                Numbers {
+                    Number {
+                        Value { "1.2k" }
+                        Caption { "Commits" }
+                    }
+                    Number {
+                        Value { "6y" }
+                        Caption { "Tenure" }
+                    }
+                }
+                Links {
+                    Social { "Profile" }
+                    Message { "Message" }
+                }
+            }
+            Card {
+                Avatar {
+                    hue: grape
+                    "SV"
+                    Presence { status: online }
+                }
+                Name { "Sofia Varga" }
+                Role { "Principal Designer" }
+                Pill { status: online, "Online" }
+                Numbers {
+                    Number {
+                        Value { "318" }
+                        Caption { "Frames" }
+                    }
+                    Number {
+                        Value { "4y" }
+                        Caption { "Tenure" }
+                    }
+                }
+                Links {
+                    Social { "Profile" }
+                    Message { "Message" }
+                }
+            }
+            Card {
+                Avatar {
+                    hue: forest
+                    "TA"
+                    Presence { status: offline }
+                }
+                Name { "Tomás Alvarez" }
+                Role { "Backend Engineer" }
+                Pill { status: offline, "Offline" }
+                Numbers {
+                    Number {
+                        Value { "874" }
+                        Caption { "Commits" }
+                    }
+                    Number {
+                        Value { "3y" }
+                        Caption { "Tenure" }
+                    }
+                }
+                Links {
+                    Social { "Profile" }
+                    Message { "Message" }
+                }
+            }
+            Card {
+                Avatar {
+                    hue: rose
+                    "AN"
+                    Presence { status: online }
+                }
+                Name { "Aiko Nakamura" }
+                Role { "Product Manager" }
+                Pill { status: online, "Online" }
+                Numbers {
+                    Number {
+                        Value { "27" }
+                        Caption { "Launches" }
+                    }
+                    Number {
+                        Value { "2y" }
+                        Caption { "Tenure" }
+                    }
+                }
+                Links {
+                    Social { "Profile" }
+                    Message { "Message" }
+                }
+            }
+            Card {
+                Avatar {
+                    hue: sky
+                    "JB"
+                    Presence { status: away }
+                }
+                Name { "Jonah Brooks" }
+                Role { "Frontend Engineer" }
+                Pill { status: away, "In a meeting" }
+                Numbers {
+                    Number {
+                        Value { "652" }
+                        Caption { "Commits" }
+                    }
+                    Number {
+                        Value { "2y" }
+                        Caption { "Tenure" }
+                    }
+                }
+                Links {
+                    Social { "Profile" }
+                    Message { "Message" }
+                }
+            }
+            Card {
+                Avatar {
+                    hue: gold
+                    "PS"
+                    Presence { status: online }
+                }
+                Name { "Priya Shah" }
+                Role { "Brand Designer" }
+                Pill { status: online, "Online" }
+                Numbers {
+                    Number {
+                        Value { "96" }
+                        Caption { "Assets" }
+                    }
+                    Number {
+                        Value { "1y" }
+                        Caption { "Tenure" }
+                    }
+                }
+                Links {
+                    Social { "Profile" }
+                    Message { "Message" }
+                }
+            }
+            Card {
+                Avatar {
+                    hue: ink
+                    "EM"
+                    Presence { status: offline }
+                }
+                Name { "Erik Magnusson" }
+                Role { "Operations Lead" }
+                Pill { status: offline, "On holiday" }
+                Numbers {
+                    Number {
+                        Value { "14" }
+                        Caption { "Vendors" }
+                    }
+                    Number {
+                        Value { "5y" }
+                        Caption { "Tenure" }
+                    }
+                }
+                Links {
+                    Social { "Profile" }
+                    Message { "Message" }
+                }
+            }
+        }
+    }
+}

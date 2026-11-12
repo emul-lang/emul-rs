@@ -1,0 +1,104 @@
+from ./Cli import Cli
+from ./Config import Config
+from ./Errors import Errors
+from ./Formatting import Formatting
+from ./OutputSize import OutputSize
+
+export anchor Init:
+    description:
+        `emul init` starts a new Emul project, as described in @{Cli}. It
+        writes a config file and an entry file that build straight away, so
+        `emul build` and `emul preview` work the moment it finishes.
+
+    directory:
+        `emul init` takes an optional directory to create the project in.
+        Without one, it uses the current directory. A directory that does not
+        exist yet is created, along with any missing parents.
+
+        ```text
+        \\\
+        emul init
+        emul init my-designs
+        emul init my-designs --name Marketing --width 375 --format png
+        \\\
+        ```
+
+    files:
+        - emul.config.pi
+            The project's config, as described in @{Config}. It sets the
+            entry, outDir, formats, width and height explicitly, so the basic
+            settings are visible and ready to change. The background and
+            svgFonts settings are written commented out, with their defaults,
+            so they are easy to find. Settings given by flags are written with
+            the flag's value in place of the default.
+        - index.emul
+            The entry file. It declares a few small components and exports
+            one composition that uses them, so the first build renders
+            something. The composition is named after the project, with
+            `Design` appended if that would clash with a starter component's
+            name.
+        - .gitignore
+            Ignores the output directory. It is written only when the
+            directory has no `.gitignore`; an existing one is left alone.
+
+    formatted:
+        Every file `emul init` writes is already in its canonical layout, so
+        `emul format --check` passes on a new project, as described in
+        @{Formatting}. A new project also passes `emul check` with no errors
+        and no warnings.
+
+    name:
+        The project name is used for the `emul-config` anchor and the starter
+        composition. It is the directory's name in PascalCase, so
+        `my-designs` becomes `MyDesigns`. When that is not a valid name, such
+        as for a directory whose name starts with a digit, it is `Project`.
+
+    flags:
+        - name
+            `--name <Name>` sets the project name. It must be PascalCase: a
+            capital letter, then letters and digits.
+        - width
+            `--width <px>` sets the width setting. Defaults to `1280`.
+        - height
+            `--height <px>` or `--height auto` sets the height setting.
+            Defaults to `auto`.
+        - background
+            `--background <color>` sets the background setting, which is then
+            written uncommented.
+        - format
+            `--format <format>` sets the formats setting. It may be repeated.
+            Defaults to all of `html`, `svg` and `png`.
+        - outDir
+            `--out <dir>` sets the outDir setting. Defaults to `./out`.
+        - force
+            `--force` overwrites an existing `emul.config.pi` or
+            `index.emul`.
+
+        Width, height and background are checked the same way as the
+        matching flags of `emul build`, described in @{OutputSize}.
+
+    existingProject:
+        Without `--force`, `emul init` changes nothing when the directory
+        already has an `emul.config.pi` or an `index.emul`. It reports each
+        one with the code `project-exists` and exits with code 1, as
+        described in @{Errors}. Other files already in the directory, such as
+        other `.emul` files, are never touched.
+
+    output:
+        Each file written is reported as `created <path>`, then a short note
+        on what to run next.
+
+        ```text
+        \\\
+        created my-designs/emul.config.pi
+        created my-designs/index.emul
+        created my-designs/.gitignore
+
+        next:
+          cd my-designs
+          emul preview
+        \\\
+        ```
+
+        The `cd` line is left out when the project is in the current
+        directory.

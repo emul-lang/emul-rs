@@ -1,4 +1,4 @@
-// Shared components used by the samples, one per file.
+// The shared components of the samples. Each file holds one component.
 from ./Badge export *
 from ./Banner export *
 from ./Body export *

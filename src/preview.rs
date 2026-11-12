@@ -1,6 +1,6 @@
-//! Preview mode: renders the project in memory, shows it in a native egui window,
-//! serves the HTML view on a local web server, and rebuilds whenever a source file,
-//! image or the config is saved. Nothing is written to the output directory.
+//! Preview mode. It renders the project in memory and shows it in a native egui window.
+//! It also serves the HTML view on a local web server. It renders again when you save
+//! a source file, an image or the config. It writes nothing to the output directory.
 
 use crate::build::{self, BuildResult, Overrides, Rendered};
 use crate::config::{Format, SvgFonts};
@@ -18,9 +18,9 @@ pub struct PreviewOptions {
     pub open_html: bool,
 }
 
-/// How many ports to try, starting with the requested one.
+/// How many ports to try. The first port is the requested port.
 const PORT_TRIES: u16 = 20;
-/// How long to wait for more file events before rebuilding.
+/// How long to wait for more file events before a rebuild.
 const DEBOUNCE: Duration = Duration::from_millis(150);
 
 // ---------------------------------------------------------------------------
@@ -28,7 +28,7 @@ const DEBOUNCE: Duration = Duration::from_millis(150);
 
 /// The last build that rendered without errors.
 struct Good {
-    /// The generation of the build that produced it.
+    /// The generation of the build that made it.
     generation: u64,
     rendered: Vec<Rendered>,
 }
@@ -41,11 +41,12 @@ struct State {
     good: Option<Arc<Good>>,
     /// Diagnostics of the latest build.
     diags: Diags,
-    /// The latest build's diagnostics rendered as text, with source lines.
+    /// The diagnostics of the latest build, as text with source lines.
     diag_text: String,
-    /// The base directory paths are shown relative to.
+    /// The base directory. The preview shows paths relative to this directory.
     base: PathBuf,
-    /// Set once the window exists, so the build thread can ask it to redraw.
+    /// The window sets this when it exists. Then the build thread can ask the window to
+    /// draw again.
     ctx: Option<egui::Context>,
 }
 
@@ -73,8 +74,8 @@ pub fn run(opts: PreviewOptions) -> Result<(), String> {
     // The window and the browser always need every format, whatever the config says.
     let mut ov = opts.overrides.clone();
     ov.formats = Some(vec![Format::Html, Format::Svg, Format::Png]);
-    // The window rasterizes the SVG with resvg, which draws outlined text exactly;
-    // embedded web fonts would not be used by it.
+    // The window rasterizes the SVG with resvg, which draws outlined text exactly.
+    // resvg does not use embedded web fonts.
     ov.svg_fonts = Some(SvgFonts::Outline);
 
     // The web server starts first, so the HTML view works even without a display.
@@ -125,14 +126,14 @@ pub fn run(opts: PreviewOptions) -> Result<(), String> {
 }
 
 // ---------------------------------------------------------------------------
-// Building and watching
+// Build and watch
 
 struct Watched {
-    /// Every file the last build read, normalized.
+    /// The normalized path of each file that the last build read.
     inputs: HashSet<PathBuf>,
-    /// The config file, normalized, whether or not it exists yet.
+    /// The normalized path of the config file. The file can be absent.
     config: PathBuf,
-    /// The source root, normalized.
+    /// The normalized path of the source root.
     root: PathBuf,
 }
 
@@ -213,7 +214,7 @@ fn build_loop(config: Option<PathBuf>, ov: Overrides, shared: Shared) {
                 Err(_) => return,
             }
         }
-        // Debounce: rebuild once things have been quiet for a moment.
+        // Wait for a short time without changes. Then build again.
         let mut deadline = Instant::now() + DEBOUNCE;
         loop {
             let now = Instant::now();
@@ -234,9 +235,9 @@ fn build_loop(config: Option<PathBuf>, ov: Overrides, shared: Shared) {
     }
 }
 
-/// Watches the source root recursively, and the directory of every input outside it
-/// and of the config. Directories are watched rather than files, so editors that save
-/// by replacing the file are still noticed.
+/// Watches the source root recursively. Also watches the directory of the config and of
+/// each input outside the source root. It watches directories, not files. Thus it also
+/// sees a save from an editor that replaces the file.
 fn update_watches(w: &mut notify::RecommendedWatcher, watching: &mut HashSet<(PathBuf, bool)>, watched: &Watched) {
     use notify::{RecursiveMode, Watcher};
     let mut wanted: HashSet<(PathBuf, bool)> = HashSet::new();
@@ -282,7 +283,7 @@ fn relevant(ev: &notify::Event, watched: &Watched) -> bool {
         EventKind::Create(_) | EventKind::Remove(_) => true,
         EventKind::Modify(ModifyKind::Metadata(MetadataKind::AccessTime)) => false,
         EventKind::Modify(_) => true,
-        // Reads by the build itself show up as access events; only finished writes count.
+        // A read by the build itself causes an access event. Only complete writes count.
         EventKind::Access(AccessKind::Close(AccessMode::Write)) => true,
         EventKind::Access(_) => false,
         EventKind::Any | EventKind::Other => true,
@@ -306,7 +307,8 @@ fn absolute(p: &Path) -> PathBuf {
     }
 }
 
-/// Canonicalizes a path, or its parent when the file itself doesn't exist (yet or any more).
+/// Makes a path canonical. When the file does not exist (not yet, or not now), it
+/// makes the parent path canonical.
 fn norm(p: &Path) -> PathBuf {
     let p = absolute(p);
     if let Ok(c) = p.canonicalize() {
@@ -331,8 +333,8 @@ fn start_server(port: u16, shared: Shared) -> Result<u16, String> {
                     .spawn(move || {
                         for req in server.incoming_requests() {
                             let shared = shared.clone();
-                            // Requests are small and quick; serve each on its own thread so a
-                            // slow client can't hold up the reload polling.
+                            // Requests are small and quick. Serve each on its own thread, so that a
+                            // slow client does not stop the reload poll.
                             std::thread::spawn(move || handle(req, &shared));
                         }
                     })
@@ -427,7 +429,8 @@ fn handle(req: tiny_http::Request, shared: &Shared) {
         if let Some(h) = found {
             return respond_text(req, 200, "text/html; charset=utf-8", inject(&h.html, generation, errors));
         }
-        // Unknown composition, or nothing good yet: a page that waits for the next build.
+        // For an unknown composition, or when no good build exists, serve a page that
+        // waits for the next build.
         let msg = if good.is_none() && building {
             "Building…".to_string()
         } else if good.is_none() {
@@ -464,11 +467,17 @@ fn inject(html: &str, generation: u64, errors: Option<&str>) -> String {
         extra.push_str(&html_escape(text));
         extra.push_str("</pre></div>\n");
     }
-    extra.push_str(&format!(
+    // The script goes in the head. The reset rule styles every element in the body, and
+    // would show a script there as text.
+    let script = format!(
         "<script>(function(){{var v=\"{generation}\";setInterval(function(){{\
          fetch(\"/__emul/version\",{{cache:\"no-store\"}}).then(function(r){{return r.text()}})\
          .then(function(t){{if(t.trim()!==v)location.reload()}}).catch(function(){{}})}},500)}})();</script>\n"
-    ));
+    );
+    let html = match html.find("</head>") {
+        Some(i) => format!("{}{}{}", &html[..i], script, &html[i..]),
+        None => format!("{script}{html}"),
+    };
     match html.rfind("</body>") {
         Some(i) => format!("{}{}{}", &html[..i], extra, &html[i..]),
         None => format!("{html}{extra}"),
@@ -546,7 +555,7 @@ fn open_in_browser(url: &str) {
     #[cfg(not(any(target_os = "macos", target_os = "windows")))]
     let r = std::process::Command::new("xdg-open").arg(url).spawn();
     match r {
-        // Reap the launcher in the background so it doesn't linger as a zombie.
+        // Reap the launcher in the background, so that it does not stay as a zombie.
         Ok(mut child) => {
             std::thread::spawn(move || {
                 let _ = child.wait();
@@ -574,7 +583,8 @@ enum Pane {
 
 struct SvgTex {
     generation: u64,
-    /// The scale the texture was rasterized at (zoom × pixels per point, maybe clamped).
+    /// The scale of the texture raster (zoom × pixels per point). The code clamps it when
+    /// necessary.
     scale: f32,
     tex: egui::TextureHandle,
 }
@@ -590,15 +600,15 @@ struct App {
     selected: Option<String>,
     view: View,
     zoom: f32,
-    /// Set until the first rendering is shown, so it starts fitted.
+    /// True until the window shows the first render. Then the first render fits the window.
     initial_fit: bool,
     last_zoom_change: Instant,
-    /// Zoom to apply to the scroll offsets of each pane, when the zoom changed: (old, new).
+    /// The zoom for the scroll offsets of each pane, after a zoom change: (old, new).
     zoom_changed: Option<(f32, f32)>,
     trees: HashMap<String, (u64, Option<usvg::Tree>)>,
     svg_tex: HashMap<String, SvgTex>,
     png_tex: HashMap<String, PngTex>,
-    /// Scroll offset and viewport size of each pane, from the last frame.
+    /// The scroll offset and viewport size of each pane, from the last frame.
     scroll: HashMap<(String, Pane), (egui::Vec2, egui::Vec2)>,
     status: Option<(String, Instant)>,
     show_warnings: bool,
@@ -682,8 +692,8 @@ impl App {
         let scale = (self.zoom * ppp).min(max_side / biggest).max(0.001);
         if let Some(t) = self.svg_tex.get(&comp.name) {
             let same = t.generation == generation && (t.scale - scale).abs() < 1e-4;
-            // While the zoom is still changing, stretch the old texture rather than
-            // rasterizing every frame.
+            // While the zoom changes, stretch the old texture.
+            // Do not rasterize again at each frame.
             let settling = t.generation == generation && self.last_zoom_change.elapsed() < DEBOUNCE;
             if same || settling {
                 if settling && !same {
@@ -923,7 +933,7 @@ fn diag_line(d: &Diagnostic, base: &Path) -> String {
 }
 
 fn draw_checkerboard(p: &egui::Painter, rect: egui::Rect) {
-    // A plain light backdrop, so transparent canvases are visible against dark themes.
+    // A plain light backdrop. Then a transparent canvas is visible on a dark theme.
     p.rect_filled(rect, 0.0, egui::Color32::from_gray(236));
     let cell = 8.0;
     let clip = p.clip_rect().intersect(rect);
@@ -961,7 +971,7 @@ impl eframe::App for App {
         };
         let good_gen = good.as_ref().map(|g| g.generation).unwrap_or(0);
 
-        // Drop cached textures of compositions that are gone or out of date.
+        // Remove the textures of compositions that are not there now or are old.
         if let Some(g) = &good {
             let names: HashSet<&str> = g.rendered.iter().map(|r| r.name.as_str()).collect();
             self.svg_tex.retain(|n, t| names.contains(n.as_str()) && t.generation == good_gen);
@@ -1007,7 +1017,7 @@ impl eframe::App for App {
             });
         });
 
-        // Status bar: warnings and short messages.
+        // The status bar: warnings and short messages.
         if let Some((_, t)) = &self.status {
             if t.elapsed() > Duration::from_secs(4) {
                 self.status = None;
@@ -1050,8 +1060,8 @@ impl eframe::App for App {
             });
         }
 
-        // Toolbar. The space left for the canvas is known only after it is laid out, so
-        // estimate it from what remains now minus the toolbar's height.
+        // Toolbar. The code knows the canvas space only after it arranges the canvas.
+        // Thus, it uses the space that remains now minus the toolbar height.
         let remaining = ui.available_rect_before_wrap();
         let toolbar_h = 34.0;
         let canvas_avail = egui::vec2(remaining.width(), remaining.height() - toolbar_h);

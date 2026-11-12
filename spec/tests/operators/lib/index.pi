@@ -1,0 +1,4 @@
+from @piton/test import Test
+
+export abstract anchor MyTest extends Test as test:
+    tags: [operators]

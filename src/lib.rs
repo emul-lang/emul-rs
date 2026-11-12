@@ -9,6 +9,7 @@ pub mod escape;
 pub mod fonts;
 pub mod format;
 pub mod html;
+pub mod init;
 pub mod layout;
 pub mod parser;
 pub mod png;

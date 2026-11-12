@@ -1,0 +1,14 @@
+use @piton/test
+
+export test PitonPackage:
+    expects:
+        The main piton.config.pi should include an emul package that exports
+        all relevant spec for how an agent could use and/or integrate Emul.
+
+    tags: [package]
+
+export test PitonPackageUpdating:
+    expects:
+        The @{PitonPackage} should remain up to date.
+
+    tags: [package]

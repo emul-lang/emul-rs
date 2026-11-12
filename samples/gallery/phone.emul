@@ -1,0 +1,462 @@
+// A banking app home screen inside a phone frame.
+
+component Stage:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    height: 100%
+    backgroundImage: radial-gradient(circle at 50% 30%, #e0f2fe, #f8fafc 70%)
+
+component Bezel:
+    display: flex
+    padding: 12px
+    borderRadius: 60px
+    backgroundImage: linear-gradient(145deg, #3f3f46, #18181b)
+    boxShadow: 0 40px 80px rgba(15, 23, 42, 0.35), 0 0 0 2px #52525b
+
+component Screen:
+    position: relative
+    display: flex
+    flexDirection: column
+    width: 380px
+    height: 820px
+    overflow: hidden
+    borderRadius: 48px
+    backgroundColor: #f4f6fb
+    fontFamily: "Plus Jakarta Sans", "Noto Color Emoji"
+
+component Island:
+    position: absolute
+    top: 12px
+    left: 135px
+    width: 110px
+    height: 32px
+    borderRadius: 999px
+    backgroundColor: #000000
+    zIndex: 2
+
+component StatusBar:
+    display: flex
+    alignItems: center
+    justifyContent: space-between
+    height: 54px
+    padding: 4px 30px 0 34px
+    flexShrink: 0
+
+component Time:
+    fontSize: 15px
+    fontWeight: 700
+    color: #0f172a
+    fontFamily: "Plus Jakarta Sans"
+
+component Indicators:
+    display: flex
+    alignItems: center
+    gap: 6px
+
+component Signal:
+    display: flex
+    alignItems: flex-end
+    gap: 2px
+    height: 11px
+
+component Level:
+    attribute n: one | two | three | four = four
+    width: 3px
+    height: 11px
+    borderRadius: 1px
+    backgroundColor: #0f172a
+
+    when n == one:
+        height: 4px
+    when n == two:
+        height: 6px
+    when n == three:
+        height: 9px
+
+component Battery:
+    width: 25px
+    height: 12px
+    padding: 2px
+    borderRadius: 4px
+    border: 1px solid #94a3b8
+
+component BatteryFill:
+    width: 80%
+    height: 100%
+    borderRadius: 2px
+    backgroundColor: #0f172a
+
+component Content:
+    display: flex
+    flexDirection: column
+    gap: 22px
+    flexGrow: 1
+    padding: 10px 22px 0
+
+component Greeting:
+    display: flex
+    alignItems: center
+    gap: 12px
+
+component Face:
+    fontFamily: "Noto Color Emoji"
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 44px
+    height: 44px
+    borderRadius: 999px
+    backgroundImage: linear-gradient(135deg, #fde68a, #f97316)
+    fontSize: 20px
+
+component Hello:
+    display: flex
+    flexDirection: column
+    gap: 2px
+
+component HelloSmall:
+    fontSize: 13px
+    color: #64748b
+    fontFamily: "Plus Jakarta Sans"
+
+component HelloName:
+    fontSize: 18px
+    fontWeight: 800
+    color: #0f172a
+    fontFamily: "Plus Jakarta Sans"
+
+component Bell:
+    fontFamily: "Noto Color Emoji"
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 42px
+    height: 42px
+    marginLeft: auto
+    borderRadius: 999px
+    backgroundColor: #ffffff
+    boxShadow: 0 2px 8px rgba(15, 23, 42, 0.06)
+    fontSize: 18px
+
+component Balance:
+    position: relative
+    display: flex
+    flexDirection: column
+    gap: 6px
+    padding: 22px
+    overflow: hidden
+    borderRadius: 26px
+    backgroundImage: radial-gradient(circle at 100% 0%, #38bdf8, rgba(56, 189, 248, 0) 55%), linear-gradient(135deg, #1e3a8a, #0f172a)
+    boxShadow: 0 18px 36px rgba(30, 58, 138, 0.35)
+
+component BalanceLabel:
+    fontSize: 13px
+    color: #bfdbfe
+    fontFamily: "Plus Jakarta Sans"
+
+component BalanceValue:
+    fontSize: 34px
+    fontWeight: 800
+    letterSpacing: -1px
+    color: #ffffff
+    fontFamily: "Plus Jakarta Sans"
+
+component BalanceFoot:
+    display: flex
+    alignItems: center
+    justifyContent: space-between
+    marginTop: 14px
+
+component CardNumber:
+    fontSize: 14px
+    letterSpacing: 2px
+    color: #e0e7ff
+    fontFamily: "JetBrains Mono"
+
+component Chip:
+    padding: 5px 10px
+    borderRadius: 999px
+    backgroundColor: rgba(255, 255, 255, 0.16)
+    fontSize: 12px
+    fontWeight: 700
+    color: #ffffff
+    fontFamily: "Plus Jakarta Sans"
+
+component Actions:
+    display: flex
+    justifyContent: space-between
+
+component Action:
+    display: flex
+    flexDirection: column
+    alignItems: center
+    gap: 8px
+    width: 70px
+
+component ActionIcon:
+    attribute tone: blue | green | amber | pink = blue
+    fontFamily: "Noto Color Emoji"
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 56px
+    height: 56px
+    borderRadius: 18px
+    backgroundColor: #dbeafe
+    fontSize: 22px
+
+    when tone == green:
+        backgroundColor: #dcfce7
+    when tone == amber:
+        backgroundColor: #fef3c7
+    when tone == pink:
+        backgroundColor: #fce7f3
+
+component ActionLabel:
+    fontSize: 12px
+    fontWeight: 600
+    color: #334155
+    fontFamily: "Plus Jakarta Sans"
+
+component SectionHead:
+    display: flex
+    alignItems: center
+    justifyContent: space-between
+
+component SectionTitle:
+    fontSize: 16px
+    fontWeight: 800
+    color: #0f172a
+    fontFamily: "Plus Jakarta Sans"
+
+component SeeAll:
+    fontSize: 13px
+    fontWeight: 700
+    color: #2563eb
+    fontFamily: "Plus Jakarta Sans"
+
+component Activity:
+    display: flex
+    flexDirection: column
+    padding: 6px 16px
+    borderRadius: 22px
+    backgroundColor: #ffffff
+    boxShadow: 0 2px 10px rgba(15, 23, 42, 0.05)
+
+component Txn:
+    attribute edge: middle | last = middle
+    display: flex
+    alignItems: center
+    gap: 12px
+    padding: 12px 0
+    borderBottom: 1px solid #f1f5f9
+
+    when edge == last:
+        borderBottom: 0px solid #f1f5f9
+
+component TxnIcon:
+    fontFamily: "Noto Color Emoji"
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 40px
+    height: 40px
+    borderRadius: 12px
+    backgroundColor: #f1f5f9
+    fontSize: 18px
+
+component TxnText:
+    display: flex
+    flexDirection: column
+    gap: 2px
+    flexGrow: 1
+
+component TxnName:
+    fontSize: 14px
+    fontWeight: 700
+    color: #0f172a
+    fontFamily: "Plus Jakarta Sans"
+
+component TxnMeta:
+    fontSize: 12px
+    color: #94a3b8
+    fontFamily: "Plus Jakarta Sans"
+
+component Amount:
+    attribute flow: out | in = out
+    fontSize: 14px
+    fontWeight: 800
+    color: #0f172a
+    fontFamily: "Plus Jakarta Sans"
+
+    when flow == in:
+        color: #16a34a
+
+component TabBar:
+    display: flex
+    justifyContent: space-around
+    alignItems: center
+    flexShrink: 0
+    height: 84px
+    paddingBottom: 18px
+    backgroundColor: #ffffff
+    borderTop: 1px solid #eef2f7
+
+component Tab:
+    attribute state: idle | active = idle
+    display: flex
+    flexDirection: column
+    alignItems: center
+    gap: 4px
+    fontSize: 11px
+    fontWeight: 600
+    color: #94a3b8
+    fontFamily: "Plus Jakarta Sans"
+
+    when state == active:
+        color: #2563eb
+
+component TabIcon:
+    attribute state: idle | active = idle
+    fontFamily: "Noto Color Emoji"
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 44px
+    height: 30px
+    borderRadius: 999px
+    fontSize: 17px
+    opacity: 0.55
+
+    when state == active:
+        backgroundColor: #dbeafe
+        opacity: 1
+
+component HomeBar:
+    position: absolute
+    bottom: 8px
+    left: 125px
+    width: 130px
+    height: 5px
+    borderRadius: 999px
+    backgroundColor: #0f172a
+
+export composition PhoneHome {
+    Stage {
+        Bezel {
+            Screen {
+                Island {}
+                StatusBar {
+                    Time { "9:41" }
+                    Indicators {
+                        Signal {
+                            Level { n: one }
+                            Level { n: two }
+                            Level { n: three }
+                            Level {}
+                        }
+                        Battery {
+                            BatteryFill {}
+                        }
+                    }
+                }
+                Content {
+                    Greeting {
+                        Face { "🦊" }
+                        Hello {
+                            HelloSmall { "Good morning" }
+                            HelloName { "Amara Okafor" }
+                        }
+                        Bell { "🔔" }
+                    }
+                    Balance {
+                        BalanceLabel { "Total balance" }
+                        BalanceValue { "$12,480.52" }
+                        BalanceFoot {
+                            CardNumber { "•••• 4021" }
+                            Chip { "+ $1,240 this week" }
+                        }
+                    }
+                    Actions {
+                        Action {
+                            ActionIcon { "📤" }
+                            ActionLabel { "Send" }
+                        }
+                        Action {
+                            ActionIcon { tone: green, "📥" }
+                            ActionLabel { "Request" }
+                        }
+                        Action {
+                            ActionIcon { tone: amber, "💳" }
+                            ActionLabel { "Cards" }
+                        }
+                        Action {
+                            ActionIcon { tone: pink, "📈" }
+                            ActionLabel { "Invest" }
+                        }
+                    }
+                    SectionHead {
+                        SectionTitle { "Recent activity" }
+                        SeeAll { "See all" }
+                    }
+                    Activity {
+                        Txn {
+                            TxnIcon { "☕" }
+                            TxnText {
+                                TxnName { "Blue Bottle Coffee" }
+                                TxnMeta { "Today · 8:12 AM" }
+                            }
+                            Amount { "−$6.40" }
+                        }
+                        Txn {
+                            TxnIcon { "💼" }
+                            TxnText {
+                                TxnName { "Salary · Lumen Labs" }
+                                TxnMeta { "Yesterday" }
+                            }
+                            Amount { flow: in, "+$4,200.00" }
+                        }
+                        Txn {
+                            TxnIcon { "🎧" }
+                            TxnText {
+                                TxnName { "Spotify Premium" }
+                                TxnMeta { "Tue · Subscription" }
+                            }
+                            Amount { "−$11.99" }
+                        }
+                        Txn {
+                            edge: last
+                            TxnIcon { "🛒" }
+                            TxnText {
+                                TxnName { "Whole Foods Market" }
+                                TxnMeta { "Mon · 6:45 PM" }
+                            }
+                            Amount { "−$84.17" }
+                        }
+                    }
+                }
+                TabBar {
+                    Tab {
+                        state: active
+                        TabIcon { state: active, "🏠" }
+                        "Home"
+                    }
+                    Tab {
+                        TabIcon { "📊" }
+                        "Insights"
+                    }
+                    Tab {
+                        TabIcon { "💳" }
+                        "Cards"
+                    }
+                    Tab {
+                        TabIcon { "👤" }
+                        "Profile"
+                    }
+                }
+                HomeBar {}
+            }
+        }
+    }
+}

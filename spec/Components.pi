@@ -1,3 +1,4 @@
+from ./Conditions import Conditions
 from ./Modules import Modules
 from ./Values import Values
 from ./componentProperties/background/BackgroundColor import BackgroundColor
@@ -223,8 +224,14 @@ export anchor Components:
         `padding`, and `Spacious` is last in line, so `Pill` gets
         `12px 24px`.
 
+    conditions:
+        A component may declare attributes, and `when` blocks that change
+        properties depending on an attribute's value, as described in
+        @{Conditions}.
+
     noNesting:
-        Components hold properties only. They do not contain other components,
+        Components hold properties, attribute declarations and `when` blocks
+        only. They do not contain other components,
         text, or selectors; arranging components inside one another is the
         job of compositions. Pseudo-classes, states such as hover or focus,
         and media queries are out of scope.

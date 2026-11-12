@@ -1,0 +1,595 @@
+// An analytics dashboard: sidebar, KPI tiles, a bar chart and a top list.
+
+component Shell:
+    display: flex
+    height: 100%
+    backgroundColor: #f6f7fb
+    fontFamily: Inter
+
+// Sidebar
+
+component Sidebar:
+    display: flex
+    flexDirection: column
+    gap: 28px
+    width: 240px
+    flexShrink: 0
+    padding: 28px 18px
+    backgroundColor: #0b1020
+
+component Brand:
+    display: flex
+    alignItems: center
+    gap: 10px
+    padding: 0 10px
+
+component BrandMark:
+    width: 28px
+    height: 28px
+    borderRadius: 8px
+    backgroundImage: linear-gradient(135deg, #22d3ee, #6366f1)
+
+component BrandName:
+    fontSize: 17px
+    fontWeight: 700
+    letterSpacing: -0.3px
+    color: #ffffff
+
+component NavGroup:
+    display: flex
+    flexDirection: column
+    gap: 4px
+
+component NavHeading:
+    padding: 0 12px 8px
+    fontSize: 11px
+    fontWeight: 600
+    letterSpacing: 1.2px
+    textTransform: uppercase
+    color: #4b5675
+
+component NavItem:
+    attribute state: idle | active = idle
+    display: flex
+    alignItems: center
+    gap: 12px
+    padding: 10px 12px
+    borderRadius: 10px
+    fontSize: 14px
+    fontWeight: 500
+    color: #94a3c4
+
+    when state == active:
+        backgroundColor: #1b2340
+        color: #ffffff
+        fontWeight: 600
+
+component NavIcon:
+    attribute state: idle | active = idle
+    width: 8px
+    height: 8px
+    borderRadius: 3px
+    backgroundColor: #3a4566
+
+    when state == active:
+        backgroundColor: #22d3ee
+        boxShadow: 0 0 0 4px rgba(34, 211, 238, 0.18)
+
+component Count:
+    marginLeft: auto
+    padding: 2px 8px
+    borderRadius: 999px
+    backgroundColor: #1b2340
+    fontSize: 11px
+    fontWeight: 600
+    color: #94a3c4
+
+component Upgrade:
+    display: flex
+    flexDirection: column
+    gap: 10px
+    marginTop: auto
+    padding: 18px
+    borderRadius: 14px
+    backgroundImage: linear-gradient(150deg, #312e81, #1e1b4b)
+    border: 1px solid #3730a3
+
+component UpgradeTitle:
+    fontSize: 14px
+    fontWeight: 700
+    color: #ffffff
+
+component UpgradeText:
+    fontSize: 12px
+    lineHeight: 1.5
+    color: #a5b4fc
+
+component UpgradeButton:
+    display: flex
+    justifyContent: center
+    padding: 8px
+    borderRadius: 8px
+    backgroundColor: #ffffff
+    fontSize: 12px
+    fontWeight: 700
+    color: #312e81
+
+// Main
+
+component Main:
+    display: flex
+    flexDirection: column
+    gap: 24px
+    flexGrow: 1
+    padding: 28px 32px
+
+component TopBar:
+    display: flex
+    alignItems: center
+    gap: 16px
+
+component Heading:
+    display: flex
+    flexDirection: column
+    gap: 4px
+
+component PageTitle:
+    htmlTag: h1
+    fontSize: 24px
+    fontWeight: 700
+    letterSpacing: -0.5px
+    color: #0b1020
+
+component PageSub:
+    fontSize: 14px
+    color: #6b7280
+
+component Search:
+    display: flex
+    alignItems: center
+    width: 260px
+    height: 40px
+    marginLeft: auto
+    padding: 0 14px
+    borderRadius: 10px
+    backgroundColor: #ffffff
+    border: 1px solid #e5e7eb
+    fontSize: 13px
+    color: #9ca3af
+
+component Range:
+    display: flex
+    alignItems: center
+    height: 40px
+    padding: 0 14px
+    borderRadius: 10px
+    backgroundColor: #0b1020
+    fontSize: 13px
+    fontWeight: 600
+    color: #ffffff
+
+component Avatar:
+    display: flex
+    alignItems: center
+    justifyContent: center
+    width: 40px
+    height: 40px
+    borderRadius: 999px
+    backgroundImage: linear-gradient(135deg, #f472b6, #fb923c)
+    fontSize: 14px
+    fontWeight: 700
+    color: #ffffff
+
+component Kpis:
+    display: grid
+    gridTemplateColumns: repeat(4, 1fr)
+    gap: 16px
+
+component Tile:
+    display: flex
+    flexDirection: column
+    gap: 10px
+    padding: 20px
+    borderRadius: 16px
+    backgroundColor: #ffffff
+    border: 1px solid #eceef3
+
+component TileLabel:
+    fontSize: 13px
+    fontWeight: 500
+    color: #6b7280
+
+component TileValue:
+    fontSize: 28px
+    fontWeight: 700
+    letterSpacing: -0.8px
+    color: #0b1020
+
+component Delta:
+    attribute trend: up | down = up
+    display: flex
+    alignSelf: flex-start
+    padding: 3px 8px
+    borderRadius: 999px
+    backgroundColor: #dcfce7
+    fontSize: 12px
+    fontWeight: 600
+    color: #15803d
+
+    when trend == down:
+        backgroundColor: #fee2e2
+        color: #b91c1c
+
+component Row:
+    display: grid
+    gridTemplateColumns: 2fr 1fr
+    gap: 16px
+    flexGrow: 1
+
+component Panel:
+    display: flex
+    flexDirection: column
+    gap: 20px
+    padding: 22px
+    borderRadius: 16px
+    backgroundColor: #ffffff
+    border: 1px solid #eceef3
+
+component PanelHead:
+    display: flex
+    alignItems: center
+    justifyContent: space-between
+
+component PanelTitle:
+    fontSize: 15px
+    fontWeight: 700
+    color: #0b1020
+
+component Legend:
+    display: flex
+    alignItems: center
+    gap: 8px
+    fontSize: 12px
+    color: #6b7280
+
+component Swatch:
+    width: 10px
+    height: 10px
+    borderRadius: 3px
+    backgroundImage: linear-gradient(180deg, #6366f1, #22d3ee)
+
+component Chart:
+    display: flex
+    flexDirection: column
+    gap: 10px
+    flexGrow: 1
+
+component Bars:
+    display: flex
+    alignItems: flex-end
+    gap: 14px
+    height: 392px
+    paddingBottom: 1px
+    borderBottom: 1px solid #eceef3
+    backgroundImage: linear-gradient(180deg, #f1f2f6 1px, rgba(255, 255, 255, 0) 1px)
+    backgroundSize: 100% 98px
+
+component Bar:
+    attribute state: idle | peak = idle
+    flexGrow: 1
+    flexBasis: 0
+    borderRadius: 8px 8px 3px 3px
+    backgroundImage: linear-gradient(180deg, #c7d2fe, #e0e7ff)
+
+    when state == peak:
+        backgroundImage: linear-gradient(180deg, #6366f1, #22d3ee)
+        boxShadow: 0 8px 18px rgba(99, 102, 241, 0.3)
+
+component Jan extends Bar:
+    height: 38%
+
+component Feb extends Bar:
+    height: 46%
+
+component Mar extends Bar:
+    height: 41%
+
+component Apr extends Bar:
+    height: 58%
+
+component May extends Bar:
+    height: 52%
+
+component Jun extends Bar:
+    height: 67%
+
+component Jul extends Bar:
+    height: 61%
+
+component Aug extends Bar:
+    height: 74%
+
+component Sep extends Bar:
+    height: 69%
+
+component Oct extends Bar:
+    height: 83%
+
+component Nov extends Bar:
+    height: 96%
+
+component Dec extends Bar:
+    height: 88%
+
+component Months:
+    display: flex
+    gap: 14px
+
+component Month:
+    flexGrow: 1
+    flexBasis: 0
+    textAlign: center
+    fontSize: 11px
+    fontWeight: 500
+    color: #9ca3af
+
+component List:
+    display: flex
+    flexDirection: column
+    gap: 26px
+
+component Item:
+    display: flex
+    flexDirection: column
+    gap: 8px
+
+component Summary:
+    display: flex
+    flexDirection: column
+    gap: 6px
+    marginTop: auto
+    padding: 16px
+    borderRadius: 12px
+    backgroundImage: linear-gradient(135deg, #eef2ff, #ecfeff)
+
+component SummaryLabel:
+    fontSize: 12px
+    fontWeight: 500
+    color: #6b7280
+
+component SummaryValue:
+    fontSize: 22px
+    fontWeight: 700
+    letterSpacing: -0.5px
+    color: #0b1020
+
+component SummaryNote:
+    fontSize: 12px
+    color: #4f46e5
+    fontWeight: 600
+
+component ItemHead:
+    display: flex
+    justifyContent: space-between
+    fontSize: 13px
+    color: #374151
+
+component ItemValue:
+    fontSize: 13px
+    fontWeight: 600
+    color: #0b1020
+
+component Track:
+    height: 6px
+    borderRadius: 999px
+    backgroundColor: #f1f2f6
+
+component Fill:
+    height: 6px
+    borderRadius: 999px
+    backgroundImage: linear-gradient(90deg, #6366f1, #22d3ee)
+
+component Fill1 extends Fill:
+    width: 92%
+
+component Fill2 extends Fill:
+    width: 71%
+
+component Fill3 extends Fill:
+    width: 54%
+
+component Fill4 extends Fill:
+    width: 38%
+
+component Fill5 extends Fill:
+    width: 22%
+
+export composition Dashboard {
+    Shell {
+        Sidebar {
+            Brand {
+                BrandMark {}
+                BrandName { "Pulse" }
+            }
+            NavGroup {
+                NavHeading { "Workspace" }
+                NavItem {
+                    state: active
+                    NavIcon { state: active }
+                    "Overview"
+                }
+                NavItem {
+                    NavIcon {}
+                    "Reports"
+                    Count { "12" }
+                }
+                NavItem {
+                    NavIcon {}
+                    "Audiences"
+                }
+                NavItem {
+                    NavIcon {}
+                    "Funnels"
+                }
+                NavItem {
+                    NavIcon {}
+                    "Experiments"
+                    Count { "3" }
+                }
+            }
+            NavGroup {
+                NavHeading { "Settings" }
+                NavItem {
+                    NavIcon {}
+                    "Team"
+                }
+                NavItem {
+                    NavIcon {}
+                    "Integrations"
+                }
+                NavItem {
+                    NavIcon {}
+                    "Billing"
+                }
+            }
+            Upgrade {
+                UpgradeTitle { "Pulse Pro" }
+                UpgradeText {
+                    "Unlock cohort analysis and unlimited event history."
+                }
+                UpgradeButton { "Upgrade plan" }
+            }
+        }
+        Main {
+            TopBar {
+                Heading {
+                    PageTitle { "Overview" }
+                    PageSub { "Here is how your product performed this year." }
+                }
+                Search { "Search events, people, reports…" }
+                Range { "Last 12 months" }
+                Avatar { "MK" }
+            }
+            Kpis {
+                Tile {
+                    TileLabel { "Monthly revenue" }
+                    TileValue { "$84,210" }
+                    Delta { "▲ 12.4% vs last month" }
+                }
+                Tile {
+                    TileLabel { "Active users" }
+                    TileValue { "21,904" }
+                    Delta { "▲ 8.1% vs last month" }
+                }
+                Tile {
+                    TileLabel { "Conversion rate" }
+                    TileValue { "4.62%" }
+                    Delta { "▲ 0.6 pts" }
+                }
+                Tile {
+                    TileLabel { "Churn" }
+                    TileValue { "1.9%" }
+                    Delta { trend: down, "▼ 0.3 pts worse" }
+                }
+            }
+            Row {
+                Panel {
+                    PanelHead {
+                        PanelTitle { "Revenue by month" }
+                        Legend {
+                            Swatch {}
+                            "2026"
+                        }
+                    }
+                    Chart {
+                        Bars {
+                            Jan {}
+                            Feb {}
+                            Mar {}
+                            Apr {}
+                            May {}
+                            Jun {}
+                            Jul {}
+                            Aug {}
+                            Sep {}
+                            Oct {}
+                            Nov { state: peak }
+                            Dec {}
+                        }
+                        Months {
+                            Month { "Jan" }
+                            Month { "Feb" }
+                            Month { "Mar" }
+                            Month { "Apr" }
+                            Month { "May" }
+                            Month { "Jun" }
+                            Month { "Jul" }
+                            Month { "Aug" }
+                            Month { "Sep" }
+                            Month { "Oct" }
+                            Month { "Nov" }
+                            Month { "Dec" }
+                        }
+                    }
+                }
+                Panel {
+                    PanelHead {
+                        PanelTitle { "Top channels" }
+                    }
+                    List {
+                        Item {
+                            ItemHead {
+                                "Organic search"
+                                ItemValue { "38.2k" }
+                            }
+                            Track {
+                                Fill1 {}
+                            }
+                        }
+                        Item {
+                            ItemHead {
+                                "Direct"
+                                ItemValue { "29.5k" }
+                            }
+                            Track {
+                                Fill2 {}
+                            }
+                        }
+                        Item {
+                            ItemHead {
+                                "Referral"
+                                ItemValue { "22.4k" }
+                            }
+                            Track {
+                                Fill3 {}
+                            }
+                        }
+                        Item {
+                            ItemHead {
+                                "Paid social"
+                                ItemValue { "15.8k" }
+                            }
+                            Track {
+                                Fill4 {}
+                            }
+                        }
+                        Item {
+                            ItemHead {
+                                "Email"
+                                ItemValue { "9.1k" }
+                            }
+                            Track {
+                                Fill5 {}
+                            }
+                        }
+                    }
+                    Summary {
+                        SummaryLabel { "Total sessions" }
+                        SummaryValue { "115,000" }
+                        SummaryNote { "Up 18% on last year" }
+                    }
+                }
+            }
+        }
+    }
+}

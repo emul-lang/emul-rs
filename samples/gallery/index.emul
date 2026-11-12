@@ -1,0 +1,21 @@
+// A gallery of example designs. Each file holds one design with its own components.
+from ./article export Article
+from ./calendar export Calendar
+from ./chat export Chat
+from ./dashboard export Dashboard
+from ./invoice export Invoice
+from ./kanban export Kanban
+from ./landing export Landing
+from ./login export Login
+from ./phone export PhoneHome
+from ./player export MusicPlayer
+from ./poster export Poster
+from ./pricing export Pricing
+from ./recipe export Recipe
+from ./settings export Settings
+from ./shop export Shop
+from ./social export SocialCard, Tweet
+from ./team export Team
+from ./ticket export BoardingPass
+from ./toasts export Toasts
+from ./weather export Weather

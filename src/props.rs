@@ -1,11 +1,12 @@
-//! Every Emul property: how its value is checked, which longhands it sets, and the
-//! resolved style that layout, painting and the HTML output read from.
+//! All Emul properties. This module checks each value and sets the longhands of each
+//! property. It also makes the resolved style. The layout, the paint step and the HTML
+//! output read that style.
 
 use crate::values::*;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-/// Longhands: the individual settings every property is broken down into.
+/// Longhands: the individual settings. Each property divides into longhands.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum L {
     Display,
@@ -330,13 +331,19 @@ pub struct PErr {
     pub msg: String,
 }
 
+impl From<crate::values::TokErr> for PErr {
+    fn from(e: crate::values::TokErr) -> Self {
+        PErr { code: e.code, msg: e.msg }
+    }
+}
+
 impl From<String> for PErr {
     fn from(msg: String) -> Self {
         PErr { code: "invalid-value", msg }
     }
 }
 
-/// Context for parsing values that refer to files.
+/// Context to parse values that refer to files.
 pub struct Ctx<'a> {
     pub dir: &'a Path,
     pub root: &'a Path,
@@ -352,7 +359,7 @@ pub fn level(name: &str) -> Option<u8> {
     })
 }
 
-/// The longhand an ordinary (non-shorthand) property sets.
+/// The longhand that an ordinary (non-shorthand) property sets.
 pub fn longhand_of(name: &str) -> Option<L> {
     use L::*;
     Some(match name {
@@ -517,8 +524,8 @@ fn border_parts(toks: &[Tok]) -> Result<(Len, &'static str, crate::values::Color
             _ => color = parse_color(t)?,
         }
     }
-    // A border with a style but no width is 1px, rather than CSS's `medium`,
-    // since Emul has no width keywords.
+    // A border with a style but no width is 1px, not the CSS `medium`,
+    // because Emul has no width keywords.
     if !got_width && style != "none" {
         width = Len::Px(1.0);
     }
@@ -618,7 +625,7 @@ pub fn resolve_image_path(path: &str, ctx: &Ctx) -> Result<PathBuf, PErr> {
     image_file(path, ctx)
 }
 
-/// Removes `.` and `..` components without touching the file system.
+/// Removes `.` and `..` components. It does not access the file system.
 pub fn normalize(p: &Path) -> PathBuf {
     let mut out = PathBuf::new();
     for c in p.components() {
@@ -1011,7 +1018,7 @@ pub fn parse_property(name: &str, value: &str, ctx: &Ctx) -> Result<Vec<(L, V)>,
     }
 }
 
-/// A component's complete style, after inheritance and the shorthand rule.
+/// The full style of a component, after inheritance and the shorthand rule.
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct Style {
     pub set: BTreeMap<L, V>,
@@ -1148,8 +1155,8 @@ pub fn default_len(l: L) -> Len {
     }
 }
 
-/// CSS text for a longhand value, for the HTML output. `own_color` stands in for
-/// colours left to default to the component's own colour.
+/// CSS text for a longhand value, for the HTML output. `own_color` replaces
+/// colours that use the default, which is the own colour of the component.
 pub fn css_value(l: L, v: &V, own_color: &crate::values::Color, asset: &dyn Fn(&Path) -> String) -> String {
     match v {
         V::Kw(k) => k.to_string(),

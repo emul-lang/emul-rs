@@ -1,6 +1,6 @@
-//! The source formatter: rewrites an `.emul` file into its one canonical layout, as
-//! set out in `spec/Formatting.pi`. Formatting never changes what a file means, and
-//! formatting an already formatted file changes nothing.
+//! The source formatter. It rewrites an `.emul` file into its one canonical layout,
+//! as `spec/Formatting.pi` specifies. The formatter never changes what a file means.
+//! When you format a file a second time, nothing changes.
 
 use crate::ast::*;
 use crate::diag::Diags;
@@ -11,8 +11,8 @@ use std::path::Path;
 const INDENT: &str = "    ";
 const WIDTH: usize = 80;
 
-/// Returns the canonically formatted form of `src`. A file with syntax errors is not
-/// formatted; its diagnostics are returned instead.
+/// Returns the canonical form of `src`. The formatter does not format a file with syntax
+/// errors. It returns the diagnostics of that file.
 pub fn format_source(path: &Path, src: &str) -> Result<String, Diags> {
     let parsed = parser::parse(path, src);
     if parsed.diags.has_errors() {
@@ -28,12 +28,12 @@ fn line_starts(src: &str) -> Vec<usize> {
     v
 }
 
-/// A top-level declaration with the comments written above it. In `lead`, `None`
-/// stands for a blank line the author left among those comments.
+/// A top-level declaration and the comments above it. In `lead`, `None` is a blank
+/// line that the author put between those comments.
 struct Unit<'a> {
     lead: Vec<Option<&'a Comment>>,
     item: Option<&'a Item>,
-    /// Whether a blank line came before this unit in the source.
+    /// True when a blank line came before this unit in the source.
     blank_before: bool,
 }
 
@@ -46,8 +46,8 @@ impl<'a> Formatter<'a> {
     fn file(&self, items: &'a [Item]) -> String {
         let mut units = group_units(items);
 
-        // Comments at the very top, separated from what follows by a blank line, are a
-        // file header: they stay first, above the imports.
+        // Comments at the top of the file, with a blank line after them, are a file
+        // header. The header stays first, above the imports.
         let mut header: Vec<Option<&Comment>> = Vec::new();
         if let Some(first) = units.first_mut() {
             if first.item.is_none() || matches!(first.lead.last(), Some(None)) {
@@ -80,8 +80,8 @@ impl<'a> Formatter<'a> {
         let mut prev: Option<&Unit> = None;
         for u in rest {
             if !out.is_empty() {
-                // Runs of re-exports and `export` lines keep the author's grouping; every
-                // other declaration is set apart by one blank line.
+                // Runs of re-exports and `export` lines keep the groups of the author.
+                // One blank line separates each other declaration.
                 let together = prev.is_some_and(|p| is_export_line(p.item))
                     && is_export_line(u.item)
                     && u.lead.is_empty()
@@ -115,8 +115,8 @@ impl<'a> Formatter<'a> {
 
     fn composition_lines(&self, c: &Composition) -> Vec<String> {
         let head = format!("{}composition {}", if c.exported { "export " } else { "" }, c.name);
-        // The parser drops a comment written after the closing brace, so it is
-        // recovered from the source and kept there.
+        // The parser removes a comment after the `}` at the end. The formatter gets
+        // that comment again from the source and keeps it in that position.
         let tail = match self.trailing_comment(c) {
             Some(t) => format!(" {}", comment_text(&t)),
             None => String::new(),
@@ -131,7 +131,7 @@ impl<'a> Formatter<'a> {
         lines
     }
 
-    /// Byte offset of a 1-based line and character column.
+    /// The byte offset of a 1-based line and character column.
     fn offset(&self, line: usize, col: usize) -> usize {
         let start = self.line_starts[line - 1];
         start + self.src[start..].char_indices().nth(col - 1).map(|(i, _)| i).unwrap_or(0)
@@ -242,8 +242,9 @@ fn strip_ext(path: &str) -> &str {
     }
 }
 
-/// `from PATH import|export names`, split one name per line when it has more than
-/// two names or would pass the line width. `None` names means `*`.
+/// `from PATH import|export names`. Each name goes on its own line when there are more
+/// than two names. This also occurs when the line is longer than the line width.
+/// `None` names means `*`.
 fn from_lines(path: &str, kw: &str, names: Option<&[ImportName]>) -> Vec<String> {
     let path = strip_ext(path);
     let Some(names) = names else {
@@ -289,6 +290,26 @@ fn component_lines(c: &Component) -> Vec<String> {
             }
             ComponentItem::Comment(cm) => lines.push(format!("{INDENT}{}", comment_text(&cm.text))),
             ComponentItem::Property(p) => lines.push(format!("{INDENT}{}: {}", p.name, format_value(&p.raw))),
+            ComponentItem::Attribute(a) => lines.push(format!("{INDENT}{}", attribute_decl(a))),
+            ComponentItem::When(w) => {
+                lines.push(format!("{INDENT}when {}:", w.raw));
+                let mut inner_blank = true;
+                for item in &w.body {
+                    match item {
+                        ComponentItem::Blank => {
+                            if !inner_blank {
+                                lines.push(String::new());
+                            }
+                            inner_blank = true;
+                            continue;
+                        }
+                        ComponentItem::Comment(cm) => lines.push(format!("{INDENT}{INDENT}{}", comment_text(&cm.text))),
+                        ComponentItem::Property(p) => lines.push(format!("{INDENT}{INDENT}{}: {}", p.name, format_value(&p.raw))),
+                        _ => {}
+                    }
+                    inner_blank = false;
+                }
+            }
         }
         last_blank = false;
     }
@@ -298,8 +319,22 @@ fn component_lines(c: &Component) -> Vec<String> {
     lines
 }
 
-/// Drops leading, trailing and repeated blank entries. Returns an empty list for a body
-/// with nothing but blank lines in it.
+fn attribute_decl(a: &AttributeDecl) -> String {
+    let mut out = format!("attribute {}", a.name);
+    if let Some(vals) = &a.values {
+        let vs: Vec<&str> = vals.iter().map(|(v, _)| v.as_str()).collect();
+        out.push_str(": ");
+        out.push_str(&vs.join(" | "));
+    }
+    if let Some((d, _)) = &a.default {
+        out.push_str(" = ");
+        out.push_str(d);
+    }
+    out
+}
+
+/// Removes blank entries at the start, at the end and in sequence. Returns an empty
+/// list for a body that contains only blank lines.
 fn normalize_blanks(entries: &[Entry]) -> Vec<&Entry> {
     let mut v: Vec<&Entry> = Vec::new();
     for e in entries {
@@ -327,8 +362,9 @@ fn body_lines(entries: &[&Entry], depth: usize, out: &mut Vec<String>) {
     }
 }
 
-/// Attribute values are written exactly as given (trimmed). They are HTML attribute
-/// values such as paths and URLs, so the value spacing rules would change them.
+/// The formatter writes attribute values as they are, with only the outer spaces removed.
+/// They are HTML attribute values, for example paths and URLs. The value spacing rules can
+/// change them, so the formatter does not apply those rules.
 fn attribute(a: &Attribute) -> String {
     format!("{}: {}", a.name, a.raw.trim())
 }
@@ -351,7 +387,7 @@ fn instance_lines(inst: &Instance, depth: usize, out: &mut Vec<String>) {
     out.push(format!("{ind}}}"));
 }
 
-/// The one-line form of a body, if it may have one: no children and no comments.
+/// The one-line form of a body, if it can have one: no children and no comments.
 fn one_line(name: &str, body: &[&Entry]) -> Option<String> {
     let mut parts = Vec::new();
     for e in body {
@@ -359,7 +395,7 @@ fn one_line(name: &str, body: &[&Entry]) -> Option<String> {
             Entry::Blank => {}
             Entry::Text(t) => parts.push(t.raw.clone()),
             Entry::Attribute(a) => {
-                // A value ending in a backslash followed by ` }` would open an escape.
+                // A value that ends in a backslash before ` }` opens an escape.
                 if a.raw.trim_end().ends_with('\\') {
                     return None;
                 }
@@ -376,8 +412,8 @@ fn one_line(name: &str, body: &[&Entry]) -> Option<String> {
 
 #[derive(Debug)]
 enum Vt {
-    /// Anything that is not spacing or punctuation: words, numbers, quoted text,
-    /// escapes, `url(...)` and `[...]`, all kept as written.
+    /// All text that is not spacing or punctuation: words, numbers, quoted text,
+    /// escapes, `url(...)` and `[...]`. They stay as the author wrote them.
     Word(String),
     Space,
     Comma,
@@ -386,16 +422,17 @@ enum Vt {
     Close,
 }
 
-/// Formats a property value: single spaces, `, ` after commas, ` / ` around slashes,
-/// no space before or just inside a function's parentheses, lowercase hex colours.
-/// Quoted text, escapes, `url(...)` and `[...]` are kept byte for byte.
+/// Formats a property value. It writes single spaces, `, ` after commas and ` / ` around
+/// slashes. It writes no space before or inside the parentheses of a function.
+/// It writes hex colours in lowercase.
+/// Quoted text, escapes, `url(...)` and `[...]` stay the same, byte for byte.
 pub(crate) fn format_value(raw: &str) -> String {
     let raw = raw.trim();
     let Some(toks) = value_tokens(raw) else {
         return raw.to_string();
     };
     let out = emit_value(&toks);
-    // Safety net: the escapes must come out exactly as they went in.
+    // Safety check: the escapes must be the same before and after the format step.
     if wrappers(&out) != wrappers(raw) || escape::unescape(&out).is_err() {
         return raw.to_string();
     }
@@ -420,7 +457,7 @@ fn is_ident_char(c: char) -> bool {
     c.is_alphanumeric() || c == '-' || c == '_'
 }
 
-/// Whether a word ends in a name that can be a function's, such as `rgba`.
+/// True when a word ends in a name that can be a function name, for example `rgba`.
 fn ends_in_name(w: &str) -> bool {
     let seg: String = w.chars().rev().take_while(|&c| is_ident_char(c)).collect();
     seg.chars().last().is_some_and(char::is_alphabetic)
@@ -431,8 +468,8 @@ fn ends_in_url(w: &str) -> bool {
     seg.eq_ignore_ascii_case("url")
 }
 
-/// Returns `None` when the value holds a backslash that is not part of an escape;
-/// such a value is left exactly as written.
+/// Returns `None` when the value contains a backslash that is not part of an escape.
+/// The formatter does not change such a value.
 fn value_tokens(raw: &str) -> Option<Vec<Vt>> {
     let bytes = raw.as_bytes();
     let mut toks = Vec::new();
@@ -493,7 +530,7 @@ fn value_tokens(raw: &str) -> Option<Vec<Vt>> {
                 i += n;
             }
             '(' => {
-                // `url(` keeps its contents as written, up to the first `)`.
+                // `url(` keeps its contents as they are, up to the first `)`.
                 if word.is_empty() && matches!(toks.last(), Some(Vt::Space)) {
                     if let Some(Vt::Word(w)) = toks.len().checked_sub(2).and_then(|k| toks.get(k)) {
                         if ends_in_url(w) {
@@ -546,7 +583,7 @@ fn value_tokens(raw: &str) -> Option<Vec<Vt>> {
 }
 
 fn emit_value(toks: &[Vt]) -> String {
-    // Each token other than a space, and whether a space came before it.
+    // Each token that is not a space, and a flag that shows if a space came before it.
     let mut items: Vec<(&Vt, bool)> = Vec::new();
     let mut spaced = false;
     for t in toks {
@@ -586,8 +623,8 @@ fn emit_value(toks: &[Vt]) -> String {
 }
 
 // ---------------------------------------------------------------------------------
-// Finding where a composition body ends, mirroring the parser, so a comment after the
-// closing brace can be recovered.
+// Find where a composition body ends, with the same method as the parser. Then the
+// formatter can get a comment after the `}` at the end again.
 
 mod scan {
     use crate::escape;
@@ -596,7 +633,7 @@ mod scan {
         src[k..].find('\n').map_or(src.len(), |e| k + e)
     }
 
-    /// From just inside an opening brace, returns the offset just past its closing brace.
+    /// Starts just after a `{`. Returns the offset just after the `}` that matches it.
     pub fn body_end(src: &str, mut k: usize) -> Option<usize> {
         let bytes = src.as_bytes();
         let mut at_line_start = false;
@@ -709,7 +746,7 @@ mod tests {
         }
     }
 
-    /// Formats, then checks the result is stable under a second pass.
+    /// Formats, then makes sure that a second pass does not change the result.
     fn check(src: &str, expected: &str) {
         let once = fmt(src);
         assert_eq!(once, expected, "\n--- got ---\n{once}\n--- expected ---\n{expected}");
@@ -838,7 +875,7 @@ composition Pricing {
         assert_eq!(format_value("oklch(0.5 0.1 200/0.5)"), "oklch(0.5 0.1 200 / 0.5)");
         assert_eq!(format_value("repeat(2,1fr) [Main  Side]"), "repeat(2, 1fr) [Main  Side]");
         assert_eq!(format_value("#GGG"), "#GGG");
-        // A backslash that is not an escape leaves the value alone.
+        // When a backslash is not an escape, the value does not change.
         assert_eq!(format_value("a\\b ,c"), "a\\b ,c");
         for v in ["rgba(0, 0, 0, .5)", "16 / 9", "\"A  B\", serif", "a\\ , \\ b"] {
             assert_eq!(format_value(v), v);

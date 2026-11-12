@@ -1,0 +1,194 @@
+// A Swiss-style typographic poster: a strict grid, huge grotesque type,
+// one accent colour and a few rotated elements.
+
+component Sheet:
+    position: relative
+    display: flex
+    flexDirection: column
+    height: 100%
+    padding: 48px
+    overflow: hidden
+    backgroundColor: #f1ede4
+    fontFamily: Inter
+    color: #111111
+
+// The big red disc sits behind the type.
+component Disc:
+    position: absolute
+    top: 380px
+    left: 340px
+    width: 500px
+    height: 500px
+    borderRadius: 999px
+    backgroundColor: #e63312
+
+component Bar:
+    position: absolute
+    top: 770px
+    left: -80px
+    width: 1000px
+    height: 40px
+    rotate: -7deg
+    backgroundColor: #111111
+
+component BarText:
+    display: flex
+    justifyContent: space-between
+    alignItems: center
+    height: 100%
+    paddingLeft: 140px
+    paddingRight: 140px
+
+component BarWord:
+    color: #f1ede4
+    fontSize: 13px
+    fontWeight: 700
+    letterSpacing: 4px
+    textTransform: uppercase
+
+component Side:
+    position: absolute
+    top: 520px
+    right: -232px
+    width: 500px
+    rotate: 90deg
+    fontSize: 13px
+    fontWeight: 700
+    letterSpacing: 6px
+    textTransform: uppercase
+    textAlign: center
+
+component Masthead:
+    position: relative
+    display: grid
+    gridTemplateColumns: 1fr 1fr 1fr 1fr
+    gap: 16px
+    paddingBottom: 16px
+    borderBottom: 3px solid #111111
+
+component Meta:
+    display: flex
+    flexDirection: column
+    gap: 2px
+    fontSize: 13px
+    lineHeight: 1.35
+
+component MetaStrong:
+    fontSize: 13px
+    fontWeight: 700
+
+component Display:
+    position: relative
+    marginTop: 36px
+    fontFamily: "Archivo Black"
+    fontSize: 230px
+    lineHeight: 0.82
+    letterSpacing: -12px
+    textTransform: uppercase
+
+component Dash:
+    display: inline
+    fontFamily: "Archivo Black"
+    fontSize: 230px
+    lineHeight: 0.82
+    color: #f1ede4
+
+component Spacer:
+    flexGrow: 1
+
+component Program:
+    position: relative
+    display: grid
+    gridTemplateColumns: 1fr 1fr 1fr
+    gap: 24px
+    paddingTop: 16px
+    borderTop: 3px solid #111111
+
+component Slot:
+    display: flex
+    flexDirection: column
+    gap: 6px
+
+component Day:
+    fontFamily: "Archivo Black"
+    fontSize: 40px
+    lineHeight: 1
+    letterSpacing: -1px
+
+component Talk:
+    fontSize: 14px
+    lineHeight: 1.4
+
+component Footer:
+    position: relative
+    display: flex
+    justifyContent: space-between
+    marginTop: 28px
+    fontSize: 12px
+    fontWeight: 700
+    letterSpacing: 2px
+    textTransform: uppercase
+
+export composition Poster {
+    Sheet {
+        Disc {}
+        Bar {
+            BarText {
+                BarWord { "Grid" }
+                BarWord { "System" }
+                BarWord { "Rhythm" }
+                BarWord { "Contrast" }
+                BarWord { "Order" }
+            }
+        }
+        Side { "Kunsthalle Zürich" }
+
+        Masthead {
+            Meta {
+                MetaStrong { "Zürich" }
+                "Type Days"
+            }
+            Meta {
+                MetaStrong { "14–16 May" }
+                "2027"
+            }
+            Meta {
+                MetaStrong { "Three days" }
+                "Twelve talks"
+            }
+            Meta {
+                MetaStrong { "No. 07" }
+                "Free entry"
+            }
+        }
+
+        Display { "Form" }
+        Display {
+            "Fol"
+            Dash { "-" }
+        }
+        Display { "lows" }
+
+        Spacer {}
+
+        Program {
+            Slot {
+                Day { "14" }
+                Talk { "Josef Müller-Brockmann and the grid as a moral idea" }
+            }
+            Slot {
+                Day { "15" }
+                Talk { "Helvetica at seventy: type, state and the street" }
+            }
+            Slot {
+                Day { "16" }
+                Talk { "Workshops in letterpress, layout and poster making" }
+            }
+        }
+
+        Footer {
+            Spacer { "typedays.ch" }
+            "Design is order"
+        }
+    }
+}

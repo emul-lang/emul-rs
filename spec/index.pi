@@ -1,11 +1,38 @@
-// The crux skills, tethered into tethers/crux by piton init. Re-exporting
-// them is what has the build emit them for each adapter; `piton update crux`
-// brings in a newer crux.
+// This file is the entry of the `emul` package. Package explains it.
+// It exports again each module that an agent needs to use Emul.
+// The project entry is project.pi. That file also exports the crux skills.
+from ./CommentStyle import CommentStyle
+from ./Package import Package
 from ./Syntax import Syntax
 from ./Thesis import Thesis
-from crux export *
+
+from ./Cli export *
+from ./Comments export *
+from ./Components export *
+from ./Compositions export *
+from ./Conditions export *
+from ./Config export *
+from ./Errors export *
+from ./Escapes export *
+from ./Fonts export *
+from ./Formatting export *
+from ./HtmlOutput export *
+from ./Init export *
+from ./Layout export *
+from ./Modules export *
+from ./Output export *
+from ./OutputSize export *
+from ./Package export *
+from ./PngOutput export *
+from ./Preview export *
+from ./SvgOutput export *
+from ./Syntax export *
+from ./Thesis export *
+from ./Values export *
 
 export anchor Emul:
     tableOfContents:
         - @{Thesis}
         - @{Syntax}
+        - @{Package}
+        - @{CommentStyle}

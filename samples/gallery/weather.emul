@@ -1,0 +1,344 @@
+// A weather widget: current conditions, an hourly strip and a five-day forecast with
+// temperature range bars.
+
+component Page:
+    display: flex
+    justifyContent: center
+    padding: 56px 40px
+    backgroundImage: linear-gradient(180deg, #e0f2fe, #f0f9ff)
+
+component Widget:
+    display: flex
+    flexDirection: column
+    gap: 20px
+    width: 800px
+    padding: 32px
+    borderRadius: 32px
+    backgroundImage: radial-gradient(circle at 85% 0%, #7dd3fc, rgba(125, 211, 252, 0) 45%), linear-gradient(160deg, #2563eb, #3b82f6 45%, #0ea5e9)
+    boxShadow: 0 40px 70px -30px rgba(37, 99, 235, 0.6)
+
+component Now:
+    display: flex
+    alignItems: center
+    justifyContent: space-between
+    padding: 4px 8px 12px
+
+component Place:
+    display: flex
+    flexDirection: column
+    gap: 6px
+
+component City:
+    fontFamily: Manrope
+    fontSize: 24px
+    fontWeight: 700
+    color: #ffffff
+
+component Small:
+    fontFamily: Manrope
+    fontSize: 14px
+    fontWeight: 500
+    color: #dbeafe
+
+component Temp:
+    fontFamily: Manrope
+    fontSize: 104px
+    fontWeight: 300
+    lineHeight: 1
+    letterSpacing: -6px
+    color: #ffffff
+    marginTop: 18px
+
+component Condition:
+    fontFamily: Manrope
+    fontSize: 18px
+    fontWeight: 600
+    color: #ffffff
+    marginTop: 4px
+
+// A sun behind a cloud, made of circles and a rounded bar.
+component Scene:
+    position: relative
+    width: 260px
+    height: 190px
+
+component Sun:
+    position: absolute
+    top: 0px
+    right: 30px
+    width: 120px
+    height: 120px
+    borderRadius: 50%
+    backgroundImage: radial-gradient(circle at 40% 35%, #fef9c3, #fde047 45%, #f59e0b)
+    boxShadow: 0 0 60px 10px rgba(253, 224, 71, 0.55)
+
+component Puff:
+    attribute part: base | left | right = base
+    position: absolute
+    borderRadius: 999px
+    backgroundImage: linear-gradient(180deg, #ffffff, #e0f2fe)
+    boxShadow: 0 18px 30px -12px rgba(30, 64, 175, 0.45)
+    left: 20px
+    bottom: 10px
+    width: 210px
+    height: 64px
+
+    when part == left:
+        left: 46px
+        bottom: 42px
+        width: 84px
+        height: 84px
+        boxShadow: none
+
+    when part == right:
+        left: 98px
+        bottom: 38px
+        width: 112px
+        height: 112px
+        boxShadow: none
+
+component Panel:
+    display: flex
+    flexDirection: column
+    gap: 14px
+    padding: 20px 22px
+    borderRadius: 22px
+    backgroundColor: rgba(255, 255, 255, 0.14)
+    border: 1px solid rgba(255, 255, 255, 0.22)
+
+component PanelTitle:
+    fontFamily: Manrope
+    fontSize: 12px
+    fontWeight: 700
+    letterSpacing: 2px
+    textTransform: uppercase
+    color: #dbeafe
+
+component Hours:
+    display: flex
+    justifyContent: space-between
+
+component Hour:
+    attribute state: later | now = later
+    display: flex
+    flexDirection: column
+    alignItems: center
+    gap: 10px
+    width: 72px
+    padding: 12px 0
+    borderRadius: 16px
+
+    when state == now:
+        backgroundColor: rgba(255, 255, 255, 0.95)
+        boxShadow: 0 10px 20px -10px rgba(15, 23, 42, 0.5)
+
+component HourTime:
+    attribute state: later | now = later
+    fontFamily: Manrope
+    fontSize: 13px
+    fontWeight: 600
+    color: #dbeafe
+
+    when state == now:
+        color: #2563eb
+
+component Icon:
+    fontFamily: "Noto Color Emoji"
+    fontSize: 26px
+
+component HourTemp:
+    attribute state: later | now = later
+    fontFamily: Manrope
+    fontSize: 18px
+    fontWeight: 700
+    color: #ffffff
+
+    when state == now:
+        color: #0f172a
+
+component Days:
+    display: flex
+    flexDirection: column
+
+component Day:
+    display: flex
+    alignItems: center
+    gap: 18px
+    padding: 10px 0
+
+component DayName:
+    fontFamily: Manrope
+    fontSize: 16px
+    fontWeight: 700
+    color: #ffffff
+    width: 92px
+
+component DayIcon:
+    fontFamily: "Noto Color Emoji"
+    fontSize: 22px
+    width: 36px
+
+component Low:
+    fontFamily: Manrope
+    fontSize: 16px
+    fontWeight: 600
+    color: #bfdbfe
+    width: 40px
+    textAlign: right
+
+component High:
+    fontFamily: Manrope
+    fontSize: 16px
+    fontWeight: 700
+    color: #ffffff
+    width: 40px
+
+component Range:
+    position: relative
+    flexGrow: 1
+    height: 6px
+    borderRadius: 999px
+    backgroundColor: rgba(15, 23, 42, 0.18)
+
+// The week runs from 11° to 24°; each span places the bar for one day.
+component Span:
+    attribute day: today | wed | thu | fri | sat = today
+    position: absolute
+    top: 0px
+    height: 6px
+    borderRadius: 999px
+    left: 31%
+    width: 69%
+    backgroundImage: linear-gradient(90deg, #fde047, #fb923c)
+
+    when day == wed:
+        left: 15%
+        width: 69%
+
+    when day == thu:
+        left: 0%
+        width: 38%
+        backgroundImage: linear-gradient(90deg, #67e8f9, #a5f3fc)
+
+    when day == fri:
+        left: 8%
+        width: 46%
+        backgroundImage: linear-gradient(90deg, #a5f3fc, #fde047)
+
+    when day == sat:
+        left: 38%
+        width: 62%
+        backgroundImage: linear-gradient(90deg, #fde047, #f97316)
+
+export composition Weather {
+    Page {
+        Widget {
+            Now {
+                Place {
+                    City { "Porto" }
+                    Small { "Tuesday, 16 June · 14:00" }
+                    Temp { "21°" }
+                    Condition { "Partly cloudy" }
+                    Small { "H 24°  ·  L 15°  ·  Feels like 22°" }
+                }
+                Scene {
+                    Sun {}
+                    Puff { part: left }
+                    Puff { part: right }
+                    Puff {}
+                }
+            }
+            Panel {
+                PanelTitle { "Hourly forecast" }
+                Hours {
+                    Hour {
+                        state: now
+                        HourTime { state: now, "Now" }
+                        Icon { "⛅" }
+                        HourTemp { state: now, "21°" }
+                    }
+                    Hour {
+                        HourTime { "15:00" }
+                        Icon { "🌤️" }
+                        HourTemp { "23°" }
+                    }
+                    Hour {
+                        HourTime { "16:00" }
+                        Icon { "☀️" }
+                        HourTemp { "24°" }
+                    }
+                    Hour {
+                        HourTime { "17:00" }
+                        Icon { "☀️" }
+                        HourTemp { "23°" }
+                    }
+                    Hour {
+                        HourTime { "18:00" }
+                        Icon { "🌤️" }
+                        HourTemp { "21°" }
+                    }
+                    Hour {
+                        HourTime { "19:00" }
+                        Icon { "🌥️" }
+                        HourTemp { "19°" }
+                    }
+                    Hour {
+                        HourTime { "20:00" }
+                        Icon { "🌙" }
+                        HourTemp { "17°" }
+                    }
+                }
+            }
+            Panel {
+                PanelTitle { "5-day forecast" }
+                Days {
+                    Day {
+                        DayName { "Today" }
+                        DayIcon { "⛅" }
+                        Low { "15°" }
+                        Range {
+                            Span {}
+                        }
+                        High { "24°" }
+                    }
+                    Day {
+                        DayName { "Wednesday" }
+                        DayIcon { "🌤️" }
+                        Low { "13°" }
+                        Range {
+                            Span { day: wed }
+                        }
+                        High { "22°" }
+                    }
+                    Day {
+                        DayName { "Thursday" }
+                        DayIcon { "🌧️" }
+                        Low { "11°" }
+                        Range {
+                            Span { day: thu }
+                        }
+                        High { "16°" }
+                    }
+                    Day {
+                        DayName { "Friday" }
+                        DayIcon { "🌦️" }
+                        Low { "12°" }
+                        Range {
+                            Span { day: fri }
+                        }
+                        High { "18°" }
+                    }
+                    Day {
+                        DayName { "Saturday" }
+                        DayIcon { "☀️" }
+                        Low { "16°" }
+                        Range {
+                            Span { day: sat }
+                        }
+                        High { "24°" }
+                    }
+                }
+            }
+        }
+    }
+}

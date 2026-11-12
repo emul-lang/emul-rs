@@ -1,0 +1,56 @@
+use @emul/config
+
+export emul-config Project:
+    entry: ./index.emul
+    outDir: ./out
+    background: #f4f5f7
+    width: 1200
+    sizes:
+        Article:
+            width: 1100
+        BoardingPass:
+            width: 980
+        Calendar:
+            width: 1100
+        Chat:
+            width: 760
+        Dashboard:
+            width: 1280
+            height: 800
+        Invoice:
+            width: 860
+        Kanban:
+            width: 1280
+        Landing:
+            width: 1280
+            height: 860
+        Login:
+            width: 1200
+            height: 800
+        MusicPlayer:
+            width: 900
+        PhoneHome:
+            width: 800
+            height: 960
+        Poster:
+            width: 800
+            height: 1120
+        Pricing:
+            width: 1200
+        Recipe:
+            width: 820
+        Settings:
+            width: 760
+        Shop:
+            width: 1240
+        SocialCard:
+            width: 1200
+            height: 630
+        Team:
+            width: 1200
+        Toasts:
+            width: 1000
+        Tweet:
+            width: 640
+        Weather:
+            width: 900

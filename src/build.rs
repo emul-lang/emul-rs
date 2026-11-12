@@ -1,4 +1,4 @@
-//! The build pipeline: load the project, fetch fonts, lay out and render every
+//! The build pipeline: load the project, fetch fonts, arrange and render every
 //! composition, and write the results.
 
 use crate::config::{Config, Format, Height, SvgFonts};
@@ -59,7 +59,7 @@ pub struct BuildResult {
     pub diags: Diags,
     pub sources: HashMap<PathBuf, String>,
     pub rendered: Vec<Rendered>,
-    /// Every file the build read, for watching.
+    /// Every file that the build read. The preview watches these files.
     pub inputs: Vec<PathBuf>,
 }
 
@@ -97,12 +97,12 @@ fn collect_images(node: &Node, out: &mut Vec<PathBuf>) {
     }
 }
 
-/// Checks the project, without fetching fonts or rendering.
+/// Checks the project. It does not fetch fonts and does not render.
 pub fn check(cfg: &Config, only: Option<&[String]>) -> Project {
     project::load(&cfg.entry, &cfg.root, only)
 }
 
-/// Loads and renders everything in memory. Nothing is rendered if there are errors.
+/// Loads and renders everything in memory. If there are errors, it renders nothing.
 pub fn render(cfg: &Config, ov: &Overrides, only: Option<&[String]>, mut diags: Diags) -> BuildResult {
     let proj = check(cfg, only);
     diags.extend(proj.diags.clone());
@@ -197,7 +197,7 @@ pub fn render(cfg: &Config, ov: &Overrides, only: Option<&[String]>, mut diags: 
     BuildResult { diags, sources, rendered, inputs }
 }
 
-/// Writes rendered compositions into the output directory.
+/// Writes the rendered compositions into the output directory.
 pub fn write(result: &BuildResult, out_dir: &Path) -> std::io::Result<Vec<PathBuf>> {
     std::fs::create_dir_all(out_dir)?;
     let mut written = Vec::new();

@@ -1,16 +1,20 @@
 from ./Config import Config
 from ./Errors import Errors
 from ./Formatting import Formatting
+from ./Init import Init
 from ./OutputSize import OutputSize
 from ./Preview import Preview
 
 export anchor Cli:
     description:
-        The `emul` command compiles, checks and formats Emul projects. It
-        reads `emul.config.pi` from the current directory, if there is one,
-        and its flags override the config's settings.
+        The `emul` command creates, compiles, checks and formats Emul
+        projects. It reads `emul.config.pi` from the current directory, if
+        there is one, and its flags override the config's settings.
 
     commands:
+        - init
+            Creates a new project with a starter config and entry file, as
+            described in @{Init}.
         - build
             Checks the project, then renders every composition exported from
             the entry file, in every configured format.

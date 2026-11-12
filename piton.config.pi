@@ -1,14 +1,18 @@
 use @piton/belay
 use @piton/config
+use @piton/packaging
 
 from @piton/belay import ClaudeCodeAdapter
 
 export piton-config Project:
     root: ./spec
-    entry: ./spec/index.pi
+    entry: ./spec/project.pi
 
-    frameworks:
+    plugins:
         - {Belay}
+
+    packages:
+        - {Emul}
 
     dependencies:
         - https://github.com/piton-lang/crux.git
@@ -18,3 +22,8 @@ belay-config Belay:
 
     adapters:
         - {ClaudeCodeAdapter}
+
+// The Emul specification is a package. spec/Package.pi explains it.
+piton-package Emul:
+    name: emul
+    root: ./spec

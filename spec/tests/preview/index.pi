@@ -1,0 +1,6 @@
+use ./lib
+
+export test PreviewCommand:
+    expects:
+        There is a preview command that opens a GUI that allows us to view the
+        rendered output of an Emul file.

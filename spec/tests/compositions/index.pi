@@ -1,0 +1,14 @@
+from @piton/test import Test
+
+abstract anchor MyTest extends Test as test:
+    tags: [compositions]
+
+export test DeclareComposition:
+    expects:
+        Should be able to declare a composition with the `composition` keyword
+        and it should use \ { } \ syntax
+
+export test ComposedComposition:
+    expects:
+        Should be able to export and declare a composition made of up individual
+        components and reuse that as a "complex" component.

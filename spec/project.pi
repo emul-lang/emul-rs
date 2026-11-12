@@ -1,0 +1,7 @@
+// This file is the entry of the project. The config names it.
+// It exports again the `emul` package entry in index.pi.
+// The crux skills are in tethers/crux. This file also exports them again.
+// The build then writes them for each adapter.
+// Use `piton update crux` to get a newer crux.
+from . export *
+from crux export *

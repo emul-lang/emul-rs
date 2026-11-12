@@ -25,7 +25,9 @@ component Side:
 
 component Top:
     gridArea: top
-    border: 3px dashed #6366f1
+    borderTop: 3px dashed #6366f1
+    borderRight: 3px dashed #6366f1
+    borderBottom: 3px dashed #6366f1
     borderLeft: 8px solid #f43f5e
     padding: 12px
     textAlign: center
